@@ -11,6 +11,7 @@ enka.fetchUser(840110542).then( user => {
     let character = user.charactersPreview;
     character.map((d, i) => {
         console.log(`Character: ${d.characterData._nameId}(Lv: ${d.level})`);
+        console.log('test');
     })
 })
 
