@@ -2,10 +2,47 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useEffect, useState } from 'react'
+import axios from 'axios';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const [userUID, setuserUID] = useState<string>('');
+
+  const ChangeUID = (e:object) => { 
+    if(e.target.value.length > 9){ e.target.value = e.target.value.substr(0, 9); }
+    setuserUID(e.target.value); 
+  }
+
+
+  const onSubmitHandler = async(e) => {
+    // fatch 진행필요!
+    e.preventDefault();
+    try{
+      const datas = { userUID: userUID }
+      const res = await axios.post('/api/getUser', datas);
+      if(res.statusText === "OK"){
+        console.log(res.data.result);
+      }
+    }catch(error){ console.log("error ===> ", error) }
+    
+    // try{
+    //   let url = "/api/getUser";
+    //   const res = await fetch(url, {
+		// 		timeout: 1000,		// 1초 타임아웃 제한..
+		// 		method: "POST",
+		// 		headers: { "Content-Type": "application/json;charset=utf-8" },
+    //     body: datas,
+		// 	})
+    //   if(res.ok){
+    //     const data = await res.json();
+    //     console.log(data.result);
+    //   }
+    // }catch(error) { console.log("error ===> ", error) }
+  }
+
+
   return (
     <>
       <Head>
@@ -14,108 +51,31 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
+
+      <main className={"w-screen h-screen relative bg-violet-200"}>
+        <div className={"body absolute z-10"}>
+          <div className='w-full h-3/5 flex items-end justify-center'>
+            <div className={'w-full' }>
               <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
+                className='m-auto'
+                src={"/../public/logo-genshin.png"}
+                alt={"background Image for home"}
+                width={900}
+                height={200}
               />
-            </a>
+            </div>
           </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
+          <form className='w-96 m-auto rounded-md bg-white opacity-90' onSubmit={onSubmitHandler}>
+            <input 
+                className={'w-80 h-14 text-center text-3xl rounded-md'}
+                type={'number'}
+                placeholder={"UID"}
+                value={userUID}
+                onChange={ChangeUID}
+                maxLength={9}
+              />
+            <button className='w-16 h-14 text-3xl'> > </button>
+          </form>
         </div>
       </main>
     </>
