@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 app.post('/api/getUser', async(req, res) => {
     const userData = await enka.fetchUser(req.body.userUID);
-    console.log('UID ===> ' ,userData);
+    console.log('UID ===> ' ,userData.characters);
     //console.log('UID ===> ' ,userData.charactersPreview);
     console.log('UID ===> ' ,req.body.userUID);
     res.send({result: userData._data, });
