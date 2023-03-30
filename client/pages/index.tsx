@@ -29,8 +29,8 @@ export default function Home() {
       const res = await axios.post('/api/getUser', datas);
       if(res.statusText === "OK"){
         setloadingFlag(false);
-        let userData = JSON.stringify(res.data.result);
-        console.log(res.data.result);
+        let userData = JSON.stringify(res.data);
+        //console.log(userData);
         // 여기서 cookie에 보관 필요!.
         // state에 저장하면 새로고침 할 때 무조건 어케되든 데이터 증발해
         // 유저 정보를 저장할 방법은

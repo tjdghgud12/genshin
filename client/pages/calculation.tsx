@@ -12,8 +12,10 @@ import { AppProps } from 'next/app'
 export default function Calculation() {
     const router = useRouter();
     const [userData, setuserData] = useState<object>(new Object());
+    // const [userData, setuserData] = useState<object>(new Object());
     useEffect(() => {
         setuserData(JSON.parse(sessionStorage.getItem('userData')));
+        console.log(JSON.parse(sessionStorage.getItem('userData')))
     },[])
     
 
@@ -25,7 +27,20 @@ export default function Calculation() {
 
     return (
         <main className={"w-screen h-screen absolute bg-violet-300 "}>
-            <div>{JSON.stringify(userData)}</div>
+            <div className='w-full h-1/10 bg-indigo-200'>{/* Header 대충 홈버튼 같은거? */}
+
+            </div>
+            <div className='w-full h-6/10 bg-red-200'> {/* 메인 화면 */}
+                <div>{/* 캐릭터 선택 버튼 */}
+
+                </div>
+                <div>{/* 캐릭터 스팩 표시 및 성유물 표기 */}
+                    <div>{JSON.stringify(userData)}</div>
+                </div>
+            </div>
+            <div className='w-full h-3/10'>{/* tail 대충 조건문이라던가 알림내용같은거 */}
+
+            </div>
         </main>
     )
 }
