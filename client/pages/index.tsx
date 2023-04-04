@@ -35,7 +35,7 @@ export default function Home() {
         // state에 저장하면 새로고침 할 때 무조건 어케되든 데이터 증발해
         // 유저 정보를 저장할 방법은
         // 1. cookie나 localstorage 등 브라우저 저장소를 사용한다.
-        // 2. back 서버단에서 저장해 두고, front에서는 페이지 그릴때 마다 읽어온다
+        // 2. back 서버단에서 저장해 두고, front에서는 페이지 그릴때 마다 읽어온다ㅏㅏ
         sessionStorage.setItem("userData", userData);
         router.push({
           pathname: 'calculation',
