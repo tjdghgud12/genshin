@@ -9,13 +9,14 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { AppProps } from 'next/app'
 
-export default function Calculation() {
+export default function Calculation({ test }) {
     const router = useRouter();
-    const [userData, setuserData] = useState<object>(new Object());
+    const [userData, setuserData] = useState<object>();
     // const [userData, setuserData] = useState<object>(new Object());
     useEffect(() => {
         setuserData(JSON.parse(sessionStorage.getItem('userData')));
         console.log(JSON.parse(sessionStorage.getItem('userData')))
+        console.log(test);
     },[])
     
 
@@ -32,6 +33,13 @@ export default function Calculation() {
             </div>
             <div className='w-full h-6/10 bg-red-200'> {/* 메인 화면 */}
                 <div>{/* 캐릭터 선택 버튼 */}
+                {/*
+                    음 여기에 뭘 어떻게 넣을까.....
+                    컴포넌트로 뺴서 10개 쭉 늘릴까?
+                    아니면 map 돌릴까
+
+                 */}
+                    {/* <img src={userData.data}></img> */}
 
                 </div>
                 <div>{/* 캐릭터 스팩 표시 및 성유물 표기 */}
@@ -44,3 +52,5 @@ export default function Calculation() {
         </main>
     )
 }
+
+//Calculation

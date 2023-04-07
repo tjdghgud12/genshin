@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.3",
     "@types/node": "18.14.6",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -18,8 +19,10 @@
     "genshin-api": "^2.1.0",
     "next": "13.2.3",
     "next-http-proxy-middleware": "^1.2.5",
+    "next-redux-wrapper": "^8.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-redux": "^8.0.5",
     "typescript": "4.9.5"
   },
   "devDependencies": {
