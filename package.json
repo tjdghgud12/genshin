@@ -11,13 +11,16 @@
     "dev-all": "concurrently -k \"yarn app-start\" \"yarn dev\""
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
     "concurrently": "^8.2.2",
     "enka-network-api": "^4.6.6",
+    "eslint-plugin-react": "^7.37.5",
     "express": "^4.18.2",
     "genshin": "^1.2.4",
     "genshin-db": "^5.1.12",
     "lodash": "^4.17.21",
-    "next": "14.0.4",
+    "next": "^15.3.5",
     "nodemon": "^3.0.3",
     "react": "^18",
     "react-dom": "^18",
@@ -31,11 +34,15 @@
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.4",
+    "eslint": "^9.31.0",
+    "eslint-config-next": "^15.3.5",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
     "postcss": "^8",
+    "prettier": "^3.6.2",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.0.2",
+  "type": "module"
 }
