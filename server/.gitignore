@@ -1,0 +1,74 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Logs
+*.log
+
+# Database files
+*.sqlite3
+*.db
+
+# IDE / Editor config
+.vscode/
+.idea/
+
+# dotenv / 환경설정 파일
+.env
+.env.*
+
+# Static files (optional)
+staticfiles/
+mediafiles/
+
+# pip cache
+pip-wheel-metadata/
+
+# Jupyter
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# mypy, pyre, pytype
+.mypy_cache/
+.pyre/
+.pytype/
+
+# pyenv
+.python-version
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# pytest cache
+.pytest_cache/
+
+# 기타 임시 파일
+*.tmp
+*.temp
+*.bak
