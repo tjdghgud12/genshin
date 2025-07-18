@@ -1,5 +1,5 @@
 # Python Bytecode
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -72,3 +72,17 @@ docker-compose.override.yml
 *.tmp
 *.temp
 *.bak
+
+# 특정 폴더 내부 캐시/임시 파일 무시
+api/**/__pycache__/
+data/**/__pycache__/
+services/**/__pycache__/
+
+# 특정 폴더들에서 빌드 산출물 무시 (필요 시 추가)
+api/build/
+data/build/
+services/build/
+
+api/dist/
+data/dist/
+services/dist/
