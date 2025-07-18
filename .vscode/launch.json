@@ -31,6 +31,20 @@
       "type": "chrome",
       "url": "http://localhost:9000",
       "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Fast API Process",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fastapi",
+      "args": [
+        "dev",
+        "main.py",
+        "--reload",
+        "--port", "9001"
+      ],
+      "justMyCode": true,
+      "cwd": "${workspaceFolder}/server"
     }
   ],
   "compounds": [

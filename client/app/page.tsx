@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import { redirect } from 'next/navigation';
+import Image from "next/image";
+import { redirect } from "next/navigation";
 
 // 루트 페이지의 메인화면 제작부
 // 여기서 server Com으로 프레임 제작 -> 프레임은 절대 변하지 않는 부분
