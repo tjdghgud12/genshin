@@ -1,0 +1,5 @@
+{
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "C:\\Users\\성호형\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\black.exe"
+}

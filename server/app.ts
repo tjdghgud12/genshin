@@ -1,16 +1,16 @@
-import express from 'express';
-import { EnkaClient, ArtifactSet, ArtifactSplitSubstat, CharacterStats, ElementalSkill, CharacterData, DetailedGenshinUser, Character } from 'enka-network-api';
-import _ from 'lodash';
-import artifactSetStat from '@/public/artifactSetStat';
-import characterPassiveStat from '@/public/characterPassiveStat';
+import express from "express";
+import { EnkaClient, ArtifactSet, ArtifactSplitSubstat, CharacterStats, ElementalSkill, CharacterData, DetailedGenshinUser, Character } from "enka-network-api";
+import _ from "lodash";
+import artifactSetStat from "@/public/artifactSetStat";
+import characterPassiveStat from "@/public/characterPassiveStat";
 
 /*------------------------------------------------------------------*/
 // 추후에 사용
 // 레벨 입력 시 기초 스텟값 결과를 리턴받음
 // 다른 다양한 함수가 존재하는 것으로 예상됨.
-import genshinDb from 'genshin-db';
-import weaponOptionStat from '@/public/weaponOptionStat';
-const a = genshinDb.characters('ganyu');
+import genshinDb from "genshin-db";
+import weaponOptionStat from "@/public/weaponOptionStat";
+const a = genshinDb.characters("ganyu");
 const testa = a?.stats(90);
 // const testaasd = genshinDb.weapons(무기이름);
 // const testStat = testaasd?.stats(90);
@@ -23,7 +23,7 @@ const enka = new EnkaClient();
 const app = express();
 const port = 9001;
 
-const characters = _.uniqBy(enka.getAllCharacters(), 'id');
+const characters = _.uniqBy(enka.getAllCharacters(), "id");
 const weapons = enka.getAllWeapons().filter((w) => w.stars === 5);
 const artifacts = enka.getAllArtifacts();
 const artifactSets = enka.getAllArtifactSets();
@@ -38,34 +38,34 @@ const artifactetSets5Star = artifactSets.filter((a) => a._data.EKBNEFGNCDP === 5
 
 enka.fetchUser(840110542).then((resCharacters: DetailedGenshinUser) => {
   const userCharacters = resCharacters.characters;
-  let returnData: Object[] = [];
+  const returnData: object[] = [];
   userCharacters.map((characterInfo: Character) => {
-    const passiveStat = characterPassiveStat[characterInfo.characterData.name.get('kr')];
-    let info = {
+    const passiveStat = characterPassiveStat[characterInfo.characterData.name.get("kr")];
+    const info = {
       character: {
         // 문제 : enka에 각 특성마다 내용이 discription으로만 정리되어있음 +  대략 90몇개 캐릭터 마다 e, q, 패시브, 운명의 자리 등등이 존재
         // 해결 방법 : 내 캐릭터만 일단 정의해서 사용. 추후 나머지 점점 추가해가기
         // 각종 스킬 및 시너지로 인한 버프는 수동기입하도록 적용
         // 패시브까지만 자동적용하도록 하기
-        passive: characterPassiveStat[characterInfo.characterData.name.get('kr')],
+        passive: characterPassiveStat[characterInfo.characterData.name.get("kr")],
       },
       weapon: {
         // 문제 : 수작업하기엔 수량이 너무 많음(3~5성: 200개)
         // 해결 방법 : 내 캐릭터만 일단 정의해서 사용. 추후 나머지 점점 추가해가기
         baseAttack: { type: characterInfo.weapon.weaponStats[0].fightProp, rawValue: characterInfo.weapon.weaponStats[0].rawValue },
         subStat: { type: characterInfo.weapon.weaponStats[1].fightProp, rawValue: characterInfo.weapon.weaponStats[1].rawValue },
-        option: weaponOptionStat[characterInfo.weapon.weaponData.name.get('kr')],
+        option: weaponOptionStat[characterInfo.weapon.weaponData.name.get("kr")],
       },
       artifacts: {
         artifact: characterInfo.artifacts.map((art) => ({
-          name: art.artifactData.name.get('kr'),
+          name: art.artifactData.name.get("kr"),
           mainStat: { type: art.mainstat.fightProp, rawValue: art.mainstat.rawValue },
           subStat: art.substats.total.map((stat) => ({ type: stat.fightProp, rawValue: stat.rawValue })),
         })),
         setStat: ArtifactSet.getActiveSetBonus(characterInfo.artifacts)
           .filter((set) => set.count > 1)
           .map((set) => {
-            const name = set.set.name.get('kr');
+            const name = set.set.name.get("kr");
             return {
               name: name,
               stat: artifactSetStat[name].filter((stat) => stat.needCount <= set.count),
@@ -81,7 +81,7 @@ enka.fetchUser(840110542).then((resCharacters: DetailedGenshinUser) => {
             elementalSkill: characterInfo.skillLevels[1].skill.icon.url,
             elementalBust: characterInfo.skillLevels[2].skill.icon.url,
           },
-          passive: characterInfo.characterData.passiveTalents.slice(0, 2).map((d) => ({ url: d.icon.url, name: d.name.get('kr') })),
+          passive: characterInfo.characterData.passiveTalents.slice(0, 2).map((d) => ({ url: d.icon.url, name: d.name.get("kr") })),
           constellation: {},
         },
         weapon: characterInfo.weapon.weaponData.splashImage.url,
