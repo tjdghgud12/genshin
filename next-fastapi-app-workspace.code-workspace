@@ -11,12 +11,13 @@
 		"version": "0.2.0",
 		"configurations": [
 			{
-			"name": "Next Precess",
-			"type": "node",
-			"request": "launch",
-			"runtimeExecutable": "yarn",
-			"runtimeArgs": ["dev"],
-			"cwd": "${workspaceFolder:client}"
+				"name": "Next Precess",
+				"type": "node",
+				"request": "launch",
+				"runtimeExecutable": "yarn",
+				"runtimeArgs": ["dev"],
+				"cwd": "${workspaceFolder:client}",
+				"console": "integratedTerminal"
 			},
 			{
 				"name": "Fast API Process",
