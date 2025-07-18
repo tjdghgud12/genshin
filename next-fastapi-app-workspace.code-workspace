@@ -1,0 +1,43 @@
+{
+	"folders": [
+		{
+			"path": "client"
+		},
+		{
+			"path": "server"
+		}
+	],
+	 "launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+			"name": "Next Precess",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"runtimeArgs": ["dev"],
+			"cwd": "${workspaceFolder:client}"
+			},
+			{
+				"name": "Fast API Process",
+				"type": "debugpy",
+				"request": "launch",
+				"module": "fastapi",
+				"args": [
+					"dev",
+					"main.py",
+					"--reload",
+					"--port", "9001"
+				],
+				"justMyCode": true,
+				"cwd": "${workspaceFolder:server}"
+			}
+		],
+		"compounds": [
+		{
+			"name": "Debug Next & Fast API",
+			"configurations": ["Next Precess", "Fast API Process"]
+		}
+		]
+	}
+}
