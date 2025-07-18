@@ -13,7 +13,7 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "plugin:prettier/recommended"),
 
   {
-    ignores: ["eslint.config.js", "eslint.config.mjs", "node_modules/", ".next/", "dist/", "prettier.config.js"],
+    ignores: ["eslint.config.js", "eslint.config.mjs", "node_modules/", ".next/", "dist/", "prettier.config.js", "postcss.config.cjs"],
     languageOptions: {
       parser: (await import("@typescript-eslint/parser")).default,
       parserOptions: {
