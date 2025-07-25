@@ -8,6 +8,8 @@ class weaponOptionType(Enum):
     stack = "stack"
 
 
+ambrWeaponCurve: dict[str, dict] = {}
+
 weaponType = {
     "아모스의 활": [
         {"type": weaponOptionType.always, "maxStack": 1, "description": "일반공격 및 강공격 피해 증가"},
