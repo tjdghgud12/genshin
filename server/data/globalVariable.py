@@ -1,5 +1,3 @@
-ambrCharacterCurve: dict | None = None
-
 fightPropMap = {
     "1": "FIGHT_PROP_BASE_HP",
     "2": "FIGHT_PROP_HP",
