@@ -1,100 +1,142 @@
-from fastapi import APIRouter
-import ambr
-from services.parseEnka import parseFightProps
-from data.globalVariable import characterStats
+from fastapi import APIRouter, HTTPException, Depends
+from ambr import CharacterDetail, AmbrAPI, Talent, Constellation
 import enka
+from data.character import passiveSkill, activeSkill, constellation
 import data.weapon as weaponInfo
+from services.ambrApi import getAmbrApi
+from services.character import getFightProp, CharacterInfo
 
 router = APIRouter()
 
-ENKA_API_URL = "https://enka.network/api/uid/{uid}"  # uid는 유저 ID
+# 2025-07-23 기준(genshin impact 5.7)
+# ambrCharacters = await ambrApi.fetch_characters() # 여행자 빼고 100개, 각 속성별 여행자 포함 시 106개
+# ambrWeapons = await ambrApi.fetch_weapons() # 4성 이상은 186개, 1성 이상은 220개
+# ambrArtifacts = await ambrApi.fetch_artifact_sets() # 55개
 
 
 @router.get("/user/{uid}")
-async def getUserData(uid: int):
+async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
+    if ambrApi is None:
+        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+
     async with enka.GenshinClient(lang="ko") as client:
         rawRes = await client.fetch_showcase(uid, raw=True)
-        avatar_info_list = client.parse_showcase(rawRes).characters
+        characterInfoList = client.parse_showcase(rawRes).characters
 
-        # 필요한 정보만 추출 예시
-        parsed_avatars = []
-        for i, avatar in enumerate(avatar_info_list):
-            avatarRawData = rawRes["avatarInfoList"][i]
-            name = avatar.name
+        parsedCharacters = []
+        for i, avatar in enumerate(characterInfoList):
+            # 해당 위치에서 해야할 것 : front에서 사용 예정인 데이터 구조를 enka데이터를 통해 제작 후
+            #                         draw에 필요한 데이터 및 최종 연산 결과를 리턴
+            # draw 필요 데이터 : 이름, 레벨, icon, 성유물 정보, 운명의 자리, 스킬 정보, 무기 정보
+            # 최종 연산 필요 데이터 : 이름, 레벨, ambrCharacterDetail, 성유물 정보, 운명의 자리, 스킬 정보, 무기 정보, 최종 연산 완료 후 fightProp
+
             artifacts = avatar.artifacts
             weapon = avatar.weapon
-            fightProps = parseFightProps(avatarRawData.get("fightPropMap"))
+            getTotalFightProp = getFightProp.get(avatar.name)
+            ambrCharacterDetail: CharacterDetail = await ambrApi.fetch_character_detail(str(avatar.id))
+
+            # Draw를 위한 데이터 제작
             characterInfo = {
-                "name": name,
+                "name": avatar.name,
                 "level": avatar.level,
+                "ascension": avatar.ascension,
                 "icon": avatar.costume.icon if getattr(avatar, "costume", None) else avatar.icon,  # type: ignore
-                "baseStat": {**characterStats, **{key: value for key, value in fightProps.items() if "BASE" in key}},
                 "weapon": {},
-                "artifact": {},
-                "activeSkill": {},
-                "passiveSkill": {},
+                "artifact": {"parts": [], "setInfo": []},
+                "passiveSkill": [],
+                "activeSkill": [],
+                "constellations": [],
                 "totalStat": {},
             }
 
-            # ----------------------- 캐릭터 Base Stat 제작 -----------------------
-            # 캐릭터 레벨에 따른 추가 stat 까지 적용
-            async with ambr.AmbrAPI(lang=ambr.Language.KR) as ambrApi:
-                ambrCharacterDetail = await ambrApi.fetch_character_detail(str(avatar.id))
-            promoteStat = max(
-                (
-                    promote
-                    for promote in ambrCharacterDetail.upgrade.promotes
-                    if promote.unlock_max_level <= int(characterInfo["level"])
-                ),
-                key=lambda x: x.unlock_max_level,
-                default=0,
-            )
-            if promoteStat:
-                for addStat in promoteStat.add_stats:
-                    if addStat.id == ambrCharacterDetail.special_stat.value:
-                        characterInfo["baseStat"][addStat.id] += addStat.value
+            # --------------------------- 스킬 및 운명의 자리 ---------------------------
+            characterConstellation = constellation.get(avatar.name, {})
+            ambrConstellation: dict[str, Constellation] = {c.name: c for c in ambrCharacterDetail.constellations}
+            enkaConstellation: dict[str, enka.gi.Constellation] = {c.name: c for c in avatar.constellations}
+            characterPassive = passiveSkill.get(avatar.name, {})
+            characterActive = activeSkill.get(avatar.name, {})
+
+            passive = list(filter(lambda talent: talent.type.name == "ULTIMATE" and characterPassive.get(talent.name), ambrCharacterDetail.talents))
+            for i, skill in enumerate(passive):
+                unlock = avatar.ascension >= (1 if i == 0 else 4)
+                skillOption = characterPassive.get(skill.name) or {}
+                characterInfo["passiveSkill"].append(
+                    {
+                        **skillOption,
+                        "name": skill.name,
+                        "icon": skill.icon,
+                        "description": skill.description,
+                        "unlocked": unlock,
+                        "active": True if unlock else False,
+                        "stack": skillOption.get("maxStack"),
+                    }
+                )
+            for i, skill in enumerate(avatar.talents):
+                skillOption = characterActive.get(skill.name)
+                skillDetail = next((t for t in ambrCharacterDetail.talents if t.name == skill.name), Talent)
+                characterInfo["activeSkill"].append(
+                    {
+                        "name": skill.name,
+                        "level": skill.level,
+                        "type": skillOption.get("type") if skillOption else "always",
+                        "icon": skill.icon,
+                        "description": skillDetail.description,
+                        "active": True,
+                        "stack": skillOption.get("maxStack") if skillOption else 0,
+                    }
+                )
+
+            for i, defaultConstellation in enumerate(characterConstellation):
+                name = defaultConstellation["name"]
+                characterInfo["constellations"].append(
+                    {
+                        **defaultConstellation,
+                        "icon": enkaConstellation[name].icon,
+                        # "unlocked": enkaConstellation[name].unlocked,
+                        "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
+                        "description": ambrConstellation[name].description,
+                        "active": True,
+                        "stack": defaultConstellation.get("maxStack"),
+                    }
+                )
+
             # ---------------------------------------------------------------------
 
-            # --------------------------- 무기 stat 제작 ---------------------------
-            # 여기서 무기
-            # 주옵, 부옵 적용. 무기 옵션은 front에서 on/off 적용
-            # 1. 주옵 부옵은 그냥 연산 진행
-            # 2. 무기 옵션의 경우 함수 리턴 불가능이기 때문에 type만 지정해서 넘기고, front에서는 on/off or stack값만 넘겨서 back에서 연산 진행
-            # 즉, 무기별 각 옵션은 back에서 보관.
-            # front는 사용자 설정값만 받아서 back로 이동 시키기
-            # 1. 무기 옵션은 일단 오늘은 불가능. 무기별로 전부 함수 별도로 만들어야 하기 때문에
-            # 2. 주옵 부옵만 적용하기
-            # 무기에 담아야 하는 값: name, refinement(재련), stat
-            characterInfo["weapon"]["name"] = weapon.name
-            characterInfo["weapon"]["refinement"] = weapon.refinement
-            characterInfo["weapon"]["level"] = weapon.level
-            characterInfo["weapon"]["icon"] = weapon.icon
-            characterInfo["weapon"]["option"] = (
-                weaponInfo.weaponType[weapon.name] if getattr(weaponInfo.weaponType, weapon.name, None) else []
-            )
-            characterInfo["weapon"]["stat"] = {}
-            for stat in weapon.stats:
-                characterInfo["weapon"]["stat"][stat.type.value] = stat.value
-
-            # 이제 각 무기별 option에 대한 리턴값은 별도로 보관하는게 좋겠다.
-            # 1차적으로 무기 옵션의 type 지정 완료
+            # --------------------------- 무기 ---------------------------
+            characterInfo["weapon"] = {
+                "name": weapon.name,
+                "refinement": weapon.refinement,
+                "level": weapon.level,
+                "icon": weapon.icon,
+                "option": weaponInfo.weaponType[weapon.name] if weaponInfo.weaponType.get(weapon.name) else [],
+                "stat": {stat.type.value: stat.value for stat in weapon.stats},
+            }
             # ---------------------------------------------------------------------
 
-            # -------------------------- 성유물 stat 제작 --------------------------
-            # 여기서 성유물
-            # 주옵, 부옵 적용. 셋옵 중 조건없이 스텟 증가하는 경우는 적용. 아닌 경우는 front에서 on/off 적용
-            # 여기서 담아야 하는 항목들 : 주옵, 부옵
+            # -------------------------- 성유물 --------------------------
+            for artifact in artifacts:
+                characterInfo["artifact"]["parts"].append(
+                    {
+                        "name": artifact.name,
+                        "setName": artifact.set_name,
+                        "id": artifact.id,
+                        "type": artifact.equip_type.name,
+                        "mainStat": {artifact.main_stat.type.value: artifact.main_stat.value},
+                        "subStat": [{subStat.type.value: subStat.value} for subStat in artifact.sub_stats],
+                        "icon": artifact.icon,
+                    }
+                )
+            # setInfo 입력할 방법 필요.
+            # 아래에서 처리해도 무방
             # ---------------------------------------------------------------------
 
-            # --------------------------- 스킬 stat 제작 ---------------------------
-            # 여기서 스킬(패시브 액티브 on/off에 따라 적용 해야함)
-            # 음...이건 애매하네??? 깡 스텟이 증가하는 경우가 있단말이지?
-            # 액티브의 경우 무조건 front에서 on/off 적용
-            # 패시브의 경우 조건없이 스텟 증가할 경우 적용. 아닌 경우는 front에서 on/off 적용
-            # ---------------------------------------------------------------------
+            # 2. 최종 연산 완료 데이터 제작
+            avatarRawData = rawRes["avatarInfoList"][i]
+            if getTotalFightProp is not None:
+                await getTotalFightProp(ambrCharacterDetail, CharacterInfo(**characterInfo))
 
-            parsed_avatars.append(characterInfo)
-        return {"avatars": parsed_avatars}
+            parsedCharacters.append({"info": characterInfo, "result": {}})
+        return {"characters": parsedCharacters}
 
 
 @router.get("/")
