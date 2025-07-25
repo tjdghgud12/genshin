@@ -2,7 +2,7 @@ from fastapi import HTTPException, Depends
 from typing import cast
 from ambr import AmbrAPI, WeaponDetail, WeaponPromote
 from services.ambrApi import getAmbrApi
-from data.character import CharacterFightPropType
+from data.character import CharacterFightPropType, fightPropTemplate
 import data.weapon as weaponData
 
 
@@ -14,20 +14,12 @@ def genWeaponList():
     return weaponList
 
 
-def weaponFightPropInit() -> CharacterFightPropType:
-    fightProp: CharacterFightPropType = cast(CharacterFightPropType, {key: 0.0 for key in CharacterFightPropType.__annotations__.keys()})
-    return fightProp
-
-
-async def getAmosBow(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropType:
     ambrApi: AmbrAPI = await getAmbrApi()
-    optionRefinementMap = [[0.12, 0.08], [0.15, 0.10], [0.18, 0.12], [0.21, 0.14], [0.24, 0.16]]
-
-    fightProp: CharacterFightPropType = weaponFightPropInit()
     ambrWeaponCurve = weaponData.ambrWeaponCurve[str(level)]["curveInfos"]
     ambrWeaponDetail: WeaponDetail = await ambrApi.fetch_weapon_detail(id)
 
-    refinementValue = optionRefinementMap[refinement - 1]
+    fightProp: CharacterFightPropType = {**fightPropTemplate}
 
     promoteStat = max(
         (promote for promote in ambrWeaponDetail.upgrade.promotes if promote.unlock_max_level <= level),
@@ -41,12 +33,47 @@ async def getAmosBow(id: int, level: int, refinement: int, options: dict) -> Cha
     for addStat in promoteStat.add_stats or []:
         fightProp[addStat.id] += addStat.value
 
+    return fightProp
+
+
+async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [[0.12, 0.08], [0.15, 0.10], [0.18, 0.12], [0.21, 0.14], [0.24, 0.16]]
+    refinementValue = optionRefinementMap[refinement - 1]
+
     for i, option in enumerate(options):
-        value = refinementValue[i]
-        fightProp["FIGHT_PROP_NOMAL_ATTACK_ATTACK_ADD_HURT"] += value if i == 0 else value * option["stack"]
-        fightProp["FIGHT_PROP_CHARGED_ATTACK_ATTACK_ADD_HURT"] += value if i == 0 else value * option["stack"]
+        if option["active"]:
+            value = refinementValue[i]
+            fightProp["FIGHT_PROP_NOMAL_ATTACK_ATTACK_ADD_HURT"] += value if i == 0 else value * option["stack"]
+            fightProp["FIGHT_PROP_CHARGED_ATTACK_ATTACK_ADD_HURT"] += value if i == 0 else value * option["stack"]
 
     return fightProp
 
 
-getTotalWeaponFightProp = {"아모스의 활": getAmosBow}
+async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [[0.12, [0.08, 0.16, 0.28]], [0.15, [0.10, 0.20, 0.35]], [0.18, [0.12, 0.24, 0.42]], [0.21, [0.14, 0.28, 0.49]], [0.24, [0.16, 0.32, 0.56]]]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            value = refinementValue[i]
+            fightProp["FIGHT_PROP_ATTACK_ADD_HURT"] += value if i == 0 else value[int(option["stack"]) - 1]
+
+    return fightProp
+
+
+async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [[0.2], [0.24], [0.28], [0.32], [0.36]]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            value = refinementValue[i]
+            fightProp["FIGHT_PROP_ATTACK_ADD_HURT"] += value
+
+    return fightProp
+
+
+getTotalWeaponFightProp = {"아모스의 활": getAmosBowFightProp, "안개를 가르는 회광": getMistsplitterReforgedFightProp, "용의 포효": getLionsRoarFightProp}
