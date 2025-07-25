@@ -97,6 +97,13 @@ class CharacterFightPropType(TypedDict, total=True):
     FIGHT_PROP_ELEMENT_BURST_ICE_ADD_HURT: float
     FIGHT_PROP_ELEMENT_BURST_ATTACK_ADD_HURT: float
 
+    # 원소 반응 관련
+    FIGHT_PROP_OVERLOADED_ADD_HURT: float  # 과부하
+    FIGHT_PROP_ELECTRICSHOCK_ADD_HURT: float  # 감전
+    FIGHT_PROP_SUPERCONDUCT_ADD_HURT: float  # 초전도
+    FIGHT_PROP_HYPERBLOOM_ADD_HURT: float  # 만개
+    FIGHT_PROP_AGGRAVATE_ADD_HURT: float  # 촉진
+
 
 class skillConstellationType(Enum):
     always = "always"
@@ -113,6 +120,8 @@ characterStats = cast(
         for key in list(CharacterFightPropType.__annotations__.keys())
     },
 )
+
+fightPropTemplate: CharacterFightPropType = cast(CharacterFightPropType, {key: 0.0 for key in CharacterFightPropType.__annotations__.keys()})
 
 
 passiveSkill = {
