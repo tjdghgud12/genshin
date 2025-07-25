@@ -5,6 +5,7 @@ from data.character import passiveSkill, activeSkill, constellation
 import data.weapon as weaponInfo
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
+from services.artifact import getArtifactSetInfo
 
 router = APIRouter()
 
@@ -110,7 +111,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 "level": weapon.level,
                 "icon": weapon.icon,
                 "option": [],
-                "stat": {stat.type.value: stat.value for stat in weapon.stats},
+                "stat": {stat.type.value: stat.value / 100 if stat.is_percentage else stat.value for stat in weapon.stats},
             }
             weaponOption = weaponInfo.weaponType.get(weapon.name)
             if weaponOption is not None:
@@ -126,19 +127,23 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                         "setName": artifact.set_name,
                         "id": artifact.id,
                         "type": artifact.equip_type.name,
-                        "mainStat": {artifact.main_stat.type.value: artifact.main_stat.value},
-                        "subStat": [{subStat.type.value: subStat.value} for subStat in artifact.sub_stats],
+                        "mainStat": {artifact.main_stat.type.value: artifact.main_stat.value / 100 if artifact.main_stat.is_percentage else artifact.main_stat.value},
+                        "subStat": [{subStat.type.value: subStat.value / 100 if subStat.is_percentage else subStat.value} for subStat in artifact.sub_stats],
                         "icon": artifact.icon,
                     }
                 )
-            # setInfo 입력할 방법 필요.
-            # 아래에서 처리해도 무방
+            artifactSetInfo = getArtifactSetInfo(characterInfo["artifact"]["parts"])
+            for setInfo in artifactSetInfo:
+                options = setInfo.get("option") if setInfo.get("option") else []
+                characterInfo["artifact"]["setInfo"].append({**setInfo, "option": [{**option, "active": True, "stack": option["maxStack"]} for option in options]})
             # ---------------------------------------------------------------------
 
-            # 2. 최종 연산 완료 데이터 제작
+            # 2. 최종 Fight Prop 데이터 계산
             avatarRawData = rawRes["avatarInfoList"][i]
             if getTotalFightProp is not None:
-                await getTotalFightProp(ambrCharacterDetail, CharacterInfo(**characterInfo))
+                totalFightProp = await getTotalFightProp(ambrCharacterDetail, CharacterInfo(**characterInfo))
+
+            # 3. 최종 캐릭터 스텟 및 데미지 계산
 
             parsedCharacters.append({"info": characterInfo, "result": {}})
         return {"characters": parsedCharacters}
