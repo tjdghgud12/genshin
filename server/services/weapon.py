@@ -1,5 +1,4 @@
-from fastapi import HTTPException, Depends
-from typing import cast, TypedDict, Literal
+from typing import TypedDict
 from ambr import AmbrAPI, WeaponDetail, WeaponPromote
 from services.ambrApi import getAmbrApi
 from data.character import CharacterFightPropSchema, fightPropTemplate
@@ -126,10 +125,39 @@ async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, o
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK_PERCENT.value]}
 
 
+async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.20, 0.008, 0.01],
+        [0.25, 0.010, 0.012],
+        [0.30, 0.012, 0.014],
+        [0.35, 0.014, 0.016],
+        [0.40, 0.016, 0.018],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            value = refinementValue[i]
+            key = fightPropKeys.HP_PERCENT.value if i == 0 else fightPropKeys.ATTACK.value
+            if i != 0:
+                baseHp = characterFightProp[fightPropKeys.BASE_HP.value]
+                hpPercent = characterFightProp[fightPropKeys.HP_PERCENT.value]
+                hp = characterFightProp[fightPropKeys.HP.value]
+                totalHp = baseHp * (hpPercent + 1) + hp
+                addAttack = totalHp * value
+                fightProp[key] += addAttack
+            else:
+                fightProp[key] += value
+
+    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK.value]}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
     "용의 포효": getLionsRoarFightProp,
     "떠오르는 천일 밤의 꿈": getAThousandFloatingDreamsFightProp,
     "예초의 번개": getEngulfingLightningFightProp,
+    "호마의 지팡이": getStaffOfHomaFightProp,
 }
