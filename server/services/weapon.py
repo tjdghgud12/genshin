@@ -153,6 +153,26 @@ async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options:
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK.value]}
 
 
+async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.08, 0.14],
+        [0.10, 0.175],
+        [0.12, 0.21],
+        [0.14, 0.245],
+        [0.16, 0.28],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            value = refinementValue[i]
+            key = fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value if i == 0 else fightPropKeys.HP_PERCENT.value
+            fightProp[key] += value * option["stack"]
+
+    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK.value]}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -160,4 +180,5 @@ getTotalWeaponFightProp = {
     "떠오르는 천일 밤의 꿈": getAThousandFloatingDreamsFightProp,
     "예초의 번개": getEngulfingLightningFightProp,
     "호마의 지팡이": getStaffOfHomaFightProp,
+    "고요히 샘솟는 빛": getSplendorOfTranquilWatersFightProp,
 }
