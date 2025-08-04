@@ -3,7 +3,7 @@ from typing import TypedDict, cast
 from data.globalVariable import fightPropKeys
 
 
-class CharacterFightPropType(TypedDict, total=True):
+class CharacterFightPropSchema(TypedDict, total=True):
     # 공통
     FIGHT_PROP_BASE_HP: float
     FIGHT_PROP_HP: float
@@ -115,14 +115,14 @@ class skillConstellationType(Enum):
 ambrCharacterCurve: dict[str, dict] = {}
 
 characterStats = cast(
-    CharacterFightPropType,
+    CharacterFightPropSchema,
     {
         key: (0.05 if key == fightPropKeys.CRITICAL.value else 0.5 if key == fightPropKeys.CRITICAL_HURT.value else 1.0 if key == fightPropKeys.CHARGE_EFFICIENCY.value else 0.0)
-        for key in list(CharacterFightPropType.__annotations__.keys())
+        for key in list(CharacterFightPropSchema.__annotations__.keys())
     },
 )
 
-fightPropTemplate: CharacterFightPropType = cast(CharacterFightPropType, {key: 0.0 for key in CharacterFightPropType.__annotations__.keys()})
+fightPropTemplate: CharacterFightPropSchema = cast(CharacterFightPropSchema, {key: 0.0 for key in CharacterFightPropSchema.__annotations__.keys()})
 
 
 passiveSkill = {

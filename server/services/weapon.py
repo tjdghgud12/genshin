@@ -1,10 +1,16 @@
 from fastapi import HTTPException, Depends
-from typing import cast
+from typing import cast, TypedDict, Literal
 from ambr import AmbrAPI, WeaponDetail, WeaponPromote
 from services.ambrApi import getAmbrApi
-from data.character import CharacterFightPropType, fightPropTemplate
+from data.character import CharacterFightPropSchema, fightPropTemplate
 from data.globalVariable import fightPropKeys
 import data.weapon as weaponData
+
+
+class WeaponDataReturnSchema(TypedDict, total=True):
+    fightProp: CharacterFightPropSchema
+    afterAddProps: list[str]
+    afterAddFlag: bool
 
 
 def genWeaponList():
@@ -15,12 +21,12 @@ def genWeaponList():
     return weaponList
 
 
-async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropType:
+async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropSchema:
     ambrApi: AmbrAPI = await getAmbrApi()
     ambrWeaponCurve = weaponData.ambrWeaponCurve[str(level)]["curveInfos"]
     ambrWeaponDetail: WeaponDetail = await ambrApi.fetch_weapon_detail(id)
 
-    fightProp: CharacterFightPropType = {**fightPropTemplate}
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     promoteStat = max(
         (promote for promote in ambrWeaponDetail.upgrade.promotes if promote.unlock_max_level <= level),
@@ -37,7 +43,7 @@ async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropType:
     return fightProp
 
 
-async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.12, 0.08], [0.15, 0.10], [0.18, 0.12], [0.21, 0.14], [0.24, 0.16]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -51,7 +57,7 @@ async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dic
     return fightProp
 
 
-async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.12, [0.08, 0.16, 0.28]], [0.15, [0.10, 0.20, 0.35]], [0.18, [0.12, 0.24, 0.42]], [0.21, [0.14, 0.28, 0.49]], [0.24, [0.16, 0.32, 0.56]]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -64,7 +70,7 @@ async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int,
     return fightProp
 
 
-async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.2], [0.24], [0.28], [0.32], [0.36]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -77,7 +83,7 @@ async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: d
     return fightProp
 
 
-async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[32, 0.10], [40, 0.14], [48, 0.18], [56, 0.22], [64, 0.26]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -93,24 +99,28 @@ async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: i
     return fightProp
 
 
-async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
+    # 여기서 fightProp뿐만 아니라 추후 연산에 대한 정보도 넘겨줘야해.
+    # 그래야 추후 연산할 때 또 다시 호출해서 연산 진행할 테니까.
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
-        [0.28, 0.80, 0.30],
-        [0.35, 0.90, 0.35],
-        [0.42, 0.100, 0.40],
-        [0.49, 0.110, 0.45],
-        [0.56, 0.120, 0.50],
+        [0.30, [0.28, 0.80]],
+        [0.35, [0.35, 0.90]],
+        [0.40, [0.42, 0.100]],
+        [0.45, [0.49, 0.110]],
+        [0.50, [0.56, 0.120]],
     ]
     refinementValue = optionRefinementMap[refinement - 1]
 
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            key = fightPropKeys.ELEMENT_MASTERY if i == 0 else fightPropKeys.ATTACK_ADD_HURT
+            key = fightPropKeys.CHARGE_EFFICIENCY if i == 0 else fightPropKeys.ATTACK_ADD_HURT
             # 진행 중
 
             fightProp[key.value] += value
+
+    # fightProp["afterAddProps"] = [fightPropKeys.ATTACK_ADD_HURT]
 
     return fightProp
 

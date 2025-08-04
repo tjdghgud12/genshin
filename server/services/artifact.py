@@ -1,11 +1,11 @@
 from typing import cast
-from data.character import CharacterFightPropType, fightPropTemplate
+from data.character import CharacterFightPropSchema, fightPropTemplate
 from data.artifact import artifactSetOptions
 from data.globalVariable import fightPropKeys
 
 
 def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict]):
-    fightProp: CharacterFightPropType = {**fightPropTemplate}
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
         if info["active"]:
@@ -22,7 +22,7 @@ def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict]):
 
 
 def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict]):
-    fightProp: CharacterFightPropType = {**fightPropTemplate}
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
         if info["active"]:
@@ -38,7 +38,7 @@ def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict]):
 
 
 def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict]):
-    fightProp: CharacterFightPropType = {**fightPropTemplate}
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
         if info["active"]:
             match i:
@@ -57,7 +57,7 @@ def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict]):
 
 
 def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict]):
-    fightProp: CharacterFightPropType = {**fightPropTemplate}
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
         if info["active"]:
             match i:
@@ -72,7 +72,7 @@ def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict]):
 
 
 def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict]):
-    fightProp: CharacterFightPropType = {**fightPropTemplate}
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
         if info["active"]:
             match i:
@@ -95,8 +95,8 @@ getArtifactSetFightProp = {
 }
 
 
-def getArtifactData(artifactInfo: dict) -> CharacterFightPropType:
-    fightProp: CharacterFightPropType = {**fightPropTemplate}
+def getArtifactData(artifactInfo: dict) -> CharacterFightPropSchema:
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     artifacts: list[dict] = artifactInfo["parts"]
     setInfos: list[dict] = artifactInfo["setInfo"]
 
