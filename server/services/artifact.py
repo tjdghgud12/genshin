@@ -1,10 +1,16 @@
-from typing import cast
+from typing import cast, TypedDict
 from data.character import CharacterFightPropSchema, fightPropTemplate
 from data.artifact import artifactSetOptions
 from data.globalVariable import fightPropKeys
 
 
-def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict]):
+# characterFightProp: CharacterFightPropSchema
+class ArtifactDataReturnSchema(TypedDict, total=True):
+    fightProp: CharacterFightPropSchema
+    afterAddProps: list[str] | None
+
+
+def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
@@ -18,10 +24,10 @@ def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict]):
                     if numberOfParts >= 4:
                         fightProp[fightPropKeys.CRITICAL.value] += 0.12 * info["stack"]
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict]):
+def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
@@ -34,10 +40,10 @@ def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict]):
                     if numberOfParts >= 4:
                         fightProp[fightPropKeys.CRITICAL.value] += 0.2 * info["stack"]
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict]):
+def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
         if info["active"]:
@@ -53,10 +59,10 @@ def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict]):
                         fightProp[fightPropKeys.HYPERBLOOM_ADD_HURT.value] += 0.4
                         fightProp[fightPropKeys.AGGRAVATE_ADD_HURT.value] += 0.2
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict]):
+def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
         if info["active"]:
@@ -68,10 +74,10 @@ def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict]):
                     if numberOfParts >= 4:
                         fightProp[fightPropKeys.GRASS_RES_MINUS.value] += 0.3
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict]):
+def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
         if info["active"]:
@@ -81,12 +87,12 @@ def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict]):
                         fightProp[fightPropKeys.CHARGE_EFFICIENCY.value] += 0.2
                 case 1:
                     if numberOfParts >= 4:
-                        fightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += 0.3
+                        fightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += characterFightProp[fightPropKeys.CHARGE_EFFICIENCY.value] * 0.25
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
 
 
-getArtifactSetFightProp = {
+getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
     "번개 같은 분노": getThunderingFurySetOption,
@@ -95,12 +101,11 @@ getArtifactSetFightProp = {
 }
 
 
-def getArtifactData(artifactInfo: dict) -> CharacterFightPropSchema:
+def getArtifactFightProp(artifactInfo: dict) -> CharacterFightPropSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     artifacts: list[dict] = artifactInfo["parts"]
-    setInfos: list[dict] = artifactInfo["setInfo"]
 
-    # 성유뮬 부위별 옵션 연산
+    # 성유물 부위별 옵션 연산
     for artifact in artifacts:
         mainFightPropKey, mainValue = next(iter(artifact["mainStat"].items()))
         if not mainFightPropKey in fightProp:
@@ -112,14 +117,19 @@ def getArtifactData(artifactInfo: dict) -> CharacterFightPropSchema:
                 fightProp[subFightPropKey] = 0
             fightProp[subFightPropKey] += subValue
 
-    # 세트옵션으로 증가하는 fightProp 연산
+    return fightProp
+
+
+def getArtifactSetData(setInfos: list[dict], characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for setInfo in setInfos:
-        getSetFightProp = getArtifactSetFightProp[setInfo["name"]]
-        setOptionFightProp = getSetFightProp(setInfo["numberOfParts"], setInfo.get("option") or [])
-        for fightPropKey, value in setOptionFightProp.items():
+        getSetFightProp = getArtifactSetsFightProp[setInfo["name"]]
+        setOptionFightProp = getSetFightProp(setInfo["numberOfParts"], setInfo.get("option") or [], characterFightProp)
+        afterAddProps = setOptionFightProp["afterAddProps"]
+        for fightPropKey, value in setOptionFightProp["fightProp"].items():
             fightProp[fightPropKey] += value
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": afterAddProps}
 
 
 def getArtifactSetInfo(artifacts: list[dict]):

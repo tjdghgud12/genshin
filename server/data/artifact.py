@@ -40,4 +40,12 @@ artifactSetOptions = {
             "description": "원소 전투 스킬 또는 원소 폭발에 명중된 적은 풀 원소 내성 감소",
         },
     ],
+    "절연의 기치": [
+        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "원소 충전 효율 증가"},
+        {
+            "type": artifactSetOptionType.always,
+            "maxStack": 1,
+            "description": "원소 충전 효율의 25%만큼 원소 폭발 피해 증가",
+        },
+    ],
 }
