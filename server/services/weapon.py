@@ -3,6 +3,7 @@ from typing import cast
 from ambr import AmbrAPI, WeaponDetail, WeaponPromote
 from services.ambrApi import getAmbrApi
 from data.character import CharacterFightPropType, fightPropTemplate
+from data.globalVariable import fightPropKeys
 import data.weapon as weaponData
 
 
@@ -44,8 +45,8 @@ async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dic
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            fightProp["FIGHT_PROP_NOMAL_ATTACK_ATTACK_ADD_HURT"] += value if i == 0 else value * option["stack"]
-            fightProp["FIGHT_PROP_CHARGED_ATTACK_ATTACK_ADD_HURT"] += value if i == 0 else value * option["stack"]
+            fightProp[fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value] += value if i == 0 else value * option["stack"]
+            fightProp[fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value] += value if i == 0 else value * option["stack"]
 
     return fightProp
 
@@ -58,7 +59,7 @@ async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int,
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            fightProp["FIGHT_PROP_ATTACK_ADD_HURT"] += value if i == 0 else value[int(option["stack"]) - 1]
+            fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += value if i == 0 else value[int(option["stack"]) - 1]
 
     return fightProp
 
@@ -71,9 +72,53 @@ async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: d
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            fightProp["FIGHT_PROP_ATTACK_ADD_HURT"] += value
+            fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += value
 
     return fightProp
 
 
-getTotalWeaponFightProp = {"아모스의 활": getAmosBowFightProp, "안개를 가르는 회광": getMistsplitterReforgedFightProp, "용의 포효": getLionsRoarFightProp}
+async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [[32, 0.10], [40, 0.14], [48, 0.18], [56, 0.22], [64, 0.26]]
+    refinementValue = optionRefinementMap[refinement - 1]
+    if options[0]["stack"] == 3 and options[1]["stack"] == 3:
+        options[0]["stack"] = 2
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            value = refinementValue[i]
+            key = fightPropKeys.ELEMENT_MASTERY.value if i == 0 else fightPropKeys.ATTACK_ADD_HURT.value
+            fightProp[key] += value * option["stack"]
+
+    return fightProp
+
+
+async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropType:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.28, 0.80, 0.30],
+        [0.35, 0.90, 0.35],
+        [0.42, 0.100, 0.40],
+        [0.49, 0.110, 0.45],
+        [0.56, 0.120, 0.50],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            value = refinementValue[i]
+            key = fightPropKeys.ELEMENT_MASTERY if i == 0 else fightPropKeys.ATTACK_ADD_HURT
+            # 진행 중
+
+            fightProp[key.value] += value
+
+    return fightProp
+
+
+getTotalWeaponFightProp = {
+    "아모스의 활": getAmosBowFightProp,
+    "안개를 가르는 회광": getMistsplitterReforgedFightProp,
+    "용의 포효": getLionsRoarFightProp,
+    "떠오르는 천일 밤의 꿈": getAThousandFloatingDreamsFightProp,
+    "예초의 번개": getEngulfingLightningFightProp,
+}

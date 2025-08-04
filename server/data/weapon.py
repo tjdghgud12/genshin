@@ -30,14 +30,14 @@ weaponType = {
     ],
     "예초의 번개": [
         {
-            "type": weaponOptionType.always,
-            "maxStack": 1,
-            "description": "원소 충전 효율이 100%를 초과할 경우, 초과된 부분의 28/35/42/49/56%만큼 공격력이 증가",
-        },
-        {
             "type": weaponOptionType.toggle,
             "maxStack": 1,
             "description": "원소폭발 발동 후 12초 동안 원소 충전 효율 증가",
+        },
+        {
+            "type": weaponOptionType.always,
+            "maxStack": 1,
+            "description": "원소 충전 효율이 100%를 초과할 경우, 초과된 부분의 28/35/42/49/56%만큼 공격력이 증가",
         },
     ],
     "호마의 지팡이": [
