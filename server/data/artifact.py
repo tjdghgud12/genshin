@@ -27,9 +27,17 @@ artifactSetOptions = {
     "번개 같은 분노": [
         {"type": artifactSetOptionType.always, "maxStack": 1, "description": "번개 원소 피해 증가"},
         {
-            "type": artifactSetOptionType.stack,
+            "type": artifactSetOptionType.always,
             "maxStack": 1,
             "description": "번개 관련 피해 계수 증가 및 번개 관련 반응 발동 시 원소 전투 스킬 재사용 대기시간 1초 감소",
+        },
+    ],
+    "숲의 기억": [
+        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "풀 원소 피해 증가"},
+        {
+            "type": artifactSetOptionType.toggle,
+            "maxStack": 1,
+            "description": "원소 전투 스킬 또는 원소 폭발에 명중된 적은 풀 원소 내성 감소",
         },
     ],
 }

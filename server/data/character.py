@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import TypedDict, cast
+from data.globalVariable import fightPropKeys
 
 
 class CharacterFightPropType(TypedDict, total=True):
@@ -116,7 +117,7 @@ ambrCharacterCurve: dict[str, dict] = {}
 characterStats = cast(
     CharacterFightPropType,
     {
-        key: (0.05 if key == "FIGHT_PROP_CRITICAL" else 0.5 if key == "FIGHT_PROP_CRITICAL_HURT" else 1.0 if key == "FIGHT_PROP_CHARGE_EFFICIENCY" else 0.0)
+        key: (0.05 if key == fightPropKeys.CRITICAL.value else 0.5 if key == fightPropKeys.CRITICAL_HURT.value else 1.0 if key == fightPropKeys.CHARGE_EFFICIENCY.value else 0.0)
         for key in list(CharacterFightPropType.__annotations__.keys())
     },
 )
