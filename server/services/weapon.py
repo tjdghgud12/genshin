@@ -9,8 +9,7 @@ import data.weapon as weaponData
 
 class WeaponDataReturnSchema(TypedDict, total=True):
     fightProp: CharacterFightPropSchema
-    afterAddProps: list[str]
-    afterAddFlag: bool
+    afterAddProps: list[str] | None
 
 
 def genWeaponList():
@@ -43,7 +42,7 @@ async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropSchem
     return fightProp
 
 
-async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
+async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dict) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.12, 0.08], [0.15, 0.10], [0.18, 0.12], [0.21, 0.14], [0.24, 0.16]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -54,10 +53,10 @@ async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dic
             fightProp[fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value] += value if i == 0 else value * option["stack"]
             fightProp[fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value] += value if i == 0 else value * option["stack"]
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
+async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int, options: dict) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.12, [0.08, 0.16, 0.28]], [0.15, [0.10, 0.20, 0.35]], [0.18, [0.12, 0.24, 0.42]], [0.21, [0.14, 0.28, 0.49]], [0.24, [0.16, 0.32, 0.56]]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -67,10 +66,10 @@ async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int,
             value = refinementValue[i]
             fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += value if i == 0 else value[int(option["stack"]) - 1]
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
+async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: dict) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.2], [0.24], [0.28], [0.32], [0.36]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -80,10 +79,10 @@ async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: d
             value = refinementValue[i]
             fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += value
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
+async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: int, options: dict) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[32, 0.10], [40, 0.14], [48, 0.18], [56, 0.22], [64, 0.26]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -96,12 +95,10 @@ async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: i
             key = fightPropKeys.ELEMENT_MASTERY.value if i == 0 else fightPropKeys.ATTACK_ADD_HURT.value
             fightProp[key] += value * option["stack"]
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, options: dict) -> CharacterFightPropSchema:
-    # 여기서 fightProp뿐만 아니라 추후 연산에 대한 정보도 넘겨줘야해.
-    # 그래야 추후 연산할 때 또 다시 호출해서 연산 진행할 테니까.
+async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, options: dict) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.30, [0.28, 0.80]],
@@ -115,14 +112,14 @@ async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, o
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            key = fightPropKeys.CHARGE_EFFICIENCY if i == 0 else fightPropKeys.ATTACK_ADD_HURT
+            key = fightPropKeys.CHARGE_EFFICIENCY if i == 0 else fightPropKeys.ATTACK
             # 진행 중
 
             fightProp[key.value] += value
 
     # fightProp["afterAddProps"] = [fightPropKeys.ATTACK_ADD_HURT]
 
-    return fightProp
+    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK]}
 
 
 getTotalWeaponFightProp = {
