@@ -56,4 +56,12 @@ artifactSetOptions = {
             "description": "과부하, 연소, 발화 반응 피해 40% 증가 + 융해 반응 보너스 계수 15%증가. 원소 전투 스킬 사용 시 2세트 옵션 50%씩 상승",
         },
     ],
+    "황금 극단": [
+        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "원소 전투 스킬 피해 증가"},
+        {
+            "type": artifactSetOptionType.toggle,
+            "maxStack": 1,
+            "description": "원소 전투 스킬 피해 증가. 대기 상태일 때 원소 전투 스킬 피해 추가 증가 ",
+        },
+    ],
 }
