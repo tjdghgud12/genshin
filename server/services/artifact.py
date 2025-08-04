@@ -92,12 +92,33 @@ def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], 
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
 
 
+def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
+    for i, info in enumerate(optionInfo):
+        if info["active"]:
+            match i:
+                case 0:
+                    if numberOfParts >= 2:
+                        fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.15
+                case 1:
+                    if numberOfParts >= 4:
+                        fightProp[fightPropKeys.OVERLOADED_ADD_HURT.value] += 0.4
+                        fightProp[fightPropKeys.IGNITION_ADD_HURT.value] += 0.4
+                        fightProp[fightPropKeys.COMBUSTION_ADD_HURT.value] += 0.4
+                        fightProp[fightPropKeys.EVAPORATION_ADD_HURT.value] += 0.15
+                        fightProp[fightPropKeys.MELT_ADD_HURT.value] += 0.15
+                        fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.075 * info["stack"]
+
+    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
     "번개 같은 분노": getThunderingFurySetOption,
     "숲의 기억": getDeepwoodMemoriesSetOption,
     "절연의 기치": getEmblemOfSeveredFateSetOption,
+    "불타오르는 화염의 마녀": getCrimsonWitchOfFlamesSetOption,
 }
 
 
