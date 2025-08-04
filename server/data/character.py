@@ -104,6 +104,10 @@ class CharacterFightPropSchema(TypedDict, total=True):
     FIGHT_PROP_SUPERCONDUCT_ADD_HURT: float  # 초전도
     FIGHT_PROP_HYPERBLOOM_ADD_HURT: float  # 만개
     FIGHT_PROP_AGGRAVATE_ADD_HURT: float  # 촉진
+    FIGHT_PROP_EVAPORATION_ADD_HURT: float  # 증발
+    FIGHT_PROP_MELT_ADD_HURT: float  # 융해
+    FIGHT_PROP_COMBUSTION_ADD_HURT: float  # 연소
+    FIGHT_PROP_IGNITION_ADD_HURT: float  # 발화
 
 
 class skillConstellationType(Enum):
