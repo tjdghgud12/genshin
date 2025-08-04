@@ -237,7 +237,7 @@ activeSkill = {
     "나히다": {
         "마음이 그리는 환상": {
             "type": skillConstellationType.toggle,
-            "maxStack": 1,
+            "maxStack": 2,
             "description": "파티 내 불, 번개, 물 원소 타입 캐릭터가 있으면 각각 상응하는 효과가 발생",
         }
     },
