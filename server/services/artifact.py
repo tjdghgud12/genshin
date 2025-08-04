@@ -14,15 +14,14 @@ def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict], _
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
-        if info["active"]:
-            match i:
-                case 0:
-                    if numberOfParts >= 2:
-                        fightProp[fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value] += 0.15
-                        fightProp[fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value] += 0.15
-                case 1:
-                    if numberOfParts >= 4:
-                        fightProp[fightPropKeys.CRITICAL.value] += 0.12 * info["stack"]
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    fightProp[fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value] += 0.15
+                    fightProp[fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value] += 0.15
+            case 1:
+                if numberOfParts >= 4:
+                    fightProp[fightPropKeys.CRITICAL.value] += 0.12 * info["stack"]
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -31,63 +30,59 @@ def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict], _cha
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
-        if info["active"]:
-            match i:
-                case 0:
-                    if numberOfParts >= 2:
-                        fightProp[fightPropKeys.ICE_ADD_HURT.value] += 0.15
-                case 1:
-                    if numberOfParts >= 4:
-                        fightProp[fightPropKeys.CRITICAL.value] += 0.2 * info["stack"]
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    fightProp[fightPropKeys.ICE_ADD_HURT.value] += 0.15
+            case 1:
+                if numberOfParts >= 4:
+                    fightProp[fightPropKeys.CRITICAL.value] += 0.2 * info["stack"]
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
 def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
-    for i, info in enumerate(optionInfo):
-        if info["active"]:
-            match i:
-                case 0:
-                    if numberOfParts >= 2:
-                        fightProp[fightPropKeys.ELEC_ADD_HURT.value] += 0.15
-                case 1:
-                    if numberOfParts >= 4:
-                        fightProp[fightPropKeys.OVERLOADED_ADD_HURT.value] += 0.4
-                        fightProp[fightPropKeys.ELECTRICSHOCK_ADD_HURT.value] += 0.4
-                        fightProp[fightPropKeys.SUPERCONDUCT_ADD_HURT.value] += 0.4
-                        fightProp[fightPropKeys.HYPERBLOOM_ADD_HURT.value] += 0.4
-                        fightProp[fightPropKeys.AGGRAVATE_ADD_HURT.value] += 0.2
+    for i, _info in enumerate(optionInfo):
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    fightProp[fightPropKeys.ELEC_ADD_HURT.value] += 0.15
+            case 1:
+                if numberOfParts >= 4:
+                    fightProp[fightPropKeys.OVERLOADED_ADD_HURT.value] += 0.4
+                    fightProp[fightPropKeys.ELECTRICSHOCK_ADD_HURT.value] += 0.4
+                    fightProp[fightPropKeys.SUPERCONDUCT_ADD_HURT.value] += 0.4
+                    fightProp[fightPropKeys.HYPERBLOOM_ADD_HURT.value] += 0.4
+                    fightProp[fightPropKeys.AGGRAVATE_ADD_HURT.value] += 0.2
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
 def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
-    for i, info in enumerate(optionInfo):
-        if info["active"]:
-            match i:
-                case 0:
-                    if numberOfParts >= 2:
-                        fightProp[fightPropKeys.GRASS_ADD_HURT.value] += 0.15
-                case 1:
-                    if numberOfParts >= 4:
-                        fightProp[fightPropKeys.GRASS_RES_MINUS.value] += 0.3
+    for i, _info in enumerate(optionInfo):
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    fightProp[fightPropKeys.GRASS_ADD_HURT.value] += 0.15
+            case 1:
+                if numberOfParts >= 4:
+                    fightProp[fightPropKeys.GRASS_RES_MINUS.value] += 0.3
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
 def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
-    for i, info in enumerate(optionInfo):
-        if info["active"]:
-            match i:
-                case 0:
-                    if numberOfParts >= 2:
-                        fightProp[fightPropKeys.CHARGE_EFFICIENCY.value] += 0.2
-                case 1:
-                    if numberOfParts >= 4:
-                        fightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += characterFightProp[fightPropKeys.CHARGE_EFFICIENCY.value] * 0.25
+    for i, _info in enumerate(optionInfo):
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    fightProp[fightPropKeys.CHARGE_EFFICIENCY.value] += 0.2
+            case 1:
+                if numberOfParts >= 4:
+                    fightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += characterFightProp[fightPropKeys.CHARGE_EFFICIENCY.value] * 0.25
 
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
 
@@ -95,19 +90,18 @@ def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], 
 def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if info["active"]:
-            match i:
-                case 0:
-                    if numberOfParts >= 2:
-                        fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.15
-                case 1:
-                    if numberOfParts >= 4:
-                        fightProp[fightPropKeys.OVERLOADED_ADD_HURT.value] += 0.4
-                        fightProp[fightPropKeys.IGNITION_ADD_HURT.value] += 0.4
-                        fightProp[fightPropKeys.COMBUSTION_ADD_HURT.value] += 0.4
-                        fightProp[fightPropKeys.EVAPORATION_ADD_HURT.value] += 0.15
-                        fightProp[fightPropKeys.MELT_ADD_HURT.value] += 0.15
-                        fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.075 * info["stack"]
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.15
+            case 1:
+                if numberOfParts >= 4:
+                    fightProp[fightPropKeys.OVERLOADED_ADD_HURT.value] += 0.4
+                    fightProp[fightPropKeys.IGNITION_ADD_HURT.value] += 0.4
+                    fightProp[fightPropKeys.COMBUSTION_ADD_HURT.value] += 0.4
+                    fightProp[fightPropKeys.EVAPORATION_ADD_HURT.value] += 0.15
+                    fightProp[fightPropKeys.MELT_ADD_HURT.value] += 0.15
+                    fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.075 * info["stack"]
 
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
 
