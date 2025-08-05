@@ -197,6 +197,32 @@ async def getAzurelightFightProp(id: int, level: int, refinement: int, options: 
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getSymphonistOfScentsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.12, 0.12, 0.32],
+        [0.15, 0.15, 0.40],
+        [0.18, 0.18, 0.48],
+        [0.21, 0.21, 0.56],
+        [0.24, 0.24, 0.64],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        value = refinementValue[i]
+        match i:
+            case 0:
+                fightProp[fightPropKeys.ATTACK_PERCENT.value] += value
+            case 1:
+                if option["active"]:
+                    fightProp[fightPropKeys.ATTACK_PERCENT.value] += value
+            case 2:
+                if option["active"]:
+                    fightProp[fightPropKeys.ATTACK_PERCENT.value] += value
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -206,4 +232,5 @@ getTotalWeaponFightProp = {
     "호마의 지팡이": getStaffOfHomaFightProp,
     "고요히 샘솟는 빛": getSplendorOfTranquilWatersFightProp,
     "창백한 섬광": getAzurelightFightProp,
+    "맛의 지휘자": getSymphonistOfScentsFightProp,
 }
