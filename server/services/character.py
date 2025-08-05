@@ -295,11 +295,11 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
         if active["active"]:
             match active["name"]:
                 case "마음이 그리는 환상":  # 번개, 물의 경우 fightProp에 영향 X. 각 쿨감 및 지속시간 증가
-                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "깨달음을 주는 잎"), {})
+                    addElementalBurstLevel = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "깨달음을 주는 잎"), {})
                     seedsOfWisdom = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "지혜를  머금은 씨앗"), {})
-                    addLevel = 3 if addElementalSkillLevel.get("unlock", False) else 0
+                    addLevel = 3 if addElementalBurstLevel.get("unlocked", False) else 0
                     skillValue = activeSkillLevelMap[active["name"]][active["level"] + addLevel - 1]
-                    stack = min(active["stack"] + (1 if seedsOfWisdom.get("unlock", False) else 0), 2)
+                    stack = min(active["stack"] + (1 if seedsOfWisdom.get("unlocked", False) else 0), 2)
                     newFightProp[fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value] += skillValue[stack - 1]
 
     # ----------------------- constellations -----------------------
@@ -392,7 +392,7 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
             match active["name"]:
                 case "초월·악요개안":
                     addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "쇼군의 현형"), {})
-                    addLevel = 3 if addElementalSkillLevel.get("unlock", False) else 0
+                    addLevel = 3 if addElementalSkillLevel.get("unlocked", False) else 0
                     skillValue = activeSkillLevelMap[active["name"]][active["level"] + addLevel - 1]
                     newFightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += 90 * skillValue / 100  # 90은 라이덴의 원소 에너지
 
@@ -474,35 +474,20 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         ]
     }
 
-    # ----------------------- active -----------------------
-    for active in characterInfo.activeSkill:
-        if active["active"]:
-            match active["name"]:
-                case "나비의 서":
-                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "적색 피의 의식"), {})
-                    addLevel = 3 if addElementalSkillLevel.get("unlock", False) else 0
-                    skillValue = activeSkillLevelMap[active["name"]][active["level"] + addLevel - 1]
-                    baseHp = newFightProp[fightPropKeys.BASE_HP.value]
-                    hpPercent = newFightProp[fightPropKeys.HP_PERCENT.value]
-                    hp = newFightProp[fightPropKeys.HP.value]
-                    totalHp = baseHp * (hpPercent + 1) + hp
-                    newFightProp[fightPropKeys.ATTACK.value] += totalHp * skillValue
-
     # ----------------------- constellations -----------------------
+    # 진홍의 꽃다발, 비처럼 내리는 불안, 적색 피의 의식, 영원한 안식의 정원, 꽃잎 향초의 기도는 호두의 fightProp에 영향 X
     for constellation in characterInfo.constellations:
         if constellation["unlocked"] and constellation["active"]:
             match constellation["name"]:
-                case "":
-                    newFightProp[fightPropKeys.DEFENSE_IGNORE.value] += 0.6
-
+                case "나비 잔향":
+                    newFightProp[fightPropKeys.CRITICAL.value] += 1.00
     # ----------------------- passive -----------------------
+    # 모습을 감춘 나비는 호두의 fightProp에 영향X
     for passive in characterInfo.passiveSkill:
         if passive["unlocked"] and passive["active"]:
             match passive["name"]:
-                case "":
-                    val = newFightProp[fightPropKeys.CHARGE_EFFICIENCY.value] - 1
-                    if val > 0:
-                        newFightProp[fightPropKeys.ELEC_ADD_HURT.value] += val * 0.4
+                case "핏빛 분장":
+                    newFightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.33
 
     # ----------------------- 추후 연산 진행부 -----------------------
     if weaponData["afterAddProps"] != None:
@@ -517,11 +502,130 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         for key in artifactSetData["afterAddProps"]:
             newFightProp[key] += finallyArtifactSetData["fightProp"][key]
 
+    # ----------------------- active -----------------------
+    # 가장 마지막 최대HP기준으로 적용되어야 하기 때문에 해당 위치로 이동
+    for active in characterInfo.activeSkill:
+        if active["active"]:
+            match active["name"]:
+                case "나비의 서":
+                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "적색 피의 의식"), {})
+                    addLevel = 3 if addElementalSkillLevel.get("unlocked", False) else 0
+                    skillValue = activeSkillLevelMap[active["name"]][active["level"] + addLevel - 1]
+                    baseHp = newFightProp[fightPropKeys.BASE_HP.value]
+                    hpPercent = newFightProp[fightPropKeys.HP_PERCENT.value]
+                    hp = newFightProp[fightPropKeys.HP.value]
+                    totalHp = baseHp * (hpPercent + 1) + hp
+                    newFightProp[fightPropKeys.ATTACK.value] += totalHp * skillValue
+
     return newFightProp
 
 
 async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+
+    # ----------------------- Artifact -----------------------
+    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
+    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+    artifactSetFightProp = artifactSetData["fightProp"]
+    if artifactSetData["afterAddProps"] != None:
+        for key in artifactSetData["afterAddProps"]:
+            artifactSetFightProp[key] = 0.0
+
+    # ----------------------- weapon -----------------------
+    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
+    weaponData = await getWeaponFightProp(
+        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+    )
+    weaponFightProp = weaponData["fightProp"]
+    if weaponData["afterAddProps"] != None:
+        for key in weaponData["afterAddProps"]:
+            weaponFightProp[key] = 0.0
+
+    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
+    for fightPropKey, value in artifactFightProp.items():
+        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+
+    activeSkillLevelMap = {
+        "성대한 카니발": [
+            [0.0007, 0.0001],  # Level 1
+            [0.0009, 0.0002],  # Level 2
+            [0.0011, 0.0003],  # Level 3
+            [0.0013, 0.0004],  # Level 4
+            [0.0015, 0.0005],  # Level 5
+            [0.0017, 0.0006],  # Level 6
+            [0.0019, 0.0007],  # Level 7
+            [0.0021, 0.0008],  # Level 8
+            [0.0023, 0.0009],  # Level 9
+            [0.0025, 0.0010],  # Level 10
+            [0.0027, 0.0011],  # Level 11
+            [0.0029, 0.0012],  # Level 12
+            [0.0031, 0.0013],  # Level 13
+            [0.0033, 0.0014],  # Level 14
+            [0.0035, 0.0015],  # Level 15
+        ]
+    }
+
+    # ----------------------- active -----------------------
+    for active in characterInfo.activeSkill:
+        if active["active"]:
+            match active["name"]:
+                case "성대한 카니발":
+                    addElementalBurstLevel = next(
+                        (constellation for constellation in characterInfo.constellations if constellation.get("name") == "「내 이름은 그 누구도 모르리라」"), {}
+                    )
+                    firstConstellation = next(
+                        (constellation for constellation in characterInfo.constellations if constellation.get("name") == "「사랑은 애걸해도 길들일 수 없는 새」"), {}
+                    )
+                    secondConstellation = next(
+                        (constellation for constellation in characterInfo.constellations if constellation.get("name") == "「여자의 마음은 흔들리는 부평초」"), {}
+                    )
+                    addLevel = 3 if addElementalBurstLevel.get("unlocked", False) else 0
+                    skillValue = activeSkillLevelMap[active["name"]][active["level"] + addLevel - 1]
+
+                    if firstConstellation.get("unlocked", False):
+                        active["stack"] = min(active["stack"] + 150, 400)
+                    if secondConstellation.get("unlocked", False):
+                        newFightProp[fightPropKeys.HP_PERCENT.value] += 0.0035 * active["stack"]
+
+                    newFightProp[fightPropKeys.ATTACK_ADD_HURT.value] += skillValue[0] * active["stack"]
+                    # newFightProp[fightPropKeys.ATTACK_ADD_HURT.value] += skillValue[1] * active["stack"] # 치유 보너스
+
+    # ----------------------- constellations -----------------------
+    # 6돌을 제외한 모든 돌파 옵션은 fightProp에 영향 없거나 active에서 처리
+    for constellation in characterInfo.constellations:
+        if constellation["unlocked"] and constellation["active"]:
+            match constellation["name"]:
+                case "「모두 사랑의 축배를 들렴!」":
+                    # 평타 계수 추가이기 때문에 2025-08-05기준 미개발 상태
+                    description = (
+                        "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가",
+                    )
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    if weaponData["afterAddProps"] != None:
+        finallyWeaponData = await getWeaponFightProp(
+            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+        )
+        for key in finallyWeaponData["afterAddProps"]:
+            newFightProp[key] += finallyWeaponData["fightProp"][key]
+
+    if artifactSetData["afterAddProps"] != None:
+        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+        for key in artifactSetData["afterAddProps"]:
+            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+
+    # ----------------------- passive -----------------------
+    # 가장 마지막 최대HP기준으로 적용되어야 하기 때문에 해당 위치로 이동
+    for passive in characterInfo.passiveSkill:
+        if passive["unlocked"]:
+            match passive["name"]:
+                case "고독한 독백":
+                    baseHp = newFightProp[fightPropKeys.BASE_HP.value]
+                    hpPercent = newFightProp[fightPropKeys.HP_PERCENT.value]
+                    hp = newFightProp[fightPropKeys.HP.value]
+                    totalHp = baseHp * (hpPercent + 1) + hp
+                    newFightProp[fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value] += min(totalHp / 1000 * 0.007, 0.28)
+
     return newFightProp
 
 
