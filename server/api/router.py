@@ -33,7 +33,6 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
             artifacts = avatar.artifacts
             weapon = avatar.weapon
-            getTotalFightProp = getFightProp.get(avatar.name)
             ambrCharacterDetail: CharacterDetail = await ambrApi.fetch_character_detail(str(avatar.id))
 
             # Draw를 위한 데이터 제작
@@ -56,10 +55,11 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             enkaConstellation: dict[str, enka.gi.Constellation] = {c.name: c for c in avatar.constellations}
             characterPassive = passiveSkill.get(avatar.name, {})
             characterActive = activeSkill.get(avatar.name, {})
+            defaultFalseConstellation = ["잿더미의 대가"]
 
             passive = list(filter(lambda talent: talent.type.name == "ULTIMATE" and characterPassive.get(talent.name), ambrCharacterDetail.talents))
             for i, skill in enumerate(passive):
-                unlock = avatar.ascension >= (1 if i == 0 else 4)
+                unlocked = avatar.ascension >= (1 if i == 0 else 4)
                 skillOption = characterPassive.get(skill.name) or {}
                 characterInfo["passiveSkill"].append(
                     {
@@ -67,8 +67,8 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                         "name": skill.name,
                         "icon": skill.icon,
                         "description": skill.description,
-                        "unlocked": unlock,
-                        "active": True if unlock else False,
+                        "unlocked": unlocked,
+                        "active": True if unlocked else False,
                         "stack": skillOption.get("maxStack"),
                     }
                 )
@@ -93,10 +93,9 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                     {
                         **defaultConstellation,
                         "icon": enkaConstellation[name].icon,
-                        # "unlocked": enkaConstellation[name].unlocked,
-                        "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
+                        "unlocked": enkaConstellation[name].unlocked,
                         "description": ambrConstellation[name].description,
-                        "active": True,
+                        "active": False if skill.name in defaultFalseConstellation else True,
                         "stack": defaultConstellation.get("maxStack"),
                     }
                 )
@@ -136,9 +135,10 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             for setInfo in artifactSetInfo:
                 options = setInfo.get("option") if setInfo.get("option") else []
                 characterInfo["artifact"]["setInfo"].append({**setInfo, "option": [{**option, "active": True, "stack": option["maxStack"]} for option in options]})
-            # ---------------------------------------------------------------------
+                # ---------------------------------------------------------------------
 
-            # 2. 최종 Fight Prop 데이터 계산
+                # 2. 최종 Fight Prop 데이터 계산
+            getTotalFightProp = getFightProp.get(avatar.name)
             avatarRawData = rawRes["avatarInfoList"][i]
             if getTotalFightProp is not None:
                 totalFightProp = await getTotalFightProp(ambrCharacterDetail, CharacterInfo(**characterInfo))
