@@ -35,8 +35,8 @@ async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropSchem
     for baseStat in ambrWeaponDetail.upgrade.base_stats:
         if baseStat.prop_type is not None:
             fightProp[baseStat.prop_type] = baseStat.init_value * ambrWeaponCurve[baseStat.growth_type]
-        for addStat in getattr(promoteStat, "add_stats", []):
-            fightProp[addStat.id] += addStat.value
+    for addStat in getattr(promoteStat, "add_stats", []):
+        fightProp[addStat.id] += addStat.value
 
     return fightProp
 
