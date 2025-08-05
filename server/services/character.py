@@ -55,23 +55,18 @@ def getConstellationData():
     return constellationData
 
 
-async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
-    # ----------------------- Base Fight Prop -----------------------
-    newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
-
+async def getWeaponArtifactFightProp(fightProp: CharacterFightPropSchema, weapon: dict, artifact: dict):
     # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+    artifactFightProp = getArtifactFightProp(artifact)
+    artifactSetData = getArtifactSetData(artifact["setInfo"], fightProp)
     artifactSetFightProp = artifactSetData["fightProp"]
     if artifactSetData["afterAddProps"] != None:
         for key in artifactSetData["afterAddProps"]:
             artifactSetFightProp[key] = 0.0
 
     # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
+    getWeaponFightProp = getTotalWeaponFightProp[weapon["name"]]
+    weaponData = await getWeaponFightProp(weapon["id"], weapon["level"], weapon["refinement"], weapon["option"], fightProp)
     weaponFightProp = weaponData["fightProp"]
     if weaponData["afterAddProps"] != None:
         for key in weaponData["afterAddProps"]:
@@ -79,7 +74,34 @@ async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
     # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
     for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+        fightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+
+    return {"fightProp": fightProp, "weaponAfterProps": weaponData["afterAddProps"], "artifactAfterProps": artifactSetData["afterAddProps"]}
+
+
+async def getAfterWeaponArtifactFightProp(fightProp: CharacterFightPropSchema, weapon: dict, artifact: dict, weaponAfterProps: list | None, artifactAfterProps: list | None):
+    getWeaponFightProp = getTotalWeaponFightProp[weapon["name"]]
+
+    if weaponAfterProps != None:
+        finallyWeaponData = await getWeaponFightProp(weapon["id"], weapon["level"], weapon["refinement"], weapon["option"], fightProp)
+        for key in finallyWeaponData["afterAddProps"]:
+            fightProp[key] += finallyWeaponData["fightProp"][key]
+
+    if artifactAfterProps != None:
+        finallyArtifactSetData = getArtifactSetData(artifact["setInfo"], fightProp)
+        for key in finallyArtifactSetData["afterAddProps"] or []:
+            fightProp[key] += finallyArtifactSetData["fightProp"][key]
+
+    return fightProp
+
+
+async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
+    # ----------------------- Base Fight Prop -----------------------
+    newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     # active: 감우의 active에는 버프 효과 존재 X
@@ -104,17 +126,9 @@ async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     newFightProp[fightPropKeys.ATTACK_ADD_HURT.value] += constellation["stack"] * 0.05
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
@@ -122,27 +136,9 @@ async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
-
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     # active: 아야카의 active에는 버프 효과 존재 X
@@ -168,17 +164,9 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
                     newFightProp[fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value] += 2.98
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
@@ -186,27 +174,9 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
 async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
-
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     # active: 각청의 active에는 버프 효과 존재 X
@@ -231,17 +201,9 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     newFightProp[fightPropKeys.ELEC_ADD_HURT.value] += constellation["stack"] * 0.06
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
@@ -249,27 +211,9 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
 async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
-
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
@@ -329,63 +273,38 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                         newFightProp[fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value] += val * 0.1
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
 
 async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
 
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
         "초월·악요개안": [
-            0.22,  # Level 1
-            0.23,  # Level 2
-            0.24,  # Level 3
-            0.25,  # Level 4
-            0.26,  # Level 5
-            0.27,  # Level 6
-            0.28,  # Level 7
-            0.29,  # Level 8
-            0.30,  # Level 9
-            0.30,  # Level 10
-            0.30,  # Level 11
-            0.30,  # Level 12
-            0.30,  # Level 13
-            0.30,  # Level 14
-            0.30,  # Level 15
+            0.0022,  # Level 1
+            0.0023,  # Level 2
+            0.0024,  # Level 3
+            0.0025,  # Level 4
+            0.0026,  # Level 5
+            0.0027,  # Level 6
+            0.0028,  # Level 7
+            0.0029,  # Level 8
+            0.0030,  # Level 9
+            0.0030,  # Level 10
+            0.0030,  # Level 11
+            0.0030,  # Level 12
+            0.0030,  # Level 13
+            0.0030,  # Level 14
+            0.0030,  # Level 15
         ]
     }
 
@@ -396,7 +315,7 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
                     addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "쇼군의 현형"), {})
                     addLevel = 3 if addElementalSkillLevel.get("unlocked", False) else 0
                     skillValue = activeSkillLevelMap[active["name"]][active["level"] + addLevel - 1]
-                    newFightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += 90 * skillValue / 100  # 90은 라이덴의 원소 에너지
+                    newFightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += 90 * skillValue  # 90은 라이덴의 원소 에너지
 
     # ----------------------- constellations -----------------------
     # 악요 명문(銘文), 진영의 과거, 진리의 맹세, 쇼군의 현형, 염원의 대행인의 경우 fightProp에 영행 X
@@ -416,17 +335,9 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
                         newFightProp[fightPropKeys.ELEC_ADD_HURT.value] += val * 0.4
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
@@ -434,27 +345,9 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
 async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
-
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- constellations -----------------------
     # 진홍의 꽃다발, 비처럼 내리는 불안, 적색 피의 의식, 영원한 안식의 정원, 꽃잎 향초의 기도는 호두의 fightProp에 영향 X
@@ -472,17 +365,9 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     newFightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.33
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     # ----------------------- active -----------------------
     # 가장 마지막 최대HP기준으로 적용되어야 하기 때문에 해당 위치로 이동
@@ -525,27 +410,9 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
-
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
@@ -602,17 +469,9 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     # ----------------------- passive -----------------------
     # 가장 마지막 최대HP기준으로 적용되어야 하기 때문에 해당 위치로 이동
@@ -631,27 +490,10 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
 
 async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
 
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
@@ -713,44 +555,19 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                         newFightProp[fightPropKeys.ATTACK_PERCENT.value] += addAttackPercent[passive["stack"]]
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
 
 async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
 
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     # active: 에스코피에의 active에는 버프 효과 존재 X
@@ -779,44 +596,19 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
                     newFightProp[fightPropKeys.WATER_RES_MINUS.value] += addIceWarterResMinus[passive["stack"]]
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
 
 async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
-    # ----------------------- Artifact -----------------------
-    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
-    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-    artifactSetFightProp = artifactSetData["fightProp"]
-    if artifactSetData["afterAddProps"] != None:
-        for key in artifactSetData["afterAddProps"]:
-            artifactSetFightProp[key] = 0.0
 
-    # ----------------------- weapon -----------------------
-    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
-    weaponData = await getWeaponFightProp(
-        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-    )
-    weaponFightProp = weaponData["fightProp"]
-    if weaponData["afterAddProps"] != None:
-        for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
-
-    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
-    for fightPropKey, value in artifactFightProp.items():
-        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
 
     # ----------------------- active -----------------------
     # active: 시틀라리의 active에는 버프 효과 존재 X
@@ -851,17 +643,9 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                     description = "원소 마스터리의 일정 비율 만큼 원소 전투 스킬 및 원소 폭발 피해 계수 추가"
 
     # ----------------------- 추후 연산 진행부 -----------------------
-    if weaponData["afterAddProps"] != None:
-        finallyWeaponData = await getWeaponFightProp(
-            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
-        )
-        for key in finallyWeaponData["afterAddProps"]:
-            newFightProp[key] += finallyWeaponData["fightProp"][key]
-
-    if artifactSetData["afterAddProps"] != None:
-        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
-        for key in artifactSetData["afterAddProps"]:
-            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
 
     return newFightProp
 
