@@ -228,7 +228,7 @@ passiveSkill = {
         "흐름의 적멸": {
             "type": skillConstellationType.stack,
             "maxStack": 3,
-            "description": "파티 내 주변에 있는 물 원소 또는 얼음 원소 캐릭터가 각각 물 원소 또는 얼음 원소 공격으로 적 명중 시 최종 데미지 증가",
+            "description": "파티 내 주변에 있는 물 원소 또는 얼음 원소 캐릭터가 각각 물 원소 또는 얼음 원소 공격으로 적 명중 시 최종 데미지 증가(마지막 곱연산)",
             "unlockLevel": 4,
         },
     },
@@ -272,7 +272,7 @@ activeSkill = {
     "마비카": {},
     "에스코피에": {},
     "스커크": {
-        "극악기 · 멸": {
+        "극악기 · 진": {
             "type": skillConstellationType.stack,
             "maxStack": 3,
             "description": "일곱빛 섬광 모드에서 발동 가능. 주변 일정 범위 내의 허계 균열을 흡수하며, 흡수한 허계 균열 개수 당 일반 공격 피해 증가",
@@ -746,7 +746,7 @@ constellation = {
         {"name": "소망", "type": skillConstellationType.always, "maxStack": 1, "description": "원소 전투 스킬 레벨 +3"},
         {
             "name": "근원",
-            "type": skillConstellationType.stack,
+            "type": skillConstellationType.always,
             "maxStack": 1,
             "description": "흡수한 허계 균열 수 당 극악기 · 참 스택 획득. 극악기 · 참 스택 마다 원소 폭발 발동 시 공격력의 750%에 해당하는 얼음 원소 피해 추가. 일곱빛 섬광 모드에서는 일반공격 또는 피격 시 협동 공격",
         },

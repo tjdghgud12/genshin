@@ -597,9 +597,7 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
             match constellation["name"]:
                 case "「모두 사랑의 축배를 들렴!」":
                     # 평타 계수 추가이기 때문에 2025-08-05기준 미개발 상태
-                    description = (
-                        "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가",
-                    )
+                    description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
 
     # ----------------------- 추후 연산 진행부 -----------------------
     if weaponData["afterAddProps"] != None:
@@ -631,6 +629,100 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
 
 async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    # ----------------------- Artifact -----------------------
+    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
+    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+    artifactSetFightProp = artifactSetData["fightProp"]
+    if artifactSetData["afterAddProps"] != None:
+        for key in artifactSetData["afterAddProps"]:
+            artifactSetFightProp[key] = 0.0
+
+    # ----------------------- weapon -----------------------
+    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
+    weaponData = await getWeaponFightProp(
+        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+    )
+    weaponFightProp = weaponData["fightProp"]
+    if weaponData["afterAddProps"] != None:
+        for key in weaponData["afterAddProps"]:
+            weaponFightProp[key] = 0.0
+
+    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
+    for fightPropKey, value in artifactFightProp.items():
+        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+
+    # ----------------------- active -----------------------
+    activeSkillLevelMap = {
+        "극악기 · 진": [
+            [0.035, 0.066, 0.088, 0.110],
+            [0.040, 0.072, 0.096, 0.120],
+            [0.045, 0.078, 0.104, 0.130],
+            [0.050, 0.084, 0.112, 0.140],
+            [0.055, 0.090, 0.120, 0.150],
+            [0.060, 0.096, 0.128, 0.160],
+            [0.065, 0.102, 0.136, 0.170],
+            [0.070, 0.108, 0.144, 0.180],
+            [0.075, 0.114, 0.152, 0.190],
+            [0.080, 0.120, 0.160, 0.200],
+            [0.085, 0.126, 0.168, 0.210],
+            [0.090, 0.132, 0.176, 0.220],
+            [0.095, 0.138, 0.184, 0.230],
+            [0.100, 0.144, 0.192, 0.240],
+            [0.105, 0.150, 0.200, 0.250],
+        ]
+    }
+    for active in characterInfo.activeSkill:
+        if active["active"]:
+            match active["name"]:
+                case "극악기 · 진":
+                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "악연"), {})
+                    secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "심연"), {})
+                    addLevel = 3 if addElementalSkillLevel.get("unlock", False) else 0
+                    skillValue = activeSkillLevelMap[active["name"]][active["level"] + addLevel - 1]
+                    if secondConstellation.get("unlocked", False):
+                        newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.70
+
+                    newFightProp[fightPropKeys.ATTACK_ADD_HURT.value] += skillValue[active["stack"]]
+
+    # ----------------------- constellations -----------------------
+    # 심연, 악연, 소망, 멸류는 fightProp에 영향 없거나 각 스킬 연산 시 처리
+    for constellation in characterInfo.constellations:
+        if constellation["unlocked"] and constellation["active"]:
+            match constellation["name"]:
+                case "요원":  # 스킬 계수 추가
+                    description = "허계 균열 1개 흡수할 때 마다 스커크 공격력의 500%에 해당하는 얼음 원소 피해 추가"
+                case "심연":  # 스킬 계수 추가
+                    description = "원소 전투 스킬 발동 시 뱀의 계략 10pt 획득. 원소 폭발 사용 시 뱀의 계략 최대치 10pt 증가."
+                case "근원":  # 스킬 계수 추가
+                    description = "흡수한 허계 균열 수 당 극악기 · 참 스택 획득. 극악기 · 참 스택 마다 원소 폭발 발동 시 공격력의 750%에 해당하는 얼음 원소 피해 추가. 일곱빛 섬광 모드에서는 일반공격 또는 피격 시 협동 공격"
+
+    # ----------------------- passive -----------------------
+    # 이치 너머의 이치는 원소전투스킬과 원소폭발의 계수 추가. 계수 추가는 미개발 상태
+    for passive in characterInfo.passiveSkill:
+        if passive["unlocked"]:
+            match passive["name"]:
+                case "흐름의 적멸":
+                    # "description": "파티 내 주변에 있는 물 원소 또는 얼음 원소 캐릭터가 각각 물 원소 또는 얼음 원소 공격으로 적 명중 시 최종 데미지 증가(마지막 곱연산)",
+                    # 원소 전투 스킬 110%/120%/170% / 원소 폭발 105%/115%/160%
+                    # 최종 데미지 곱연산 미개발 상태
+                    fourthConstellation = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "멸류"), {})
+                    if fourthConstellation.get("unlocked", False):
+                        addAttackPercent = [0, 0.1, 0.2, 0.4]
+                        newFightProp[fightPropKeys.ATTACK_PERCENT.value] += addAttackPercent[passive["stack"]]
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    if weaponData["afterAddProps"] != None:
+        finallyWeaponData = await getWeaponFightProp(
+            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+        )
+        for key in finallyWeaponData["afterAddProps"]:
+            newFightProp[key] += finallyWeaponData["fightProp"][key]
+
+    if artifactSetData["afterAddProps"] != None:
+        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+        for key in artifactSetData["afterAddProps"]:
+            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+
     return newFightProp
 
 
