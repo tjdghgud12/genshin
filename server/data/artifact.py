@@ -72,4 +72,17 @@ artifactSetOptions = {
             "description": "원소 게이지가 0pt일 시 일반 공격 또는 원소 폭발로 주는 피해 증가",
         },
     ],
+    "잿더미성 용사의 두루마리": [
+        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "주변 파티 내 캐릭터가 밤혼 발산 발동 시, 장착 캐릭터 원소 에너지 회복"},
+        {
+            "type": artifactSetOptionType.toggle,
+            "maxStack": 1,
+            "description": "장착캐릭터가 원소 반응 발동 시 파티 내 모든 캐릭터의 해당 원소 반응과 관련된 피해 12% 증가",
+        },
+        {
+            "type": artifactSetOptionType.toggle,
+            "maxStack": 1,
+            "description": "장착캐릭터가 원소 반응 발동 시 장착 캐릭터가 밤혼 가호 상태인 경우 파티 내 모든 캐릭터의 해당 원소 반응과 관련된 피해 28% 증가",
+        },
+    ],
 }
