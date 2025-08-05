@@ -268,6 +268,30 @@ async def getTomeOfTheEternalFlowFightProp(id: int, level: int, refinement: int,
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getAThousandBlazingSunsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.20, 0.28],
+        [0.25, 0.35],
+        [0.30, 0.42],
+        [0.35, 0.49],
+        [0.40, 0.56],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            match i:
+                case 0:
+                    fightProp[fightPropKeys.CRITICAL_HURT.value] += refinementValue[0]
+                    fightProp[fightPropKeys.ATTACK_PERCENT.value] += refinementValue[1]
+                case 1:
+                    fightProp[fightPropKeys.CRITICAL_HURT.value] += refinementValue[0] * 0.75
+                    fightProp[fightPropKeys.ATTACK_PERCENT.value] += refinementValue[1] * 0.75
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 async def getApprenticesNotesFightProp(id: int, level: int, _refinement: int, _options: dict, _characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
 
@@ -287,4 +311,5 @@ getTotalWeaponFightProp = {
     "별지기의 시선": getStarcallersWatchFightProp,
     "영원히 샘솟는 법전": getTomeOfTheEternalFlowFightProp,
     "학자의 노트": getApprenticesNotesFightProp,
+    "타오르는 천 개의 태양": getAThousandBlazingSunsFightProp,
 }
