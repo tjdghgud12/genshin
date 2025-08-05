@@ -270,6 +270,7 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     for fightPropKey, value in artifactFightProp.items():
         newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
 
+    # ----------------------- active -----------------------
     activeSkillLevelMap = {
         "마음이 그리는 환상": [
             (14.9, 22.3),
@@ -290,7 +291,6 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
         ]
     }
 
-    # ----------------------- active -----------------------
     for active in characterInfo.activeSkill:
         if active["active"]:
             match active["name"]:
@@ -366,6 +366,7 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
     for fightPropKey, value in artifactFightProp.items():
         newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
 
+    # ----------------------- active -----------------------
     activeSkillLevelMap = {
         "초월·악요개안": [
             0.22,  # Level 1
@@ -386,7 +387,6 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
         ]
     }
 
-    # ----------------------- active -----------------------
     for active in characterInfo.activeSkill:
         if active["active"]:
             match active["name"]:
@@ -454,26 +454,6 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     for fightPropKey, value in artifactFightProp.items():
         newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
 
-    activeSkillLevelMap = {
-        "나비의 서": [
-            0.0384,  # Level 1
-            0.0407,  # Level 2
-            0.0430,  # Level 3
-            0.0460,  # Level 4
-            0.0483,  # Level 5
-            0.0506,  # Level 6
-            0.0536,  # Level 7
-            0.0566,  # Level 8
-            0.0596,  # Level 9
-            0.0626,  # Level 10
-            0.0656,  # Level 11
-            0.0685,  # Level 12
-            0.0715,  # Level 13
-            0.0745,  # Level 14
-            0.0775,  # Level 15
-        ]
-    }
-
     # ----------------------- constellations -----------------------
     # 진홍의 꽃다발, 비처럼 내리는 불안, 적색 피의 의식, 영원한 안식의 정원, 꽃잎 향초의 기도는 호두의 fightProp에 영향 X
     for constellation in characterInfo.constellations:
@@ -504,6 +484,26 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
     # ----------------------- active -----------------------
     # 가장 마지막 최대HP기준으로 적용되어야 하기 때문에 해당 위치로 이동
+    activeSkillLevelMap = {
+        "나비의 서": [
+            0.0384,  # Level 1
+            0.0407,  # Level 2
+            0.0430,  # Level 3
+            0.0460,  # Level 4
+            0.0483,  # Level 5
+            0.0506,  # Level 6
+            0.0536,  # Level 7
+            0.0566,  # Level 8
+            0.0596,  # Level 9
+            0.0626,  # Level 10
+            0.0656,  # Level 11
+            0.0685,  # Level 12
+            0.0715,  # Level 13
+            0.0745,  # Level 14
+            0.0775,  # Level 15
+        ]
+    }
+
     for active in characterInfo.activeSkill:
         if active["active"]:
             match active["name"]:
@@ -545,6 +545,7 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     for fightPropKey, value in artifactFightProp.items():
         newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
 
+    # ----------------------- active -----------------------
     activeSkillLevelMap = {
         "성대한 카니발": [
             [0.0007, 0.0001],  # Level 1
@@ -565,7 +566,6 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
         ]
     }
 
-    # ----------------------- active -----------------------
     for active in characterInfo.activeSkill:
         if active["active"]:
             match active["name"]:
