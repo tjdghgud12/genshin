@@ -103,7 +103,7 @@ def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict],
                     fightProp[fightPropKeys.MELT_ADD_HURT.value] += 0.15
                     fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.075 * info["stack"]
 
-    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
 def getGoldenTroupeSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -119,7 +119,23 @@ def getGoldenTroupeSetOption(numberOfParts: int, optionInfo: list[dict], _charac
                     if info["active"]:
                         fightProp[fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value] += 0.25
 
-    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+def getFinaleOfTheDeepGalleriesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
+    for i, info in enumerate(optionInfo):
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    fightProp[fightPropKeys.ICE_ADD_HURT.value] += 0.15
+            case 1:
+                if numberOfParts >= 4:
+                    if info["active"]:
+                        fightProp[fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value] += 0.60
+                        fightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += 0.60
+
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
 getArtifactSetsFightProp = {
@@ -130,6 +146,7 @@ getArtifactSetsFightProp = {
     "절연의 기치": getEmblemOfSeveredFateSetOption,
     "불타오르는 화염의 마녀": getCrimsonWitchOfFlamesSetOption,
     "황금 극단": getGoldenTroupeSetOption,
+    "깊은 회랑의 피날레": getFinaleOfTheDeepGalleriesSetOption,
 }
 
 

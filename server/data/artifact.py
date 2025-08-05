@@ -64,4 +64,12 @@ artifactSetOptions = {
             "description": "원소 전투 스킬 피해 증가. 대기 상태일 때 원소 전투 스킬 피해 추가 증가 ",
         },
     ],
+    "깊은 회랑의 피날레": [
+        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "얼음 원소 피해 증가"},
+        {
+            "type": artifactSetOptionType.toggle,
+            "maxStack": 1,
+            "description": "원소 게이지가 0pt일 시 일반 공격 또는 원소 폭발로 주는 피해 증가",
+        },
+    ],
 }
