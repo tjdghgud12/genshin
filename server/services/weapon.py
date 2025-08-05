@@ -246,6 +246,34 @@ async def getStarcallersWatchFightProp(id: int, level: int, refinement: int, opt
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getTomeOfTheEternalFlowFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.16, 0.14],
+        [0.20, 0.18],
+        [0.24, 0.22],
+        [0.28, 0.26],
+        [0.32, 0.30],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        value = refinementValue[i]
+        match i:
+            case 0:
+                fightProp[fightPropKeys.ELEMENT_MASTERY.value] += value
+            case 1:
+                fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += value * option["stack"]
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getApprenticesNotesFightProp(id: int, level: int, _refinement: int, _options: dict, _characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -257,4 +285,6 @@ getTotalWeaponFightProp = {
     "창백한 섬광": getAzurelightFightProp,
     "맛의 지휘자": getSymphonistOfScentsFightProp,
     "별지기의 시선": getStarcallersWatchFightProp,
+    "영원히 샘솟는 법전": getTomeOfTheEternalFlowFightProp,
+    "학자의 노트": getApprenticesNotesFightProp,
 }
