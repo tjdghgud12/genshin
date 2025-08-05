@@ -154,6 +154,22 @@ def getScrollOfTheHeroOfCinderCitySetOption(numberOfParts: int, optionInfo: list
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+def getObsidianCodexSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
+    fightProp: CharacterFightPropSchema = {**fightPropTemplate}
+    for i, info in enumerate(optionInfo):
+        match i:
+            case 0:
+                if numberOfParts >= 2:
+                    if info["active"]:
+                        fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += 0.15
+            case 1:
+                if numberOfParts >= 4:
+                    if info["active"]:
+                        fightProp[fightPropKeys.CRITICAL.value] += 0.40
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
@@ -164,6 +180,7 @@ getArtifactSetsFightProp = {
     "황금 극단": getGoldenTroupeSetOption,
     "깊은 회랑의 피날레": getFinaleOfTheDeepGalleriesSetOption,
     "잿더미성 용사의 두루마리": getScrollOfTheHeroOfCinderCitySetOption,
+    "흑요석 비전": getObsidianCodexSetOption,
 }
 
 

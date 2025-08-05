@@ -85,4 +85,12 @@ artifactSetOptions = {
             "description": "장착캐릭터가 원소 반응 발동 시 장착 캐릭터가 밤혼 가호 상태인 경우 파티 내 모든 캐릭터의 해당 원소 반응과 관련된 피해 28% 증가",
         },
     ],
+    "흑요석 비전": [
+        {"type": artifactSetOptionType.toggle, "maxStack": 1, "description": "밤혼 가호 상태의 장착 캐릭터가 필드 위에 있을 시 주는 피해 15% 증가"},
+        {
+            "type": artifactSetOptionType.toggle,
+            "maxStack": 1,
+            "description": "장착 캐릭터가 필드 위에서 밤혼을 1pt 소모한 후 치명타 확률이 40% 증가",
+        },
+    ],
 }
