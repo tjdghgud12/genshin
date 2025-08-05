@@ -194,8 +194,8 @@ passiveSkill = {
     "느비예트": {
         "생존한 고대바다의 계승자": {"type": skillConstellationType.stack, "maxStack": 3, "description": "물 원소 관련 반응 발동 시 강공격 피해 증가", "unlockLevel": 1},
         "드높은 중재의 규율": {
-            "type": skillConstellationType.always,
-            "maxStack": 1,
+            "type": skillConstellationType.stack,
+            "maxStack": 50,
             "description": "현재 hp 중 hp 최대치의 30%를 초과하는 부분을 기반으로 1% 당 물 원소 피해 증가",
             "unlockLevel": 4,
         },

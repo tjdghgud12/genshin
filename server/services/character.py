@@ -612,6 +612,7 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
 
     # ----------------------- active -----------------------
     # active: 시틀라리의 active에는 버프 효과 존재 X
+
     # ----------------------- constellations -----------------------
     # 구름뱀의 깃털 왕관, 불길한 닷새의 저주, 심장을 삼키는 자의 순행는 fightProp에 영향 없거나 스킬에서 처리
     for constellation in characterInfo.constellations:
@@ -652,6 +653,44 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
 
 async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    # ----------------------- active -----------------------
+    # active: 느비예트의 active에는 버프 효과 존재 X
+
+    # ----------------------- constellations -----------------------
+    # 위대한 제정, 법의 계율, 고대의 의제, 연민의 왕관, 정의의 판결 fightProp에 영향 없거나 스킬에서 처리
+    for constellation in characterInfo.constellations:
+        if constellation["unlocked"]:
+            match constellation["name"]:
+                case "분노의 보상":  # 스킬 계수 추가
+                    description = "강공격 명중 시 hp최대치의 10% 물 원소 피해를 주는 격류 2개 소환"
+
+    # ----------------------- passive -----------------------
+    # 최종 HP 연산 완료 후 연산 필요로 인해 해당 위치로 이동(드높은 중재의 규율)
+    for passive in characterInfo.passiveSkill:
+        if passive["unlocked"]:
+            match passive["name"]:
+                case "생존한 고대바다의 계승자":
+                    firstConstellation = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "위대한 제정"), {})
+                    secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "법의 계율"), {})
+                    if firstConstellation.get("unlocked", False):
+                        passive["stack"] = min(passive["stack"] + 1, 3)
+                    if secondConstellation.get("unlocked", False):
+                        newFightProp[fightPropKeys.CHARGED_ATTACK_CRITICAL_HURT.value] += 0.14 * passive["stack"]
+                    # finallyAddHurt = [0, 0.10, 1.25, 1.60]   # 최종 데미지 곱연산
+                    # finallyAddHurt[passive["stack"]]
+                case "드높은 중c재의 규율":
+                    newFightProp[fightPropKeys.WATER_ADD_HURT.value] += 0.6 * passive["stack"]
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
     return newFightProp
 
 
