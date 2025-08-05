@@ -222,10 +222,11 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     # ----------------------- constellations -----------------------
     # # 계뢰, 가연, 등루, 이등의 경우 fightProp에 영행 X
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "조율":
-                    newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.25
+                    if constellation["active"]:
+                        newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.25
                 case "염정":
                     newFightProp[fightPropKeys.ELEC_ADD_HURT.value] += constellation["stack"] * 0.06
 
@@ -305,12 +306,13 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     # ----------------------- constellations -----------------------
     # # 지혜를 머금은 씨앗, 감화된 성취의 싹, 달변으로 맺은 열매, 깨달음을 주는 잎의 경우 fightProp에 영행 X
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "올곧은 선견의 뿌리":
                     # 연소, 개화, 만개, 발화의 치명타 효과는 일단 무시
                     # 활성, 촉진, 발산 반응 시 방어력 감소만 적용
-                    newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.3
+                    if constellation["active"]:
+                        newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.3
                 case "추론으로 드러난 줄기":
                     newFightProp[fightPropKeys.ELEMENT_MASTERY.value] += constellation["stack"] * 20 + 80
 
@@ -687,7 +689,7 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     # ----------------------- constellations -----------------------
     # 심연, 악연, 소망, 멸류는 fightProp에 영향 없거나 각 스킬 연산 시 처리
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "요원":  # 스킬 계수 추가
                     description = "허계 균열 1개 흡수할 때 마다 스커크 공격력의 500%에 해당하는 얼음 원소 피해 추가"
@@ -728,11 +730,139 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
 async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    # ----------------------- Artifact -----------------------
+    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
+    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+    artifactSetFightProp = artifactSetData["fightProp"]
+    if artifactSetData["afterAddProps"] != None:
+        for key in artifactSetData["afterAddProps"]:
+            artifactSetFightProp[key] = 0.0
+
+    # ----------------------- weapon -----------------------
+    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
+    weaponData = await getWeaponFightProp(
+        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+    )
+    weaponFightProp = weaponData["fightProp"]
+    if weaponData["afterAddProps"] != None:
+        for key in weaponData["afterAddProps"]:
+            weaponFightProp[key] = 0.0
+
+    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
+    for fightPropKey, value in artifactFightProp.items():
+        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+
+    # ----------------------- active -----------------------
+    # active: 에스코피에의 active에는 버프 효과 존재 X
+
+    # ----------------------- constellations -----------------------
+    # 캐러멜화의 마법, 다채로운 소스의 교향곡, 로즈마리 비밀 레시피는 fightProp에 영향X
+    for constellation in characterInfo.constellations:
+        if constellation["unlocked"]:
+            match constellation["name"]:
+                case "미각을 깨우는 식전 공연":
+                    if constellation["active"]:
+                        newFightProp[fightPropKeys.CRITICAL_HURT.value] += 0.6
+                case "예술의 경지에 이른 스튜":  # 스킬 계수 추가
+                    description = "원소 전투 스킬 발동 시 피해를 에스코피에의 공격력의 240%만큼 증가시키는 즉석 요리 스텍 획득(신학 깃털 효과)"
+                case "무지갯빛 티타임":  # 스킬 계수 추가
+                    description = "현재 필드 위에 있는 파티 내 자신의 캐릭터의 일반공격, 강공격, 낙하공격이 명중 시 에스코피에의 공격력의 500%에 해당하는 얼음 원소 추가 피해"
+
+    # ----------------------- passive -----------------------
+    # 밥이 보약은 fightProp에 영향X
+    for passive in characterInfo.passiveSkill:
+        if passive["unlocked"]:
+            match passive["name"]:
+                case "영감의 조미료":
+                    addIceWarterResMinus = [0, 0.05, 0.1, 0.15, 0.55]
+                    newFightProp[fightPropKeys.ICE_RES_MINUS.value] += addIceWarterResMinus[passive["stack"]]
+                    newFightProp[fightPropKeys.WATER_RES_MINUS.value] += addIceWarterResMinus[passive["stack"]]
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    if weaponData["afterAddProps"] != None:
+        finallyWeaponData = await getWeaponFightProp(
+            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+        )
+        for key in finallyWeaponData["afterAddProps"]:
+            newFightProp[key] += finallyWeaponData["fightProp"][key]
+
+    if artifactSetData["afterAddProps"] != None:
+        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+        for key in artifactSetData["afterAddProps"]:
+            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+
     return newFightProp
 
 
 async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    # ----------------------- Artifact -----------------------
+    artifactFightProp = getArtifactFightProp(characterInfo.artifact)
+    artifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+    artifactSetFightProp = artifactSetData["fightProp"]
+    if artifactSetData["afterAddProps"] != None:
+        for key in artifactSetData["afterAddProps"]:
+            artifactSetFightProp[key] = 0.0
+
+    # ----------------------- weapon -----------------------
+    getWeaponFightProp = getTotalWeaponFightProp[characterInfo.weapon["name"]]
+    weaponData = await getWeaponFightProp(
+        characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+    )
+    weaponFightProp = weaponData["fightProp"]
+    if weaponData["afterAddProps"] != None:
+        for key in weaponData["afterAddProps"]:
+            weaponFightProp[key] = 0.0
+
+    # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
+    for fightPropKey, value in artifactFightProp.items():
+        newFightProp[fightPropKey] += value + artifactSetFightProp[fightPropKey] + weaponFightProp[fightPropKey]
+
+    # ----------------------- active -----------------------
+    # active: 시틀라리의 active에는 버프 효과 존재 X
+    # ----------------------- constellations -----------------------
+    # 구름뱀의 깃털 왕관, 불길한 닷새의 저주, 심장을 삼키는 자의 순행는 fightProp에 영향 없거나 스킬에서 처리
+    for constellation in characterInfo.constellations:
+        if constellation["unlocked"]:
+            match constellation["name"]:
+                case "사백 개의 별빛":  # 스킬 계수 추가
+                    description = "파티 내 캐릭터가 공격 시 소모되는 별빛 검 스텍을 10개 획득. 별빛 검은 시틀라리의 원소 마스터리의 200%만큼 피해 증가"
+                case "죽음을 거부하는 자의 영혼 해골":  # 스킬 계수 추가
+                    if constellation["active"]:
+                        description = "서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해."
+                case "아홉 번째 하늘의 계약":
+                    newFightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.015 * constellation["stack"]
+                    newFightProp[fightPropKeys.WATER_ADD_HURT.value] += 0.015 * constellation["stack"]
+                    newFightProp[fightPropKeys.ATTACK_ADD_HURT.value] += 0.025 * constellation["stack"]
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive["unlocked"]:
+            match passive["name"]:
+                case "다섯 번째 하늘의 서리비":
+                    if passive["active"]:
+                        secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "심장을 삼키는 자의 순행"), {})
+                        if secondConstellation.get("unlocked", False):
+                            newFightProp[fightPropKeys.FIRE_RES_MINUS.value] += 0.2
+                            newFightProp[fightPropKeys.WATER_RES_MINUS.value] += 0.2
+                        newFightProp[fightPropKeys.FIRE_RES_MINUS.value] += 0.2
+                        newFightProp[fightPropKeys.WATER_RES_MINUS.value] += 0.2
+                case "하얀 불나비의 별옷":  # 스킬 계수 추가
+                    description = "원소 마스터리의 일정 비율 만큼 원소 전투 스킬 및 원소 폭발 피해 계수 추가"
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    if weaponData["afterAddProps"] != None:
+        finallyWeaponData = await getWeaponFightProp(
+            characterInfo.weapon["id"], characterInfo.weapon["level"], characterInfo.weapon["refinement"], characterInfo.weapon["option"], newFightProp
+        )
+        for key in finallyWeaponData["afterAddProps"]:
+            newFightProp[key] += finallyWeaponData["fightProp"][key]
+
+    if artifactSetData["afterAddProps"] != None:
+        finallyArtifactSetData = getArtifactSetData(characterInfo.artifact["setInfo"], newFightProp)
+        for key in artifactSetData["afterAddProps"]:
+            newFightProp[key] += finallyArtifactSetData["fightProp"][key]
+
     return newFightProp
 
 

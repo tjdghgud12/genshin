@@ -592,7 +592,7 @@ constellation = {
         },
         {
             "name": "죽음을 거부하는 자의 영혼 해골",
-            "type": skillConstellationType.always,
+            "type": skillConstellationType.toggle,
             "maxStack": 1,
             "description": "서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해. 재사용 대기시간 8초",
         },
