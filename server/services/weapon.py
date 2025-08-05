@@ -35,8 +35,8 @@ async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropSchem
     for baseStat in ambrWeaponDetail.upgrade.base_stats:
         if baseStat.prop_type is not None:
             fightProp[baseStat.prop_type] = baseStat.init_value * ambrWeaponCurve[baseStat.growth_type]
-    for addStat in promoteStat.add_stats or []:
-        fightProp[addStat.id] += addStat.value
+        for addStat in getattr(promoteStat, "add_stats", []):
+            fightProp[addStat.id] += addStat.value
 
     return fightProp
 
@@ -310,6 +310,6 @@ getTotalWeaponFightProp = {
     "맛의 지휘자": getSymphonistOfScentsFightProp,
     "별지기의 시선": getStarcallersWatchFightProp,
     "영원히 샘솟는 법전": getTomeOfTheEternalFlowFightProp,
-    "학자의 노트": getApprenticesNotesFightProp,
+    "학도의 노트": getApprenticesNotesFightProp,
     "타오르는 천 개의 태양": getAThousandBlazingSunsFightProp,
 }
