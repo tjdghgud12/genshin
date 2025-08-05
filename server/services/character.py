@@ -670,7 +670,6 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
                     description = "강공격 명중 시 hp최대치의 10% 물 원소 피해를 주는 격류 2개 소환"
 
     # ----------------------- passive -----------------------
-    # 최종 HP 연산 완료 후 연산 필요로 인해 해당 위치로 이동(드높은 중재의 규율)
     for passive in characterInfo.passiveSkill:
         if passive["unlocked"]:
             match passive["name"]:
@@ -683,7 +682,7 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
                         newFightProp[fightPropKeys.CHARGED_ATTACK_CRITICAL_HURT.value] += 0.14 * passive["stack"]
                     # finallyAddHurt = [0, 0.10, 1.25, 1.60]   # 최종 데미지 곱연산
                     # finallyAddHurt[passive["stack"]]
-                case "드높은 중c재의 규율":
+                case "드높은 중재의 규율":
                     newFightProp[fightPropKeys.WATER_ADD_HURT.value] += 0.6 * passive["stack"]
 
     # ----------------------- 추후 연산 진행부 -----------------------
@@ -696,6 +695,51 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
 
 async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropSchema:
     newFightProp: CharacterFightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp({**newFightProp}, characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    # ----------------------- active -----------------------
+    # active: 마비카의 active에는 버프 효과 존재 X
+
+    # ----------------------- constellations -----------------------
+    # 타오르는 태양, 진정한 의미, 「지도자」의 각오는 fightProp에 영향 없거나 다른 곳에서 처리
+    for constellation in characterInfo.constellations:
+        if constellation["unlocked"]:
+            match constellation["name"]:
+                case "밤 주인의 계시":
+                    if constellation["active"]:
+                        newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.4
+                case "잿더미의 대가":  # 스킬 계수 추가(일반공격, 강공격, 원소폭발의 석양 베기로 주는 피해가 마비카 공격력의 60%/90%/120%만큼 증가)
+                    newFightProp[fightPropKeys.BASE_ATTACK.value] += 200
+                    if constellation["active"]:
+                        newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.2
+
+                case "「인간의 이름」 해방":  # 스킬 계수 추가
+                    if constellation["active"]:
+                        newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.2
+                    description = "불볕 고리: 공격 적중 시 공격력의 200%에 해당하는 밤혼 성질의 불 원소 피해 추가. 바이크 : 주변 적 방어력 20% 감소 및 3초마다 공격력의 500%에 해당하는 밤혼 성질의 불 원소 피해 추가"
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive["unlocked"]:
+            match passive["name"]:
+                case "타오르는 꽃의 선물":
+                    if passive["active"]:
+                        newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.3
+                case "키온고지":
+                    fourthConstellation = next((constellation for constellation in characterInfo.constellations if constellation.get("name") == "「지도자」의 각오"), {})
+                    if fourthConstellation.get("unlocked", False):
+                        passive["stack"] = passive["maxStack"]
+                        newFightProp[fightPropKeys.AGGRAVATE_ADD_HURT.value] += 0.1
+                    newFightProp[fightPropKeys.AGGRAVATE_ADD_HURT.value] += 0.002 * passive["stack"]
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
     return newFightProp
 
 

@@ -203,8 +203,8 @@ passiveSkill = {
     "마비카": {
         "타오르는 꽃의 선물": {"type": skillConstellationType.toggle, "maxStack": 1, "description": "파티 내 캐릭터가 밤혼 발산 발동 시 마비카의 공격력 증가", "unlockLevel": 1},
         "키온고지": {
-            "type": skillConstellationType.toggle,
-            "maxStack": 1,
+            "type": skillConstellationType.stack,
+            "maxStack": 200,
             "description": "원소 폭발 발동 후 발동 당시 전의 스텍 1pt당 피해 증가 및 지속 시간 동안 점차 감소",
             "unlockLevel": 4,
         },
