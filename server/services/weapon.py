@@ -153,7 +153,7 @@ async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options:
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK.value]}
 
 
-async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.08, 0.14],
@@ -170,7 +170,31 @@ async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: 
             key = fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value if i == 0 else fightPropKeys.HP_PERCENT.value
             fightProp[key] += value * option["stack"]
 
-    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK.value]}
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getAzurelightFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropSchema) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.24, [0.24, 0.40]],
+        [0.30, [0.30, 0.50]],
+        [0.36, [0.36, 0.60]],
+        [0.42, [0.42, 0.70]],
+        [0.48, [0.48, 0.80]],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option["active"]:
+            value = refinementValue[i]
+            match i:
+                case 0:
+                    fightProp[fightPropKeys.ATTACK_PERCENT.value] += value
+                case 1:
+                    fightProp[fightPropKeys.ATTACK_PERCENT.value] += value[0]
+                    fightProp[fightPropKeys.CRITICAL_HURT.value] += value[1]
+
+    return {"fightProp": fightProp, "afterAddProps": None}
 
 
 getTotalWeaponFightProp = {
@@ -181,4 +205,5 @@ getTotalWeaponFightProp = {
     "예초의 번개": getEngulfingLightningFightProp,
     "호마의 지팡이": getStaffOfHomaFightProp,
     "고요히 샘솟는 빛": getSplendorOfTranquilWatersFightProp,
+    "창백한 섬광": getAzurelightFightProp,
 }
