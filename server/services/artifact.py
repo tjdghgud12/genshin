@@ -23,7 +23,7 @@ def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict], _
                 if numberOfParts >= 4:
                     fightProp[fightPropKeys.CRITICAL.value] += 0.12 * info["stack"]
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -38,7 +38,7 @@ def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict], _cha
                 if numberOfParts >= 4:
                     fightProp[fightPropKeys.CRITICAL.value] += 0.2 * info["stack"]
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -56,7 +56,7 @@ def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict], _char
                     fightProp[fightPropKeys.HYPERBLOOM_ADD_HURT.value] += 0.4
                     fightProp[fightPropKeys.AGGRAVATE_ADD_HURT.value] += 0.2
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -70,7 +70,7 @@ def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict], _ch
                 if numberOfParts >= 4:
                     fightProp[fightPropKeys.GRASS_RES_MINUS.value] += 0.3
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -103,7 +103,7 @@ def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict],
                     fightProp[fightPropKeys.MELT_ADD_HURT.value] += 0.15
                     fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.075 * info["stack"]
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getGoldenTroupeSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -119,7 +119,7 @@ def getGoldenTroupeSetOption(numberOfParts: int, optionInfo: list[dict], _charac
                     if info["active"]:
                         fightProp[fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value] += 0.25
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getFinaleOfTheDeepGalleriesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -135,7 +135,7 @@ def getFinaleOfTheDeepGalleriesSetOption(numberOfParts: int, optionInfo: list[di
                         fightProp[fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value] += 0.60
                         fightProp[fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value] += 0.60
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getScrollOfTheHeroOfCinderCitySetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -151,7 +151,7 @@ def getScrollOfTheHeroOfCinderCitySetOption(numberOfParts: int, optionInfo: list
                     if info["active"]:
                         fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += 0.28
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 def getObsidianCodexSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
@@ -167,7 +167,7 @@ def getObsidianCodexSetOption(numberOfParts: int, optionInfo: list[dict], _chara
                     if info["active"]:
                         fightProp[fightPropKeys.CRITICAL.value] += 0.40
 
-    return {"fightProp": fightProp, "afterAddProps": None}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
 getArtifactSetsFightProp = {
@@ -212,7 +212,7 @@ def getArtifactSetData(setInfos: list[dict], characterFightProp: CharacterFightP
         for fightPropKey, value in setOptionFightProp["fightProp"].items():
             fightProp[fightPropKey] += value
 
-    return {"fightProp": fightProp, "afterAddProps": afterAddProps}
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=afterAddProps)
 
 
 def getArtifactSetInfo(artifacts: list[dict]):
