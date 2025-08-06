@@ -5,24 +5,34 @@
 			"path": "./client"
 		},
 		{
-			"name": "server", 
+			"name": "server",
 			"path": "./server"
 		}
 	],
 	"settings": {
-		"typescript.preferences.includePackageJsonAutoImports": "off"
+		"typescript.preferences.includePackageJsonAutoImports": "off",
+		"search.exclude": {
+			"**/.yarn": true,
+			"**/.pnp.*": true
+		}
 	},
 	 "launch": {
 		"version": "0.2.0",
 		"configurations": [
 			{
-				"name": "Next Precess",
-				"type": "node",
+				"name": "Next Process",
+				"type": "node-terminal",
 				"request": "launch",
-				"runtimeExecutable": "yarn",
-				"runtimeArgs": ["dev"],
+				"command": "yarn dev",
 				"cwd": "${workspaceFolder:client}",
-				"console": "integratedTerminal"
+				"env": {
+					"NODE_OPTIONS": "--require ${workspaceFolder:client}/.pnp.cjs"
+				},
+				"skipFiles": [
+					"<node_internals>/**",
+					"${workspaceFolder:client}/.pnp.cjs",
+					"${workspaceFolder:client}/.yarn/**"
+				]
 			},
 			{
 				"name": "Fast API Process",
@@ -42,7 +52,7 @@
 		"compounds": [
 		{
 			"name": "Debug Next & Fast API",
-			"configurations": ["Next Precess", "Fast API Process"]
+			"configurations": ["Next Process", "Fast API Process"]
 		}
 		]
 	}
