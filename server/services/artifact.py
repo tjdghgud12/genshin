@@ -143,7 +143,7 @@ def getScrollOfTheHeroOfCinderCitySetOption(numberOfParts: int, optionInfo: list
     for i, info in enumerate(optionInfo):
         match i:
             case 1:
-                if numberOfParts >= 4:
+                if numberOfParts >= 2:
                     if info["active"]:
                         fightProp[fightPropKeys.ATTACK_ADD_HURT.value] += 0.12
             case 2:
