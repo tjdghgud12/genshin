@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Fast API Process",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "fastapi",
+            "args": [
+                "dev",
+                "main.py",
+                "--reload",
+                "--port", "9001"
+            ],
+            "justMyCode": true,
+            "cwd": "${workspaceFolder:server}"
+        }
+    ]
+}

@@ -33,7 +33,6 @@ coverage.xml
 *.db
 
 # IDE / Editor config
-.vscode/
 .idea/
 
 # dotenv / 환경설정 파일
