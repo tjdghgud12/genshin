@@ -1,20 +1,29 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Next Process",
-            "type": "node-terminal",
-            "request": "launch",
-            "command": "yarn dev",
-            "cwd": "${workspaceFolder}",
-            // "env": {
-            //     "NODE_OPTIONS": "--require ${workspaceFolder:client}/.pnp.cjs"
-            // },
-            "skipFiles": [
-                "<node_internals>/**",
-                "${workspaceFolder}/.pnp.cjs",
-                "${workspaceFolder}/.yarn/**"
-            ]
-        },
-    ],
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next Server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "yarn dev",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/.pnp.cjs", "${workspaceFolder}/.yarn/**"],
+      "sourceMaps": true
+    },
+    {
+      "name": "Attach to Chrome",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}",
+      "urlFilter": "http://localhost:9000/*",
+      "trace": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Next Process",
+      "configurations": ["Next Server", "Attach to Chrome"]
+    }
+  ]
 }

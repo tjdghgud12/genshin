@@ -69,7 +69,7 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "editor.rulers": [80, 120],
+  // "editor.rulers": [120],
 
   // Next.js 관련 (Next.js 프로젝트인 경우)
   "emmet.includeLanguages": {
