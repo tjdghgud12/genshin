@@ -1,0 +1,91 @@
+"use client";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import api from "@/lib/axios";
+import { useCalculatorStore } from "@/store/useCalculatorStore";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Home, Search } from "lucide-react";
+// import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "../../components/ui/button";
+
+// **************************** Schema ****************************
+const uidFormSchema = z.object({
+  uid: z.string().min(9, { error: "UID를 확인해주세요." }).max(12, {
+    error: "UID를 확인해주세요.",
+  }),
+});
+// **************************** Schema ****************************
+
+const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>): React.ReactElement => {
+  const router = useRouter();
+  const setCalculatorData = useCalculatorStore((state) => state.setTotalCalculatorData);
+
+  const form = useForm<z.infer<typeof uidFormSchema>>({
+    resolver: zodResolver(uidFormSchema),
+    defaultValues: {
+      uid: "",
+    },
+  });
+
+  const handleUid = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const uid = e.target.value;
+    if (/^\d*$/.test(uid)) {
+      form.setValue("uid", uid);
+    }
+  };
+
+  const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
+    toast.promise(api.get(`/api/user/${valus.uid}`), {
+      loading: "로딩 중",
+      success: (res) => {
+        setCalculatorData(res.data.characters);
+        const searchParams = new URLSearchParams({ uid: valus.uid });
+        router.push(`/calculator?${searchParams.toString()}`);
+        return "성공요";
+      },
+      error: (err) => {
+        console.log(err);
+        return "실패요";
+      },
+    });
+  };
+
+  return (
+    <div>
+      <div className="w-full min-w-[1100px] flex">
+        {/* Header */}
+        <Link className="w-fit h-fit rounded-full" href={`/`}>
+          {/* <Image src={`/img/paimon-face.png`} alt="" priority width={60} height={60} /> */}
+          <Home width={60} height={60} />
+        </Link>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 m-auto">
+            <FormField
+              control={form.control}
+              name="uid"
+              render={({ field }) => (
+                <FormItem id="qawdasd" className="w-full">
+                  <FormControl>
+                    <Input className="w-full border-none shadow-none focus-visible:ring-0" {...field} onChange={handleUid} maxLength={12} placeholder="UID" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-auto bg-transparent rounded-full text-stone-500  hover:bg-stone-300 hover:text-white">
+              <Search />
+            </Button>
+          </form>
+        </Form>
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+};
+
+export default CalculratorLayout;
