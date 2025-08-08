@@ -7,12 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Home, Search } from "lucide-react";
 // import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../../components/ui/button";
+import { DotBounsLoading } from "../loading";
 
 // **************************** Schema ****************************
 const uidFormSchema = z.object({
@@ -25,11 +26,13 @@ const uidFormSchema = z.object({
 const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>): React.ReactElement => {
   const router = useRouter();
   const setCalculatorData = useCalculatorStore((state) => state.setTotalCalculatorData);
+  const [waitUserInfoFlag, setWaitUserInfoFlag] = useState<boolean>(false);
+  const searchParams = useSearchParams();
 
   const form = useForm<z.infer<typeof uidFormSchema>>({
     resolver: zodResolver(uidFormSchema),
     defaultValues: {
-      uid: "",
+      uid: searchParams.get("uid")?.toString(),
     },
   });
 
@@ -41,49 +44,60 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
   };
 
   const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
+    setWaitUserInfoFlag(true);
     toast.promise(api.get(`/api/user/${valus.uid}`), {
       loading: "로딩 중",
       success: (res) => {
         setCalculatorData(res.data.characters);
         const searchParams = new URLSearchParams({ uid: valus.uid });
         router.push(`/calculator?${searchParams.toString()}`);
+        setWaitUserInfoFlag(false);
         return "성공요";
       },
       error: (err) => {
         console.log(err);
+        setWaitUserInfoFlag(false);
         return "실패요";
       },
     });
   };
 
   return (
-    <div>
-      <div className="w-full flex">
-        {/* Header */}
-        <Link className="w-fit h-fit rounded-full" href={`/`}>
-          {/* <Image src={`/img/paimon-face.png`} alt="" priority width={60} height={60} /> */}
-          <Home className="text-indigo-800" width={60} height={60} />
-        </Link>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 m-auto">
-            <FormField
-              control={form.control}
-              name="uid"
-              render={({ field }) => (
-                <FormItem id="qawdasd" className="w-full">
-                  <FormControl>
-                    <Input className="w-full border-none shadow-none focus-visible:ring-0" {...field} onChange={handleUid} maxLength={12} placeholder="UID" />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-auto bg-transparent rounded-full text-stone-500  hover:bg-stone-300 hover:text-white">
-              <Search />
-            </Button>
-          </form>
-        </Form>
-      </div>
-      <div>{children}</div>
+    <div className="w-full h-full flex flex-col">
+      {waitUserInfoFlag ? (
+        <div className="m-auto">
+          <DotBounsLoading />
+        </div>
+      ) : (
+        <Fragment>
+          <div className="w-full flex">
+            {/* Header */}
+            <Link className="w-fit h-fit rounded-full" href={`/`}>
+              {/* <Image src={`/img/paimon-face.png`} alt="" priority width={60} height={60} /> */}
+              <Home className="text-indigo-800" width={60} height={60} />
+            </Link>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 m-auto">
+                <FormField
+                  control={form.control}
+                  name="uid"
+                  render={({ field }) => (
+                    <FormItem id="qawdasd" className="w-full">
+                      <FormControl>
+                        <Input className="w-full border-none shadow-none focus-visible:ring-0" {...field} onChange={handleUid} maxLength={12} placeholder="UID" />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-auto bg-transparent rounded-full text-stone-500  hover:bg-stone-300 hover:text-white">
+                  <Search />
+                </Button>
+              </form>
+            </Form>
+          </div>
+          <main>{children}</main>
+        </Fragment>
+      )}
     </div>
   );
 };
