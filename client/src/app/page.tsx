@@ -46,6 +46,7 @@ const Home = (): React.ReactElement => {
       loading: "캐릭터 진열장의 정보를 읽어오는 중 입니다.",
       success: (res) => {
         setCalculatorData(res.data.characters);
+        window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
         const searchParams = new URLSearchParams({ uid: valus.uid });
         router.push(`/calculator?${searchParams.toString()}`);
         // setWaitUserInfoFlag(false);
@@ -60,43 +61,41 @@ const Home = (): React.ReactElement => {
   };
 
   return (
-    <div>
-      <main className="w-screen h-screen min-w-[1200px] min-h-[500px] flex flex-col">
-        {waitUserInfoFlag ? (
-          <div className="m-auto">
-            <DotBounsLoading />
+    <main className="w-full h-full flex flex-col">
+      {waitUserInfoFlag ? (
+        <div className="m-auto">
+          <DotBounsLoading />
+        </div>
+      ) : (
+        <Fragment>
+          <div className="h-1/2 flex">
+            <h1 className="text-8xl font-bold text-violet-800 mt-auto mb-4 mx-auto">Calculator</h1>
           </div>
-        ) : (
-          <Fragment>
-            <div className="h-1/2 flex">
-              <h1 className="text-8xl font-bold text-violet-800 mt-auto mb-4 mx-auto">Calculator</h1>
-            </div>
-            <Toaster richColors />
-            <div />
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex mx-auto">
-                <FormField
-                  control={form.control}
-                  name="uid"
-                  render={({ field }) => (
-                    <FormItem id="qawdasd" className="w-1/7 h-fit mr-1 ml-auto">
-                      <FormControl>
-                        <Input placeholder="UID" className=" p-0 text-center" {...field} onChange={handleUid} maxLength={12} />
-                      </FormControl>
-                      <FormDescription />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="mr-auto" disabled={waitUserInfoFlag}>
-                  Submit
-                </Button>
-              </form>
-            </Form>
-          </Fragment>
-        )}
-      </main>
-    </div>
+          <Toaster richColors />
+          <div />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex mx-auto">
+              <FormField
+                control={form.control}
+                name="uid"
+                render={({ field }) => (
+                  <FormItem id="qawdasd" className="w-1/7 h-fit mr-1 ml-auto">
+                    <FormControl>
+                      <Input placeholder="UID" className=" p-0 text-center" {...field} onChange={handleUid} maxLength={12} />
+                    </FormControl>
+                    <FormDescription />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="mr-auto" disabled={waitUserInfoFlag}>
+                Submit
+              </Button>
+            </form>
+          </Form>
+        </Fragment>
+      )}
+    </main>
   );
 };
 
