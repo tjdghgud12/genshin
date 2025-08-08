@@ -58,11 +58,11 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
 
   return (
     <div>
-      <div className="w-full min-w-[1100px] flex">
+      <div className="w-full flex">
         {/* Header */}
         <Link className="w-fit h-fit rounded-full" href={`/`}>
           {/* <Image src={`/img/paimon-face.png`} alt="" priority width={60} height={60} /> */}
-          <Home width={60} height={60} />
+          <Home className="text-indigo-800" width={60} height={60} />
         </Link>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 m-auto">
