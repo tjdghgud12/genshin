@@ -1,6 +1,6 @@
-import { IArtifactInfo } from "@/types/artifact";
-import { ICharacterInfo } from "@/types/character";
-import { IWeaponInfo } from "@/types/weapon";
+import { IArtifactInfo } from "@/types/artifactType";
+import { ICharacterInfo } from "@/types/characterType";
+import { IWeaponInfo } from "@/types/weaponType";
 import { create } from "zustand";
 
 interface IUserCharacterData extends ICharacterInfo {
