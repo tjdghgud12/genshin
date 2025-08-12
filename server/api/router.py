@@ -61,12 +61,10 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             passive = list(filter(lambda talent: talent.type.name == "ULTIMATE" and characterPassive.get(talent.name), ambrCharacterDetail.talents))
             for i, skill in enumerate(passive):
                 unlocked = avatar.ascension >= (1 if i == 0 else 4)
-                skillOption = characterPassive.get(skill.name) or passiveSkillType(skillConstellationType.always, 1, "", 1)
+                skillOption = characterPassive.get(skill.name) or passiveSkillType(skillConstellationType.always, 1, "", 1, "")
                 characterInfo["passiveSkill"].append(
                     {
-                        "type": skillOption.type,
-                        "maxStack": skillOption.maxStack,
-                        "unlockLevel": skillOption.unlockLevel,
+                        **vars(skillOption),
                         "name": skill.name,
                         "icon": skill.icon,
                         "description": skill.description,
