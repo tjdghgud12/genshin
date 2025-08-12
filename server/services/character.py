@@ -158,6 +158,8 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
     for constellation in characterInfo.constellations:
         if constellation["unlocked"] and constellation["active"]:
             match constellation["name"]:
+                case "삼중 서리 관문":  # 최종 데미지 기준 추가 피해
+                    description = "원소 폭발 발동 시 기존 공격력의 20%의 피해를 주는 소형 서리 관문 2개 추가"
                 case "영고성쇠":
                     newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.3
                 case "물에 비친 달":
@@ -190,10 +192,12 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     newFightProp[fightPropKeys.CHARGE_EFFICIENCY.value] += 0.15
 
     # ----------------------- constellations -----------------------
-    # # 계뢰, 가연, 등루, 이등의 경우 fightProp에 영행 X
+    # # 가연, 등루, 이등의 경우 fightProp에 영행 X
     for constellation in characterInfo.constellations:
         if constellation["unlocked"]:
             match constellation["name"]:
+                case "계뢰":  # 원소 전투 스킬 추가 피해
+                    description = "뇌설이 존재하는 동안 다시 원소 전투 스킬 발동 시 공격력의 50%의 번개 원소 피해 추가"
                 case "조율":
                     if constellation["active"]:
                         newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.25
@@ -614,12 +618,16 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     # active: 시틀라리의 active에는 버프 효과 존재 X
 
     # ----------------------- constellations -----------------------
-    # 구름뱀의 깃털 왕관, 불길한 닷새의 저주, 심장을 삼키는 자의 순행는 fightProp에 영향 없거나 스킬에서 처리
+    # 구름뱀의 깃털 왕관, 불길한 닷새의 저주은 fightProp에 영향 없거나 스킬에서 처리
     for constellation in characterInfo.constellations:
         if constellation["unlocked"]:
             match constellation["name"]:
                 case "사백 개의 별빛":  # 스킬 계수 추가
                     description = "파티 내 캐릭터가 공격 시 소모되는 별빛 검 스텍을 10개 획득. 별빛 검은 시틀라리의 원소 마스터리의 200%만큼 피해 증가"
+                case "심장을 삼키는 자의 순행":
+                    newFightProp[fightPropKeys.ELEMENT_MASTERY.value] += 125
+                    if constellation["active"]:
+                        newFightProp[fightPropKeys.ELEMENT_MASTERY.value] += 250
                 case "죽음을 거부하는 자의 영혼 해골":  # 스킬 계수 추가
                     if constellation["active"]:
                         description = "서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해."

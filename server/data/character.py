@@ -292,7 +292,7 @@ constellation = {
             description="일반 공격 또는 강공격으로 얼음 원소 피해를 주면, 50% 확률로 원소 전투 스킬의 재사용 대기시간이 0.3초 감소",
         ),
         contellationType(
-            name="삼중 서리 관문", type=skillConstellationType.toggle, maxStack=1, description="원소 폭발 발동 시 기존 공격력의 20%의 피해를 주는 소형 서리 관문 2개 추가"
+            name="삼중 서리 관문", type=skillConstellationType.always, maxStack=1, description="원소 폭발 발동 시 기존 공격력의 20%의 피해를 주는 소형 서리 관문 2개 추가"
         ),
         contellationType(name="흩날리는 카미후부키", type=skillConstellationType.always, maxStack=1, description="원소 폭발 레벨 +3"),
         contellationType(name="영고성쇠", type=skillConstellationType.toggle, maxStack=1, description="원소 폭발의 피해를 받은 적의 방어력 30% 감소"),
@@ -369,7 +369,9 @@ constellation = {
     ],
     "야란": [
         contellationType(name="승부에 뛰어든 공모자", type=skillConstellationType.always, maxStack=1, description="원소 전투 스킬 사용 가능 횟수 +1"),
-        contellationType(name="올가미에 걸린 적", type=skillConstellationType.always, maxStack=1, description="원소 폭발의 협동 공격 시 야란 hp 최대치의 14%의 추가 데미지"),
+        contellationType(
+            name="올가미에 걸린 적", type=skillConstellationType.always, maxStack=1, description="원소 폭발의 협동 공격 시 야란 hp 최대치의 14%의 추가 데미지. 쿨타임 1.8초"
+        ),
         contellationType(name="노름꾼의 주사위", type=skillConstellationType.always, maxStack=1, description="원소 폭발 레벨 +3"),
         contellationType(name="이화접목의 현혹술", type=skillConstellationType.stack, maxStack=4, description="원소 전투 스킬에 명중한 적 당 hp최대치 증가"),
         contellationType(name="눈보다 빠른 손", type=skillConstellationType.always, maxStack=1, description="원소 전투 스킬 레벨 +3"),
@@ -382,7 +384,9 @@ constellation = {
             maxStack=1,
             description="원소 폭발 발동 시 무대 열기 +150pt 및 무대 열기 최대치 +100pt",
         ),
-        contellationType(name="「여자의 마음은 흔들리는 부평초」", type=skillConstellationType.toggle, maxStack=1, description="원소 폭발 시간 동안 무대 열기 당 hp최대치 증가"),
+        contellationType(
+            name="「여자의 마음은 흔들리는 부평초」", type=skillConstellationType.always, maxStack=1, description="원소 폭발 발동 시 지속 시간 동인 무대 열기 당 hp최대치 증가"
+        ),
         contellationType(name="「내 이름은 그 누구도 모르리라」", type=skillConstellationType.always, maxStack=1, description="원소 폭발 레벨 +3"),
         contellationType(
             name="「저승에서 느낀 삶의 소중함!」", type=skillConstellationType.always, maxStack=1, description="원소 전투 스킬이 적 명중 또는 파티원 회복 시 원소 에너지 획득"
@@ -406,7 +410,7 @@ constellation = {
             name="심장을 삼키는 자의 순행",
             type=skillConstellationType.toggle,
             maxStack=1,
-            description="원소 전투 스킬 사용 시 원소 마스터리 증가 및 빙결 또는 융해 반응 시 물 원소, 불 원소의 내성을 추가로 20% 감소",
+            description="원소 전투 스킬 사용 시 원소 마스터리 증가 및 다섯 번째 하늘의 서리비 강화(물, 불 원소 내성 감소 각각 20% 추가 감소)",
         ),
         contellationType(name="구름뱀의 깃털 왕관", type=skillConstellationType.always, maxStack=1, description="원소 전투 스킬 레벨 +3"),
         contellationType(
