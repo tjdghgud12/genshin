@@ -41,6 +41,13 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-Fire: oklch(0.7095 0.1851 34.2);
+  --color-Water: oklch(0.6517 0.1874 257.41);
+  --color-Wind: oklch(0.8067 0.1018 165.36);
+  --color-Electric: oklch(0.6474 0.218 297.77);
+  --color-Ice: oklch(0.8737 0.0731 211.26);
+  --color-Rock: oklch(0.8833 0.1285 90.37);
+  --color-Grass: oklch(0.6579 0.1581 139.95);
 }
 
 :root {
