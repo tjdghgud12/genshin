@@ -37,13 +37,15 @@ const CharacterOptionControlCircle = ({
     <Fragment>
       <div className="w-fit h-fit flex">
         {type === "always" ? (
-          <div className={`w-[5vw] h-[5vw] border-3 bg-gray-500 rounded-full border-white flex justify-center relative`}>
+          <div
+            className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full ${unlocked ? "border-white" : "border-stone-400 opacity-50"} flex justify-center relative`}
+          >
             <Image src={icon} alt="" priority fill sizes="(max-width: 768px) 5vw, (max-width: 1200px) 50vw, 5vw" />
           </div>
         ) : (
           <Fragment>
             <Button
-              className={`w-[5vw] h-[5vw] border-3 bg-gray-500 rounded-full relative ${active ? "border-white" : "border-stone-400"} hover:bg-gray-800`}
+              className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full relative ${active && unlocked ? "border-white" : "border-stone-400"} hover:bg-gray-800`}
               disabled={!unlocked}
               onClick={onClick}
             >
@@ -53,7 +55,7 @@ const CharacterOptionControlCircle = ({
             {type === "stack" && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button className="bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
+                  <Button disabled={!unlocked} className="bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
                     <Settings className="size-6 " />
                   </Button>
                 </PopoverTrigger>
@@ -86,104 +88,157 @@ const CharacterSettingCard = ({
   item: z.infer<typeof calculatorFormSchema>;
   index: number;
 }): React.ReactElement => {
-  const { passiveSkill, activeSkill, constellations } = useWatch({ control: form.control, name: `data.${index}` });
+  const { passiveSkill, activeSkill, constellations, raw } = useWatch({ control: form.control, name: `data.${index}` });
 
   return (
     <>
-      <div className={`w-1/2 h-[500px] bg-right bg-size-[125%] bg-no-repeat flex px-8 py-3`}>
-        {/* <div className={`w-1/2 h-[500px] bg-right bg-size-[125%] bg-no-repeat opacity-90 flex`} style={{ backgroundImage: `url('${rawInfo.icon.gacha}')` }}> */}
-        <div className="mr-auto flex flex-col">
-          <FormField
-            control={form.control}
-            name={`data.${index}.level`}
-            render={({ field }) => (
-              <FormItem className="w-fit mb-auto mx-auto justify-start">
-                <div className="flex">
-                  <FormLabel className="w-fit text-xl font-bold my-auto">Lv: </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="w-full border-none text-xl font-bold shadow-none focus-visible:ring-0 input-removeArrow"
-                      {...field}
-                      value={field.value}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => form.setValue(`data.${index}.level`, Number(e.target.value))}
-                      type="number"
-                      min={1}
-                      max={90}
-                      placeholder="Level"
-                    />
-                  </FormControl>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <div className={`w-1/2 h-fit min-h-[500px] bg-right bg-size-[125%] bg-no-repeat flex flex-col px-8 py-3`}>
+        {/* <div className={`w-1/2 h-fit min-h-[500px] bg-right bg-size-[125%] bg-no-repeat opacity-90 flex flex-col px-8 py-3`} style={{ backgroundImage: `url('${raw.icon.gacha}')` }}> */}
+        <FormField
+          control={form.control}
+          name={`data.${index}.level`}
+          render={({ field }) => (
+            <FormItem className="w-fit mb-auto justify-start">
+              <div className="flex">
+                <FormLabel className="w-fit text-xl font-bold my-auto">Lv: </FormLabel>
+                <FormControl>
+                  <Input
+                    className="w-full border-none text-xl font-bold shadow-none focus-visible:ring-0 input-removeArrow"
+                    {...field}
+                    value={field.value}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => form.setValue(`data.${index}.level`, Number(e.target.value))}
+                    type="number"
+                    min={1}
+                    max={90}
+                    placeholder="Level"
+                  />
+                </FormControl>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="w-full h-auto flex">
+          <div className="mr-auto flex flex-col mt-auto">
+            {item.passiveSkill.map((passive, j) => {
+              const passiveInfo = item.raw.passiveSkill[j];
 
-          {item.passiveSkill.map((passive, j) => {
-            const passiveInfo = item.raw.passiveSkill[j];
-            // 여기서 on/off에 맞춰서 변경하자.
-            // 클릭으로 on/off
-            // 스텍값 입력은?????? 아래에 뭔가 추가해야하는데 그건 어캄???
-            // 여기서 선택적 랜더링 들어가야겠네
-            // 버튼 내부에 가능한가???? 인풋이
-            // 아 클릭이 되네.
-            // 음 스텍인 경우는 어떻게 처리할까. 애매허이
-            // 음 버튼 클릭 영역이 자식쪽이냐 아니냐로 갈릴꺼같은데,
-            return (
-              <FormField
-                key={`passive-${index}-${j}`}
-                control={form.control}
-                name={`data.${index}.passiveSkill.${j}`}
-                render={() => (
-                  <FormItem className="w-fit mt-3 justify-start">
-                    <div className="flex">
-                      <FormControl className="w-fit h-fit flex flex-col">
-                        <CharacterOptionControlCircle
-                          type={passiveInfo.type}
-                          active={passiveSkill[j].active}
-                          unlocked={passive.unlocked}
-                          stack={passive.stack}
-                          maxStack={passiveInfo.maxStack}
-                          inputLabel={passiveInfo.label}
-                          icon={passiveInfo.icon}
-                          onClick={() => form.setValue(`data.${index}.passiveSkill.${j}`, { ...passive, active: !passive.active })}
-                          onChange={(e) => {
-                            if (/^\d*$/.test(e.target.value)) {
-                              const value = Number(e.target.value);
-                              form.setValue(`data.${index}.passiveSkill.${j}`, { ...passive, stack: value > passiveInfo.maxStack ? passiveInfo.maxStack : value });
-                            }
-                          }}
-                        />
+              return (
+                <FormField
+                  key={`passive-${index}-${j}`}
+                  control={form.control}
+                  name={`data.${index}.passiveSkill.${j}`}
+                  render={() => (
+                    <FormItem className="w-fit mt-3 justify-start">
+                      <div className="flex">
+                        <FormControl className="w-fit h-fit flex flex-col">
+                          <CharacterOptionControlCircle
+                            type={passiveInfo.type}
+                            active={passiveSkill[j].active}
+                            unlocked={passive.unlocked}
+                            stack={passive.stack}
+                            maxStack={passiveInfo.maxStack}
+                            inputLabel={passiveInfo.label}
+                            icon={passiveInfo.icon}
+                            onClick={() => form.setValue(`data.${index}.passiveSkill.${j}`, { ...passive, active: !passive.active })}
+                            onChange={(e) => {
+                              if (/^\d*$/.test(e.target.value)) {
+                                const value = Number(e.target.value);
+                                form.setValue(`data.${index}.passiveSkill.${j}`, { ...passive, stack: value > passiveInfo.maxStack ? passiveInfo.maxStack : value });
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
+          </div>
+          <div className="w-[18%] h-full flex flex-col mt-auto mr-3">
+            {item.activeSkill.map((active, j) => {
+              const activeInfo = item.raw.activeSkill[j];
 
-                        {/* <Button
-                          className={`w-[5vw] h-[5vw] border-3 bg-gray-500 rounded-full ${passiveSkill[j].active ? "border-white" : "border-stone-400"} hover:bg-gray-800`}
-                          disabled={!passive.unlocked}
-                          onClick={() => {
-                            form.setValue(`data.${index}.passiveSkill.${j}`, { ...passive, active: !passive.active });
-                          }}
-                        >
-                          <Image src={passiveInfo.icon} alt="" priority width={60} height={60} />
-                        </Button> */}
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            );
-          })}
-        </div>
-        <div className="h-full flex flex-col">
-          <div>평타</div>
-          <div>원소 전투</div>
-          <div>원소 폭발</div>
-        </div>
-        <div className="h-full flex flex-col">
-          <div>1돌</div>
-          <div>2돌</div>
-          <div>3돌</div>
-          <div>4돌</div>
-          <div>5돌</div>
-          <div>6돌</div>
+              return (
+                <FormField
+                  key={`activeSkill-${index}-${j}`}
+                  control={form.control}
+                  name={`data.${index}.activeSkill.${j}`}
+                  render={() => (
+                    <FormItem className="w-fit mt-3 justify-start">
+                      <div className="flex">
+                        <FormControl className="w-fit h-fit flex flex-col">
+                          <CharacterOptionControlCircle
+                            type={activeInfo.type}
+                            active={activeSkill[j].active}
+                            unlocked
+                            stack={active.stack}
+                            maxStack={activeInfo.maxStack}
+                            inputLabel={activeInfo.label}
+                            icon={activeInfo.icon}
+                            onClick={() => form.setValue(`data.${index}.activeSkill.${j}`, { ...active, active: !active.active })}
+                            onChange={(e) => {
+                              if (/^\d*$/.test(e.target.value)) {
+                                const value = Number(e.target.value);
+                                form.setValue(`data.${index}.activeSkill.${j}`, {
+                                  ...active,
+                                  stack: value > activeInfo.maxStack ? activeInfo.maxStack : value,
+                                });
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
+          </div>
+          <div className="w-[18%] h-full flex flex-col mt-auto">
+            {item.constellations.map((constellation, j) => {
+              const constellationInfo = item.raw.constellations[j];
+
+              return (
+                <FormField
+                  key={`constellations-${index}-${j}`}
+                  control={form.control}
+                  name={`data.${index}.constellations.${j}`}
+                  render={() => (
+                    <FormItem className="w-fit mt-3 justify-start">
+                      <div className="flex">
+                        <FormControl className="w-fit h-fit flex flex-col">
+                          <CharacterOptionControlCircle
+                            type={constellationInfo.type}
+                            active={constellations[j].active}
+                            unlocked={constellation.unlocked}
+                            stack={constellation.stack}
+                            maxStack={constellationInfo.maxStack}
+                            inputLabel={constellationInfo.label}
+                            icon={constellationInfo.icon}
+                            onClick={() => form.setValue(`data.${index}.constellations.${j}`, { ...constellation, active: !constellation.active })}
+                            onChange={(e) => {
+                              if (/^\d*$/.test(e.target.value)) {
+                                const value = Number(e.target.value);
+                                form.setValue(`data.${index}.constellations.${j}`, {
+                                  ...constellation,
+                                  stack: value > constellationInfo.maxStack ? constellationInfo.maxStack : value,
+                                });
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
       <div className="w-1/2">무기 성유물 영역</div>
