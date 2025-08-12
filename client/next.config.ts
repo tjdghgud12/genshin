@@ -7,6 +7,22 @@ const nextConfig: NextConfig = {
   //   config.resolve.symlinks = false;
   //   return config;
   // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "enka.network",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "gi.yatta.moe",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
