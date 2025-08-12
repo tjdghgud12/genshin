@@ -82,25 +82,25 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                     {
                         "name": skill.name,
                         "level": skill.level,
-                        "type": skillOption.get("type") if skillOption else "always",
+                        "type": skillOption.type if skillOption else "always",
                         "icon": skill.icon,
                         "description": skillDetail.description,
                         "active": True,
-                        "stack": skillOption.get("maxStack") if skillOption else 0,
+                        "stack": skillOption.maxStack if skillOption else 0,
                     }
                 )
 
             for i, defaultConstellation in enumerate(characterConstellation):
-                name = defaultConstellation["name"]
+                name = defaultConstellation.name
                 characterInfo["constellations"].append(
                     {
-                        **defaultConstellation,
+                        **vars(defaultConstellation),
                         "icon": enkaConstellation[name].icon,
                         "unlocked": enkaConstellation[name].unlocked,
                         # "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
                         "description": ambrConstellation[name].description,
                         "active": False if skill.name in defaultFalseConstellation else True,
-                        "stack": defaultConstellation.get("maxStack"),
+                        "stack": defaultConstellation.maxStack,
                     }
                 )
 
