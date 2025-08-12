@@ -20,6 +20,7 @@ interface IuserSelectOption {
 const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalculatorData: T): TCalculatorData => {
   const data = rawCalculatorData.info;
   return {
+    raw: data,
     level: data.level,
     constellations: data.constellations.map((constellation: IuserSelectOption) => ({
       unlocked: constellation.unlocked,

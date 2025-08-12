@@ -1,13 +1,15 @@
 "use client";
+import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCard";
+import { Form } from "@/components/ui/form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { parseCalculatorData } from "@/lib/parseCalculatorData";
-import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const calculatorFormSchema = z.object({
+  raw: z.record(z.string(), z.any()),
   level: z.number().min(1, { error: "캐릭터 레벨을 확인해주세요." }).max(90, {
     error: "캐릭터 레벨을 확인해주세요.",
   }),
@@ -71,9 +73,17 @@ const formSchema = z.object({
 });
 
 const CalculatorPage = (): React.ReactElement => {
-  const { calculatorData, setCalculateData, setCharacterInfo } = useCalculatorStore();
-  const searchParams = useSearchParams();
-  searchParams.get("uid");
+  const [selectedCharacter, setSelectedCharacter] = useState<string>("");
+
+  const elementBgColors: Record<string, string> = {
+    Fire: `bg-Fire`,
+    Water: `bg-Water`,
+    Wind: `bg-Wind`,
+    Electric: `bg-Electric`,
+    Ice: `bg-Ice`,
+    Rock: `bg-Rock`,
+    Grass: `bg-Grass`,
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,28 +97,58 @@ const CalculatorPage = (): React.ReactElement => {
     control: form.control,
   });
 
+  const onSubmit = (value: z.infer<typeof formSchema>): void => {
+    console.log(value);
+  };
+
   useEffect(() => {
     const calculatorDataRaw = window.sessionStorage.getItem(`calculatorData`);
     if (calculatorDataRaw) {
-      const resData = JSON.parse(calculatorDataRaw);
-      resData.map((data: { info: object; result: object }) => append(parseCalculatorData<typeof data>(data)));
-
-      return () => {
-        form.reset();
-      };
+      const parseData = JSON.parse(calculatorDataRaw);
+      parseData.map((data: { info: object; result: object }) => append(parseCalculatorData<typeof data>(data)));
+      setSelectedCharacter(parseData[0].info.name);
     }
+
+    return (): void => {
+      form.reset();
+    };
   }, []);
 
   return (
     <div>
-      <div>{searchParams.get("uid")}</div>
-      {fields.map((field, index) => {
-        // 캐릭터 카드 제작 부
-        return <div key={`calculator-${index}`}>{JSON.stringify(field)}</div>;
-      })}
+      <Form {...form}>
+        <form id="page form" onSubmit={form.handleSubmit(onSubmit)} className="w-full mx-auto">
+          <Tabs value={selectedCharacter} onValueChange={setSelectedCharacter} className="w-[90%] mx-auto gap-0">
+            <TabsList className="w-full h-fit justify-around pt-3 px-3 rounded-2xl mx-auto">
+              {fields.map((item, i) => {
+                const rawInfo = item.raw;
+                const iconUrl = rawInfo.icon.front;
+                const name = rawInfo.name;
 
-      <p>여기가 경계서어언</p>
-      {JSON.stringify(calculatorData)}
+                return (
+                  <TabsTrigger
+                    key={`calculator-tab-trigger-${i}`}
+                    className={`w-[5vw] h-[5vw] min-w-20 min-h-20 relative overflow-hidden flex-none font-bold border-[3px] border-stone-300 ${elementBgColors[rawInfo.element]} rounded-full mx-1 data-[state=active]:border-lime-400 hover:border-lime-400 data-[state=active]:${elementBgColors[rawInfo.element]}`}
+                    value={name}
+                  >
+                    {/* <Image src={iconUrl} alt="" priority fill /> */}
+                    <p>{name.slice(0, 1)}</p>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+            {fields.map((item, index) => {
+              const rawInfo = item.raw;
+              const name = rawInfo.name;
+              return (
+                <TabsContent key={`calculator-tab-content-${index}`} className={`w-full h-fit flex ${elementBgColors[rawInfo.element]} rounded-2xl text-stone-600`} value={name}>
+                  <CharacterSettingCard form={form} item={item} index={index} />
+                </TabsContent>
+              );
+            })}
+          </Tabs>
+        </form>
+      </Form>
     </div>
   );
 };

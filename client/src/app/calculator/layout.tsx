@@ -82,7 +82,7 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
                   control={form.control}
                   name="uid"
                   render={({ field }) => (
-                    <FormItem id="qawdasd" className="w-full">
+                    <FormItem className="w-full">
                       <FormControl>
                         <Input className="w-full border-none shadow-none focus-visible:ring-0" {...field} onChange={handleUid} maxLength={12} placeholder="UID" />
                       </FormControl>
