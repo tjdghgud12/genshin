@@ -3,12 +3,10 @@ import { z } from "zod";
 
 type TCalculatorData = z.infer<typeof calculatorFormSchema>;
 
-interface IuserSelectOption {
+interface IuserSelectoptions {
   level?: number;
   unlocked?: boolean;
-  stack: number;
-  active: boolean;
-  option?: {
+  options: {
     level?: number;
     unlocked?: boolean;
     stack: number;
@@ -22,25 +20,25 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
   return {
     raw: data,
     level: data.level,
-    constellations: data.constellations.map((constellation: IuserSelectOption) => ({
+    constellations: data.constellations.map((constellation: IuserSelectoptions) => ({
       unlocked: constellation.unlocked,
-      stack: constellation.stack,
-      active: constellation.active,
+      options: constellation.options.map((o) => ({
+        stack: o.stack,
+        active: o.active,
+      })),
     })),
-    activeSkill: data.activeSkill.map((skill: IuserSelectOption) => ({
+    activeSkill: data.activeSkill.map((skill: IuserSelectoptions) => ({
       level: skill.level,
-      active: skill.active,
-      stack: skill.stack,
+      options: skill.options.map((option) => ({ active: option.active, stack: option.stack })),
     })),
-    passiveSkill: data.passiveSkill.map((skill: IuserSelectOption) => ({
+    passiveSkill: data.passiveSkill.map((skill: IuserSelectoptions) => ({
       unlocked: skill.unlocked,
-      active: skill.active,
-      stack: skill.stack,
+      options: skill.options.map((option) => ({ active: option.active, stack: option.stack })),
     })),
     weapon: {
       level: data.weapon.level,
       refinement: data.weapon.refinement,
-      option: data.weapon.option.map((o: IuserSelectOption) => ({
+      options: data.weapon.option.map((o: IuserSelectoptions) => ({
         active: o.active,
         stack: o.stack,
       })),
@@ -53,10 +51,10 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
         mainStat: part.mainStat,
         subStat: part.subStat.map((s: { [key: string]: number }) => s),
       })),
-      setInfo: data.artifact.setInfo.map((s: IuserSelectOption) => ({
+      setInfo: data.artifact.setInfo.map((s: IuserSelectoptions) => ({
         name: s.name,
-        option: s.option
-          ? s.option.map((o: { active: boolean; stack: number }) => {
+        options: s.options
+          ? s.options.map((o: { active: boolean; stack: number }) => {
               return {
                 active: o.active,
                 stack: o.stack,
@@ -69,7 +67,3 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
 };
 
 export { parseCalculatorData };
-
-// function parseCalculatorData<T extends object>(rawCalculatorData: T): ICalculatorData {
-//   return calculatorFormSchema.parse(rawCalculatorData);
-// }

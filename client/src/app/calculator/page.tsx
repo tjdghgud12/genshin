@@ -16,28 +16,40 @@ const calculatorFormSchema = z.object({
   constellations: z.array(
     z.object({
       unlocked: z.boolean(),
-      active: z.boolean(),
-      stack: z.number(),
+      options: z.array(
+        z.object({
+          active: z.boolean(),
+          stack: z.number(),
+        }),
+      ),
     }),
   ),
   activeSkill: z.array(
     z.object({
       level: z.number().max(10, { error: "스킬 레벨을 확인해주세요." }).min(1, { error: "스킬 레벨을 확인해주세요." }),
-      active: z.boolean(),
-      stack: z.number(),
+      options: z.array(
+        z.object({
+          active: z.boolean(),
+          stack: z.number(),
+        }),
+      ),
     }),
   ),
   passiveSkill: z.array(
     z.object({
       unlocked: z.boolean(),
-      active: z.boolean(),
-      stack: z.number(),
+      options: z.array(
+        z.object({
+          active: z.boolean(),
+          stack: z.number(),
+        }),
+      ),
     }),
   ),
   weapon: z.object({
     level: z.number().max(90, { error: "스킬 레벨을 확인해주세요." }).min(1, { error: "스킬 레벨을 확인해주세요." }),
     refinement: z.number().max(5, { error: "스킬 레벨을 확인해주세요." }).min(0, { error: "스킬 레벨을 확인해주세요." }),
-    option: z.array(
+    options: z.array(
       z.object({
         active: z.boolean(),
         stack: z.number(),
@@ -57,7 +69,7 @@ const calculatorFormSchema = z.object({
     setInfo: z.array(
       z.object({
         name: z.string(),
-        option: z.array(
+        options: z.array(
           z.object({
             active: z.boolean(),
             stack: z.number(),
