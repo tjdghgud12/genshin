@@ -122,9 +122,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-gutter: stable;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  body[data-scroll-locked] {
+    margin-right: 0px !important;
+    overflow: visible !important;
   }
 }
 input.input-removeArrow[type="number"]::-webkit-inner-spin-button,
