@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from ambr import CharacterDetail, WeaponDetail, AmbrAPI, Talent, Constellation
 import enka
-from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, activeSkillType, skillOptionType, skillConstellationType
+from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, activeSkillType, skillConstellationOptionType, skillConstellationType
 import data.weapon as weaponInfo
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
@@ -62,7 +62,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             for i, skill in enumerate(passive):
                 unlocked = avatar.ascension >= (1 if i == 0 else 4)
                 skillOption = characterPassive.get(skill.name) or passiveSkillType(
-                    unlockLevel=1, description="", options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+                    unlockLevel=1, description="", options=[skillConstellationOptionType(type=skillConstellationType.always, maxStack=1, label="")]
                 )
                 characterInfo["passiveSkill"].append(
                     {
@@ -82,7 +82,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 )
             for i, skill in enumerate(avatar.talents):
                 skillOption = characterActive.get(skill.name) or activeSkillType(
-                    description="", options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+                    description="", options=[skillConstellationOptionType(type=skillConstellationType.always, maxStack=1, label="")]
                 )
                 skillDetail = next((t for t in ambrCharacterDetail.talents if t.name == skill.name), Talent)
                 characterInfo["activeSkill"].append(
@@ -112,8 +112,14 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                         "unlocked": enkaConstellation[name].unlocked,
                         # "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
                         "description": ambrConstellation[name].description,
-                        "active": False if skill.name in defaultFalseConstellation else True,
-                        "stack": defaultConstellation.maxStack,
+                        "options": [
+                            {
+                                **vars(option),
+                                "active": True,
+                                "stack": option.maxStack,
+                            }
+                            for option in defaultConstellation.options
+                        ],
                     }
                 )
 

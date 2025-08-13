@@ -120,12 +120,14 @@ async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     # ----------------------- constellations -----------------------
     # 획린(獲麟), 구름 여행, 잡초 근절, 살생의 발걸음의 경우 fightProp에 영행 X
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "이슬 먹는 신수":
-                    newFightProp[fightPropKeys.ICE_RES_MINUS.value] += 0.15
+                    if constellation["options"][0]["active"]:
+                        newFightProp[fightPropKeys.ICE_RES_MINUS.value] += 0.15
                 case "서수(西狩)":
-                    newFightProp[fightPropKeys.ATTACK_ADD_HURT.value] += constellation["stack"] * 0.05
+                    if constellation["options"][0]["active"]:
+                        newFightProp[fightPropKeys.ATTACK_ADD_HURT.value] += constellation["stack"] * 0.05
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -160,14 +162,16 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
     # ----------------------- constellations -----------------------
     # # 서리에 검게 물든 벚꽃, 삼중 서리 관문, 흩날리는 카미후부키, 화운종월경의 경우 fightProp에 영행 X
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "삼중 서리 관문":  # 최종 데미지 기준 추가 피해
                     description = "원소 폭발 발동 시 기존 공격력의 20%의 피해를 주는 소형 서리 관문 2개 추가"
                 case "영고성쇠":
-                    newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.3
+                    if constellation["options"][0]["active"]:
+                        newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.3
                 case "물에 비친 달":
-                    newFightProp[fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value] += 2.98
+                    if constellation["options"][0]["active"]:
+                        newFightProp[fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value] += 2.98
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -204,7 +208,7 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                 case "계뢰":  # 원소 전투 스킬 추가 피해
                     description = "뇌설이 존재하는 동안 다시 원소 전투 스킬 발동 시 공격력의 50%의 번개 원소 피해 추가"
                 case "조율":
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.25
                 case "염정":
                     newFightProp[fightPropKeys.ELEC_ADD_HURT.value] += constellation["stack"] * 0.06
@@ -265,10 +269,11 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                 case "올곧은 선견의 뿌리":
                     # 연소, 개화, 만개, 발화의 치명타 효과는 일단 무시
                     # 활성, 촉진, 발산 반응 시 방어력 감소만 적용
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.3
                 case "추론으로 드러난 줄기":
-                    newFightProp[fightPropKeys.ELEMENT_MASTERY.value] += constellation["stack"] * 20 + 80
+                    if constellation["options"][0]["active"]:
+                        newFightProp[fightPropKeys.ELEMENT_MASTERY.value] += constellation["stack"] * 20 + 80
 
     # ----------------------- passive -----------------------
     for passive in characterInfo.passiveSkill:
@@ -332,10 +337,11 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
     # ----------------------- constellations -----------------------
     # 악요 명문(銘文), 진영의 과거, 진리의 맹세, 쇼군의 현형, 염원의 대행인의 경우 fightProp에 영행 X
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "강철 절단":
-                    newFightProp[fightPropKeys.DEFENSE_IGNORE.value] += 0.6
+                    if constellation["options"][0]["active"]:
+                        newFightProp[fightPropKeys.DEFENSE_IGNORE.value] += 0.6
 
     # ----------------------- passive -----------------------
     for passive in characterInfo.passiveSkill:
@@ -365,10 +371,11 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     # ----------------------- constellations -----------------------
     # 진홍의 꽃다발, 비처럼 내리는 불안, 적색 피의 의식, 영원한 안식의 정원, 꽃잎 향초의 기도는 호두의 fightProp에 영향 X
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "나비 잔향":
-                    newFightProp[fightPropKeys.CRITICAL.value] += 1.00
+                    if constellation["options"][0]["active"]:
+                        newFightProp[fightPropKeys.CRITICAL.value] += 1.00
     # ----------------------- passive -----------------------
     # 모습을 감춘 나비는 호두의 fightProp에 영향X
     for passive in characterInfo.passiveSkill:
@@ -477,11 +484,12 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     # ----------------------- constellations -----------------------
     # 6돌을 제외한 모든 돌파 옵션은 fightProp에 영향 없거나 active에서 처리
     for constellation in characterInfo.constellations:
-        if constellation["unlocked"] and constellation["active"]:
+        if constellation["unlocked"]:
             match constellation["name"]:
                 case "「모두 사랑의 축배를 들렴!」":
-                    # 평타 계수 추가이기 때문에 2025-08-05기준 미개발 상태
-                    description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
+                    if constellation["options"][0]["active"]:
+                        # 평타 계수 추가이기 때문에 2025-08-05기준 미개발 상태
+                        description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -596,7 +604,7 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
         if constellation["unlocked"]:
             match constellation["name"]:
                 case "미각을 깨우는 식전 공연":
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         newFightProp[fightPropKeys.CRITICAL_HURT.value] += 0.6
                 case "예술의 경지에 이른 스튜":  # 스킬 계수 추가
                     description = "원소 전투 스킬 발동 시 피해를 에스코피에의 공격력의 240%만큼 증가시키는 즉석 요리 스텍 획득(신학 깃털 효과)"
@@ -642,10 +650,10 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                     description = "파티 내 캐릭터가 공격 시 소모되는 별빛 검 스텍을 10개 획득. 별빛 검은 시틀라리의 원소 마스터리의 200%만큼 피해 증가"
                 case "심장을 삼키는 자의 순행":
                     newFightProp[fightPropKeys.ELEMENT_MASTERY.value] += 125
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         newFightProp[fightPropKeys.ELEMENT_MASTERY.value] += 250
                 case "죽음을 거부하는 자의 영혼 해골":  # 스킬 계수 추가
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         description = "서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해."
                 case "아홉 번째 하늘의 계약":
                     newFightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.015 * constellation["stack"]
@@ -737,15 +745,15 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
         if constellation["unlocked"]:
             match constellation["name"]:
                 case "밤 주인의 계시":
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         newFightProp[fightPropKeys.ATTACK_PERCENT.value] += 0.4
                 case "잿더미의 대가":  # 스킬 계수 추가(일반공격, 강공격, 원소폭발의 석양 베기로 주는 피해가 마비카 공격력의 60%/90%/120%만큼 증가)
                     newFightProp[fightPropKeys.BASE_ATTACK.value] += 200
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.2
 
                 case "「인간의 이름」 해방":  # 스킬 계수 추가
-                    if constellation["active"]:
+                    if constellation["options"][0]["active"]:
                         newFightProp[fightPropKeys.DEFENSE_MINUS.value] += 0.2
                     description = "불볕 고리: 공격 적중 시 공격력의 200%에 해당하는 밤혼 성질의 불 원소 피해 추가. 바이크 : 주변 적 방어력 20% 감소 및 3초마다 공격력의 500%에 해당하는 밤혼 성질의 불 원소 피해 추가"
 
