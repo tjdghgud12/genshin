@@ -4,6 +4,7 @@ import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { parseCalculatorData } from "@/lib/parseCalculatorData";
 import { zodResolver } from "@hookform/resolvers/zod";
+// import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -140,10 +141,10 @@ const CalculatorPage = (): React.ReactElement => {
                 return (
                   <TabsTrigger
                     key={`calculator-tab-trigger-${i}`}
-                    className={`w-[5vw] h-[5vw] min-w-20 min-h-20 relative overflow-hidden flex-none font-bold border-[3px] border-stone-300 ${elementBgColors[rawInfo.element]} rounded-full mx-1 data-[state=active]:border-lime-400 hover:border-lime-400 data-[state=active]:${elementBgColors[rawInfo.element]}`}
+                    className={`w-[5vw] h-[5vw] min-w-20 min-h-20 relative overflow-hidden flex-none border-[3px] border-stone-300 ${elementBgColors[rawInfo.element]} rounded-full mx-1 data-[state=active]:border-lime-400 hover:border-lime-400 data-[state=active]:${elementBgColors[rawInfo.element]}`}
                     value={name}
                   >
-                    {/* <Image src={iconUrl} alt="" priority fill /> */}
+                    {/* <Image src={iconUrl} alt="" priority fill sizes="(max-width: 1200px) 5vw" /> */}
                     <p>{name.slice(0, 1)}</p>
                   </TabsTrigger>
                 );
