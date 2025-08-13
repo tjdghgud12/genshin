@@ -36,6 +36,7 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
       options: skill.options.map((option) => ({ active: option.active, stack: option.stack })),
     })),
     weapon: {
+      name: data.weapon.name,
       level: data.weapon.level,
       refinement: data.weapon.refinement,
       options: data.weapon.option.map((o: IuserSelectoptions) => ({

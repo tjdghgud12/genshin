@@ -1,10 +1,12 @@
 "use Client";
 
 import { calculatorFormSchema, formSchema } from "@/app/calculator/page";
+import { SingleSelectBox } from "@/app/globalComponents/SelectBox";
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Arrow } from "@radix-ui/react-popover";
 import { Settings } from "lucide-react";
 import Image from "next/image";
@@ -13,6 +15,8 @@ import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 const CharacterOptionControlCircle = ({
+  name = "",
+  description = "",
   unlocked = false,
   options = [],
   icon = "",
@@ -20,6 +24,8 @@ const CharacterOptionControlCircle = ({
   onChange = (): void => {},
 }: {
   unlocked: boolean;
+  name?: string;
+  description?: string;
   options: {
     type: "always" | "toggle" | "stack" | string;
     active: boolean;
@@ -32,54 +38,61 @@ const CharacterOptionControlCircle = ({
   onChange?: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
 }): React.ReactElement => {
   return (
-    <Fragment>
-      <div className="w-fit h-fit flex">
-        {options.every((o) => o.type === "always") ? (
-          <div
-            className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full ${unlocked ? "border-white" : "border-gray-600 opacity-50"} flex justify-center relative`}
-          >
-            <Image src={icon} alt="" priority fill sizes="(max-width: 768px) 5vw, (max-width: 1200px) 50vw, 5vw" />
-          </div>
-        ) : (
-          <Fragment>
-            <Button
-              className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full relative ${options.every((o) => o.active) && unlocked ? "border-white" : "border-gray-600"} hover:bg-gray-800`}
-              disabled={!unlocked}
-              onClick={onClick}
+    <Tooltip delayDuration={500}>
+      <TooltipTrigger asChild>
+        <div className="w-fit h-fit flex">
+          {options.every((o) => o.type === "always") ? (
+            <div
+              className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full ${unlocked ? "border-white" : "border-gray-600 opacity-50"} flex justify-center relative`}
             >
               <Image src={icon} alt="" priority fill sizes="(max-width: 768px) 5vw, (max-width: 1200px) 50vw, 5vw" />
-            </Button>
+            </div>
+          ) : (
+            <Fragment>
+              <Button
+                className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full relative ${options.every((o) => o.active) && unlocked ? "border-white" : "border-gray-600"} hover:bg-gray-800`}
+                type="button"
+                disabled={!unlocked}
+                onClick={onClick}
+              >
+                <Image src={icon} alt="" priority fill sizes="(max-width: 768px) 5vw, (max-width: 1200px) 50vw, 5vw" />
+              </Button>
 
-            {options.some((o) => o.type === "stack") && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button disabled={!unlocked} className="bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
-                    <Settings className="size-6 " />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white" side="right">
-                  <Arrow />
-                  {options.map((o, i) => {
-                    return (
-                      <div key={`skill-option-${o.inputLabel}`} className="flex">
-                        <p className="my-auto mr-3">{o.inputLabel}:</p>
-                        <Input
-                          className="w-auto max-w-[100px] border-x-0 border-t-0 shadow-none focus-visible:ring-0 rounded-none input-removeArrow text-center"
-                          value={o.stack}
-                          max={o.maxStack}
-                          min={0}
-                          onChange={(e) => onChange(e, i)}
-                        />
-                      </div>
-                    );
-                  })}
-                </PopoverContent>
-              </Popover>
-            )}
-          </Fragment>
-        )}
-      </div>
-    </Fragment>
+              {options.some((o) => o.type === "stack") && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button disabled={!unlocked} className="bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
+                      <Settings className="size-6 " />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white" side="right">
+                    <Arrow />
+                    {options.map((o, i) => {
+                      return (
+                        <div key={`skill-option-${o.inputLabel}`} className="flex">
+                          <p className="my-auto mr-3">{o.inputLabel}:</p>
+                          <Input
+                            className="w-auto max-w-[100px] border-x-0 border-t-0 shadow-none focus-visible:ring-0 rounded-none input-removeArrow text-center"
+                            value={o.stack}
+                            max={o.maxStack}
+                            min={0}
+                            onChange={(e) => onChange(e, i)}
+                          />
+                        </div>
+                      );
+                    })}
+                  </PopoverContent>
+                </Popover>
+              )}
+            </Fragment>
+          )}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent className="w-full max-w-[200px] bg-gray-500 fill-gray-500" side="right">
+        <p className="font-bold">{name}</p>
+        <p className="mb-2">{description}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };
 
@@ -92,7 +105,7 @@ const CharacterSettingCard = ({
   item: z.infer<typeof calculatorFormSchema>;
   index: number;
 }): React.ReactElement => {
-  const { passiveSkill, activeSkill, constellations, raw } = useWatch({ control: form.control, name: `data.${index}` });
+  useWatch({ control: form.control, name: `data.${index}` }); // useWatch가 없는 상태에서는 React Hook Form이 이 컴포넌트를 “변화 감지 대상”으로 인식하지 않아서, 입력이 제대로 반영되지 않는 것처럼 보임
 
   return (
     <>
@@ -136,6 +149,8 @@ const CharacterSettingCard = ({
                       <div className="flex">
                         <FormControl className="w-fit h-fit flex flex-col">
                           <CharacterOptionControlCircle
+                            name={passiveInfo.name}
+                            description={passiveInfo.description}
                             unlocked={passive.unlocked}
                             options={passive.options.map((o, k) => ({ ...passiveInfo.options[k], ...o, inputLabel: passiveInfo.options[k].label }))}
                             icon={passiveInfo.icon}
@@ -177,6 +192,8 @@ const CharacterSettingCard = ({
                       <div className="flex">
                         <FormControl className="w-fit h-fit flex flex-col">
                           <CharacterOptionControlCircle
+                            name={activeInfo.name}
+                            description={activeInfo.description}
                             unlocked
                             options={active.options.map((o, k) => ({ ...activeInfo.options[k], ...o, inputLabel: activeInfo.options[k].label }))}
                             icon={activeInfo.icon}
@@ -218,6 +235,8 @@ const CharacterSettingCard = ({
                       <div className="flex">
                         <FormControl className="w-fit h-fit flex flex-col">
                           <CharacterOptionControlCircle
+                            name={constellationInfo.name}
+                            description={constellationInfo.description}
                             unlocked={constellation.unlocked}
                             options={constellation.options.map((o, k) => ({ ...constellationInfo.options[k], ...o, inputLabel: constellationInfo.options[k].label }))}
                             icon={constellationInfo.icon}
@@ -247,7 +266,47 @@ const CharacterSettingCard = ({
           </div>
         </div>
       </div>
-      <div className="w-1/2">무기 성유물 영역</div>
+      <div className="w-1/2  h-fit flex px-8 py-3">
+        <div className="w-2/5 flex flex-col">
+          <div className="w-full flex">
+            {/* 무기 옵션 선택부도 하나 추가해야함. */}
+            {/* 똑같이 설정 icon 하나 추가하자 */}
+            {/* 설정부는 어떻게 처리할까 */}
+            {/* 1. 모든 무기의 정보를 싹 가져와야함. */}
+            {/* root페이지 접근 시 요청해서 사용하자. */}
+            {/* 루트페이지를 일부만 client 일부는 server단위로 쪼갤 수 있는지 알아보고, 가능하다면, 무기 및 성유물 정보는 가져와서 사용하는거로.*/}
+            {/* back에서 넘겨줄 때 1차적으로 내가 현재 구현한 성유물 무기만 필터링해서 넘겨주기!! */}
+            {/* FormField가 여러개 필요하네? 이름, 레벨, 재련이 필요해. */}
+            {/* 일단 셀렉트박스의 옵션을 전부 가져온 다음에 생각하자. */}
+            <FormField
+              control={form.control}
+              name={`data.${index}.weapon`}
+              render={({ field }) => (
+                <FormItem className="w-fit h-1/2 mb-auto justify-start">
+                  <div className="flex">
+                    <FormControl>
+                      <SingleSelectBox />
+                      {/* <Input
+                        className="w-full border-none text-xl font-bold shadow-none focus-visible:ring-0 input-removeArrow"
+                        {...field}
+                        value={field.value}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => form.setValue(`data.${index}.level`, Number(e.target.value))}
+                        type="number"
+                        min={1}
+                        max={90}
+                        placeholder="Level"
+                      /> */}
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div>세트옵션</div>
+        </div>
+        <div className="w-3/5 flex flex-col">성유물</div>
+      </div>
     </>
   );
 };
