@@ -119,20 +119,23 @@ class skillConstellationType(Enum):
 
 
 @dataclass
-class passiveSkillType:
+class skillOptionType:
     type: skillConstellationType
     maxStack: int
-    description: str
-    unlockLevel: int
     label: str
 
 
 @dataclass
-class activeSkillType:
-    type: skillConstellationType
-    maxStack: int
+class passiveSkillType:
+    unlockLevel: int
     description: str
-    label: str
+    options: list[skillOptionType]
+
+
+@dataclass
+class activeSkillType:
+    description: str
+    options: list[skillOptionType]
 
 
 @dataclass
@@ -159,117 +162,137 @@ fightPropTemplate: CharacterFightPropSchema = cast(CharacterFightPropSchema, {ke
 
 passiveSkill = {
     "감우": {
-        "단 하나의 마음": passiveSkillType(type=skillConstellationType.toggle, maxStack=1, description="강공격 후 강공격 치명타 확률 증가", unlockLevel=1, label=""),
-        "천지교태": passiveSkillType(type=skillConstellationType.toggle, maxStack=1, description="원소 폭발 내부에 존재 시 얼음 원소 피해 증가", unlockLevel=4, label=""),
+        "단 하나의 마음": passiveSkillType(
+            description="강공격 후 강공격 치명타 확률 증가", unlockLevel=1, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        ),
+        "천지교태": passiveSkillType(
+            description="원소 폭발 내부에 존재 시 얼음 원소 피해 증가", unlockLevel=4, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        ),
     },
     "카미사토 아야카": {
         "천죄국죄 진사": passiveSkillType(
-            type=skillConstellationType.toggle, maxStack=1, description="원소 전투 스킬 발동 후 일반공격 및 강공격 피해 증가", unlockLevel=1, label=""
+            description="원소 전투 스킬 발동 후 일반공격 및 강공격 피해 증가", unlockLevel=1, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
         ),
-        "한천선명 축사": passiveSkillType(type=skillConstellationType.toggle, maxStack=1, description="싸락눈 걸음 명중 후 얼음 원소 피해 증가", unlockLevel=4, label=""),
+        "한천선명 축사": passiveSkillType(
+            description="싸락눈 걸음 명중 후 얼음 원소 피해 증가", unlockLevel=4, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        ),
     },
     "각청": {
-        "하늘에 닿은 뇌벌": passiveSkillType(type=skillConstellationType.toggle, maxStack=1, description="원소 전투 스킬 발동 후 번개 원소 인챈트", unlockLevel=1, label=""),
+        "하늘에 닿은 뇌벌": passiveSkillType(
+            description="원소 전투 스킬 발동 후 번개 원소 인챈트", unlockLevel=1, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        ),
         "옥형의 품격": passiveSkillType(
-            type=skillConstellationType.toggle, maxStack=1, description="원소 폭발 발동 후 치명타 확률 및 원소 충전 효율 증가", unlockLevel=4, label=""
+            description="원소 폭발 발동 후 치명타 확률 및 원소 충전 효율 증가", unlockLevel=4, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
         ),
     },
     "나히다": {
-        "정선으로 포용한 명론": passiveSkillType(type=skillConstellationType.toggle, maxStack=1, description="원소 폭발 발동 시 원소마스터리 증가", unlockLevel=1, label=""),
+        "정선으로 포용한 명론": passiveSkillType(
+            description="원소 폭발 발동 시 원소마스터리 증가", unlockLevel=1, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        ),
         "지혜로 깨우친 지론": passiveSkillType(
-            type=skillConstellationType.always,
-            maxStack=1,
             description="원소 마스터리 200pt 초과 시 초과분 1pt 당 원소 전투 스킬의 삼업의 정화가 가하는 피해 및 치명타 확률 증가",
             unlockLevel=4,
-            label="",
+            options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")],
         ),
     },
     "라이덴 쇼군": {
-        "수천수만의 염원": passiveSkillType(type=skillConstellationType.always, maxStack=1, description="원소 입자 획득 시 원력 스텍 추가", unlockLevel=1, label=""),
+        "수천수만의 염원": passiveSkillType(
+            description="원소 입자 획득 시 원력 스텍 추가", unlockLevel=1, options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+        ),
         "비범한 옥체": passiveSkillType(
-            type=skillConstellationType.always, maxStack=1, description="원소 충전 효율이 100%초과 시 초과 분 1% 당 번개 원소 피해 증가", unlockLevel=4, label=""
+            description="원소 충전 효율이 100%초과 시 초과 분 1% 당 번개 원소 피해 증가",
+            unlockLevel=4,
+            options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")],
         ),
     },
     "호두": {
         "모습을 감춘 나비": passiveSkillType(
-            type=skillConstellationType.always, maxStack=1, description="피안접무 상태가 끝난 후 호두를 제외한 파티 내 모든 캐릭터의 치명타 확률 증가", unlockLevel=1, label=""
+            description="피안접무 상태가 끝난 후 호두를 제외한 파티 내 모든 캐릭터의 치명타 확률 증가",
+            unlockLevel=1,
+            options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")],
         ),
-        "핏빛 분장": passiveSkillType(type=skillConstellationType.toggle, maxStack=1, description="현재 hp가 50% 이하일 때 불 원소 피해 증가", unlockLevel=4, label=""),
+        "핏빛 분장": passiveSkillType(
+            description="현재 hp가 50% 이하일 때 불 원소 피해 증가", unlockLevel=4, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        ),
     },
     "야란": {
         "선공의 묘수": passiveSkillType(
-            type=skillConstellationType.stack, maxStack=4, description="파티 내 캐릭터의 원소 타입 종류 마다 야란의 최대 hp 증가", unlockLevel=1, label="원소 타입 종류 수"
+            description="파티 내 캐릭터의 원소 타입 종류 마다 야란의 최대 hp 증가",
+            unlockLevel=1,
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=4, label="원소 타입 종류 수")],
         ),
         "마음 가는 대로": passiveSkillType(
-            type=skillConstellationType.stack, maxStack=14, description="원소 폭발 발동 시 필드 위 캐릭터가 가하는 피해가 1초마다 증가", unlockLevel=4, label="시간(초)"
+            description="원소 폭발 발동 시 필드 위 캐릭터가 가하는 피해가 1초마다 증가",
+            unlockLevel=4,
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=14, label="경과 시간(초)")],
         ),
     },
     "푸리나": {
         "끝없는 왈츠": passiveSkillType(
-            type=skillConstellationType.always,
-            maxStack=1,
             description="필드 위 캐릭터가 치유 받을 시 푸리나의 치유가 아닌 동시에 회복량이 초과된 경우 주변 파티 내 캐릭터 hp 회복",
             unlockLevel=1,
-            label="",
+            options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")],
         ),
-        "고독한 독백": passiveSkillType(type=skillConstellationType.always, maxStack=1, description="푸리나의 최대 hp 1000pt 당 원소 전투 스킬 피해 증가", unlockLevel=4, label=""),
+        "고독한 독백": passiveSkillType(
+            description="푸리나의 최대 hp 1000pt 당 원소 전투 스킬 피해 증가", unlockLevel=4, options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+        ),
     },
     "시틀라리": {
         "다섯 번째 하늘의 서리비": passiveSkillType(
-            type=skillConstellationType.toggle, maxStack=1, description="융해 반응 발동 시 반응에 영향을 받은 적의 물 원소 및 불 원소 내성 감소", unlockLevel=1, label=""
+            description="융해 반응 발동 시 반응에 영향을 받은 적의 물 원소 및 불 원소 내성 감소",
+            unlockLevel=1,
+            options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")],
         ),
         "하얀 불나비의 별옷": passiveSkillType(
-            type=skillConstellationType.always, maxStack=1, description="원소 마스터리의 일정 비율 만큼 원소 전투 스킬 및 원소 폭발 피해 계수 추가", unlockLevel=4, label=""
+            description="원소 마스터리의 일정 비율 만큼 원소 전투 스킬 및 원소 폭발 피해 계수 추가",
+            unlockLevel=4,
+            options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")],
         ),
     },
     "느비예트": {
         "생존한 고대바다의 계승자": passiveSkillType(
-            type=skillConstellationType.stack, maxStack=3, description="물 원소 관련 반응 발동 시 강공격 피해 증가", unlockLevel=1, label="생존한 용의 영광"
+            description="물 원소 관련 반응 발동 시 강공격 피해 증가",
+            unlockLevel=1,
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=3, label="생존한 용의 영광")],
         ),
         "드높은 중재의 규율": passiveSkillType(
-            type=skillConstellationType.stack,
-            maxStack=50,
             description="현재 hp 중 hp 최대치의 30%를 초과하는 부분을 기반으로 1% 당 물 원소 피해 증가",
             unlockLevel=4,
-            label="HP 최대치 초과분(%)",
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=50, label="HP 최대치 초과분(%)")],
         ),
     },
     "마비카": {
         "타오르는 꽃의 선물": passiveSkillType(
-            type=skillConstellationType.toggle, maxStack=1, description="파티 내 캐릭터가 밤혼 발산 발동 시 마비카의 공격력 증가", unlockLevel=1, label=""
+            description="파티 내 캐릭터가 밤혼 발산 발동 시 마비카의 공격력 증가",
+            unlockLevel=1,
+            options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")],
         ),
         "「키온고지」": passiveSkillType(
-            type=skillConstellationType.stack,
-            maxStack=200,
             description="원소 폭발 발동 후 발동 당시 전의 스텍 1pt당 피해 증가 및 지속 시간 동안 점차 감소",
             unlockLevel=4,
-            label="전의",
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=200, label="전의")],
         ),
     },
     "에스코피에": {
-        "밥이 보약": passiveSkillType(type=skillConstellationType.toggle, maxStack=1, description="원소 폭발 발동 후 파티 내 모든 캐릭터 hp 회복", unlockLevel=1, label=""),
+        "밥이 보약": passiveSkillType(
+            description="원소 폭발 발동 후 파티 내 모든 캐릭터 hp 회복", unlockLevel=1, options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        ),
         "영감의 조미료": passiveSkillType(
-            type=skillConstellationType.stack,
-            maxStack=4,
             description="원소 전투 스킬 또는 원소 폭발 명중 시 파티 내 물 원소 캐릭터 또는 얼음 원소 캐릭터 수 마다 명중한 적 물 원소 내성 및 얼음 원소 내성 감소",
             unlockLevel=4,
-            label="물 또는 얼음 원소 파티원 수",
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=4, label="물 또는 얼음 원소 파티원 수")],
         ),
     },
     "스커크": {
         "이치 너머의 이치": passiveSkillType(
-            type=skillConstellationType.stack,
-            maxStack=3,
             description="빙결, 초전도, 얼음 확산, 얼음 결정 반응 발동 시 허계 균열 1개 생성. 허계 균열은 흡수 가능하며 흡수 시 원소 전투 스킬 및 원소 폭발 계수 증가",
             unlockLevel=1,
-            label="허계 균열 흡수",
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=3, label="흡수 허계 균열 수")],
         ),
         "흐름의 적멸": passiveSkillType(
-            type=skillConstellationType.stack,
-            maxStack=3,
             description="파티 내 주변에 있는 물 원소 또는 얼음 원소 캐릭터가 각각 물 원소 또는 얼음 원소 공격으로 적 명중 시 최종 데미지 증가(마지막 곱연산)",
             unlockLevel=4,
-            label="죽음의 강",
+            options=[skillOptionType(type=skillConstellationType.stack, maxStack=3, label="죽음의 강")],
         ),
     },
 }
@@ -280,25 +303,44 @@ activeSkill = {
     "각청": {},
     "나히다": {
         "마음이 그리는 환상": activeSkillType(
-            type=skillConstellationType.stack, maxStack=2, description="파티 내 불, 번개, 물 원소 타입 캐릭터가 있으면 각각 상응하는 효과가 발생", label=""
+            description="파티 내 불, 번개, 물 원소 타입 캐릭터가 있으면 각각 상응하는 효과가 발생",
+            options=[
+                skillOptionType(type=skillConstellationType.stack, maxStack=2, label="불"),
+                skillOptionType(type=skillConstellationType.stack, maxStack=2, label="물"),
+                skillOptionType(type=skillConstellationType.stack, maxStack=2, label="번개"),
+            ],
         )
     },
     "라이덴 쇼군": {
-        "초월·악요개안": activeSkillType(type=skillConstellationType.toggle, maxStack=1, description="원소 폭발의 원소 에너지 당 원소 폭발 피해 증가", label=""),
+        "초월·악요개안": activeSkillType(
+            description="원소 폭발의 원소 에너지 당 원소 폭발 피해 증가", options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        )
     },
-    "호두": {"나비의 서": activeSkillType(type=skillConstellationType.toggle, maxStack=1, description="현재 hp의 30%를 소비하여 hp 최대치 기반 공격력 증가", label="")},
+    "호두": {
+        "나비의 서": activeSkillType(
+            description="현재 hp의 30%를 소비하여 hp 최대치 기반 공격력 증가", options=[skillOptionType(type=skillConstellationType.toggle, maxStack=1, label="")]
+        )
+    },
     "야란": {},
-    "푸리나": {"성대한 카니발": activeSkillType(type=skillConstellationType.stack, maxStack=300, description="무대 열기 당 피해 증가 및 치유 보너스 증가", label="무대 열기")},
+    "푸리나": {
+        "성대한 카니발": activeSkillType(
+            description="무대 열기 당 피해 증가 및 치유 보너스 증가", options=[skillOptionType(type=skillConstellationType.stack, maxStack=300, label="무대 열기")]
+        )
+    },
     "시틀라리": {},
     "느비예트": {},
     "마비카": {},
     "에스코피에": {},
     "스커크": {
-        "극악기 · 진": activeSkillType(
-            type=skillConstellationType.stack,
-            maxStack=3,
+        "극악기·멸": activeSkillType(
             description="일곱빛 섬광 모드에서 발동 가능. 주변 일정 범위 내의 허계 균열을 흡수하며, 흡수한 허계 균열 개수 당 일반 공격 피해 증가",
-            label="허계 균열 흡수",
+            options=[
+                skillOptionType(
+                    type=skillConstellationType.stack,
+                    maxStack=3,
+                    label="허계 균열 흡수",
+                )
+            ],
         )
     },
 }

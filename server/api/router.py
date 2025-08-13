@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from ambr import CharacterDetail, WeaponDetail, AmbrAPI, Talent, Constellation
 import enka
-from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, skillConstellationType
+from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, activeSkillType, skillOptionType, skillConstellationType
 import data.weapon as weaponInfo
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
@@ -61,30 +61,45 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             passive = list(filter(lambda talent: talent.type.name == "ULTIMATE" and characterPassive.get(talent.name), ambrCharacterDetail.talents))
             for i, skill in enumerate(passive):
                 unlocked = avatar.ascension >= (1 if i == 0 else 4)
-                skillOption = characterPassive.get(skill.name) or passiveSkillType(skillConstellationType.always, 1, "", 1, "")
+                skillOption = characterPassive.get(skill.name) or passiveSkillType(
+                    unlockLevel=1, description="", options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+                )
                 characterInfo["passiveSkill"].append(
                     {
-                        **vars(skillOption),
                         "name": skill.name,
                         "icon": skill.icon,
                         "description": skill.description,
                         "unlocked": unlocked,
-                        "active": True if unlocked else False,
-                        "stack": skillOption.maxStack,
+                        "options": [
+                            {
+                                **vars(option),
+                                "active": True if unlocked else False,
+                                "stack": option.maxStack,
+                            }
+                            for option in skillOption.options
+                        ],
                     }
                 )
             for i, skill in enumerate(avatar.talents):
-                skillOption = characterActive.get(skill.name)
+                skillOption = characterActive.get(skill.name) or activeSkillType(
+                    description="", options=[skillOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+                )
                 skillDetail = next((t for t in ambrCharacterDetail.talents if t.name == skill.name), Talent)
                 characterInfo["activeSkill"].append(
                     {
                         "name": skill.name,
                         "level": skill.level,
-                        "type": skillOption.type if skillOption else "always",
                         "icon": skill.icon,
                         "description": skillDetail.description,
-                        "active": True,
-                        "stack": skillOption.maxStack if skillOption else 0,
+                        "unlocked": unlocked,
+                        "options": [
+                            {
+                                **vars(option),
+                                "active": True,
+                                "stack": option.maxStack if skillOption else 0,
+                            }
+                            for option in skillOption.options
+                        ],
                     }
                 )
 
