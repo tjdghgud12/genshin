@@ -1,15 +1,14 @@
 export interface IWeaponInfo {
   id: number;
+  rarity: number;
+  type: string;
   name: string;
-  refinement: number;
-  level: number;
   icon: string;
+  route: string;
   option: {
     type: string;
     maxStack: number;
     description: string;
-    active: boolean;
-    stack: number;
+    label: string;
   }[];
-  stat: object;
 }
