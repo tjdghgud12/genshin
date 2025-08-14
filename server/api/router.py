@@ -25,7 +25,7 @@ async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
     ambrWeapons = await ambrApi.fetch_weapons()  # 4성 이상은 186개, 1성 이상은 220개
 
     endTime = time.perf_counter()
-    return list(map(lambda weapon: {**vars(weapon), "options": weaponInfo.get(weapon.name, None)}, filter(lambda weapon: weaponInfo.get(weapon.name, None), ambrWeapons)))
+    return list(map(lambda weapon: {**vars(weapon), "options": weaponInfo.get(weapon.name, None)}, filter(lambda weapon: weaponInfo.get(weapon.name, None) != None, ambrWeapons)))
 
 
 @router.get("/user/{uid}")
