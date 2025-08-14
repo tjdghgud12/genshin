@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from ambr import CharacterDetail, WeaponDetail, AmbrAPI, Talent, Constellation
 import enka
 from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, activeSkillType, skillConstellationOptionType, skillConstellationType
-import data.weapon as weaponInfo
+from data.weapon import weaponInfo
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
 from services.artifact import getArtifactSetInfo
@@ -135,10 +135,10 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 "option": [],
                 "stat": {stat.type.value: stat.value / 100 if stat.is_percentage else stat.value for stat in weapon.stats},
             }
-            weaponOption = weaponInfo.weaponType.get(weapon.name)
+            weaponOption = weaponInfo.get(weapon.name)
             if weaponOption is not None:
                 for option in weaponOption:
-                    characterInfo["weapon"]["option"].append({**option, "active": True, "stack": option.get("maxStack")})
+                    characterInfo["weapon"]["option"].append({**vars(option), "active": True, "stack": option.maxStack})
             # ---------------------------------------------------------------------
 
             # -------------------------- 성유물 --------------------------

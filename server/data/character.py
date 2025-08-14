@@ -264,7 +264,7 @@ passiveSkill = {
         "드높은 중재의 규율": passiveSkillType(
             description="현재 hp 중 hp 최대치의 30%를 초과하는 부분을 기반으로 1% 당 물 원소 피해 증가",
             unlockLevel=4,
-            options=[skillConstellationOptionType(type=skillConstellationType.stack, maxStack=50, label="HP 최대치 초과분(%)")],
+            options=[skillConstellationOptionType(type=skillConstellationType.stack, maxStack=50, label="hp 최대치 초과분(%)")],
         ),
     },
     "마비카": {
