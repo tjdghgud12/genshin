@@ -11,17 +11,9 @@ class WeaponDataReturnSchema(TypedDict, total=True):
     afterAddProps: list[str] | None
 
 
-def genWeaponList():
-    # 여기는 ambr을 통해서 통합 무기 list를 제작 예정
-    # front에게 넘겨주기 위한 데이터
-    weaponList = []
-
-    return weaponList
-
-
 async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropSchema:
     ambrApi: AmbrAPI = await getAmbrApi()
-    ambrWeaponCurve = weaponData.ambrWeaponCurve[str(level)]["curveInfos"]
+    ambrWeaponCurveInfo = weaponData.ambrWeaponCurve[str(level)]["curveInfos"]
     ambrWeaponDetail: WeaponDetail = await ambrApi.fetch_weapon_detail(id)
 
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
@@ -34,7 +26,7 @@ async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropSchem
 
     for baseStat in ambrWeaponDetail.upgrade.base_stats:
         if baseStat.prop_type is not None:
-            fightProp[baseStat.prop_type] = baseStat.init_value * ambrWeaponCurve[baseStat.growth_type]
+            fightProp[baseStat.prop_type] = baseStat.init_value * ambrWeaponCurveInfo[baseStat.growth_type]
     for addStat in getattr(promoteStat, "add_stats", []):
         fightProp[addStat.id] += addStat.value
 

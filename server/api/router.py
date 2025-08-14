@@ -2,10 +2,11 @@ from fastapi import APIRouter, HTTPException, Depends
 from ambr import CharacterDetail, WeaponDetail, AmbrAPI, Talent, Constellation
 import enka
 from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, activeSkillType, skillConstellationOptionType, skillConstellationType
-from data.weapon import weaponInfo
+import data.weapon as weaponData
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
 from services.artifact import getArtifactSetInfo
+import time
 
 router = APIRouter()
 
@@ -15,10 +16,24 @@ router = APIRouter()
 # ambrArtifacts = await ambrApi.fetch_artifact_sets() # 55개
 
 
+@router.get("/weaponlist")
+async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
+    if ambrApi is None:
+        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+    weaponInfo = weaponData.weaponInfo
+    startTime = time.perf_counter()
+    ambrWeapons = await ambrApi.fetch_weapons()  # 4성 이상은 186개, 1성 이상은 220개
+
+    endTime = time.perf_counter()
+    return list(map(lambda weapon: {**vars(weapon), "options": weaponInfo.get(weapon.name, None)}, filter(lambda weapon: weaponInfo.get(weapon.name, None), ambrWeapons)))
+
+
 @router.get("/user/{uid}")
 async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+
+    test = await genWeaponList(ambrApi)
 
     async with enka.GenshinClient(lang="ko") as client:
         rawRes = await client.fetch_showcase(uid, raw=True)
@@ -42,6 +57,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 "level": avatar.level,
                 "ascension": avatar.ascension,
                 "icon": avatar.costume.icon if getattr(avatar, "costume", None) else avatar.icon,  # type: ignore
+                "weaponType": ambrCharacterDetail.weapon_type,
                 "weapon": {},
                 "artifact": {"parts": [], "setInfo": []},
                 "passiveSkill": [],
@@ -135,7 +151,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 "option": [],
                 "stat": {stat.type.value: stat.value / 100 if stat.is_percentage else stat.value for stat in weapon.stats},
             }
-            weaponOption = weaponInfo.get(weapon.name)
+            weaponOption = weaponData.weaponInfo.get(weapon.name)
             if weaponOption is not None:
                 for option in weaponOption:
                     characterInfo["weapon"]["option"].append({**vars(option), "active": True, "stack": option.maxStack})
