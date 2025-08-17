@@ -16,15 +16,20 @@ router = APIRouter()
 # ambrArtifacts = await ambrApi.fetch_artifact_sets() # 55개
 
 
+@router.get("/weaponDetail/{id}")
+async def getWeaponDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
+    if ambrApi is None:
+        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+    return await ambrApi.fetch_weapon_detail(id)
+
+
 @router.get("/weaponlist")
 async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     weaponInfo = weaponData.weaponInfo
-    startTime = time.perf_counter()
     ambrWeapons = await ambrApi.fetch_weapons()  # 4성 이상은 186개, 1성 이상은 220개
 
-    endTime = time.perf_counter()
     return list(map(lambda weapon: {**vars(weapon), "options": weaponInfo.get(weapon.name, None)}, filter(lambda weapon: weaponInfo.get(weapon.name, None) != None, ambrWeapons)))
 
 
