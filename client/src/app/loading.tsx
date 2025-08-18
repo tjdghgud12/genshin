@@ -13,13 +13,13 @@ const RootLoading = (): React.ReactElement => {
   );
 };
 
-const DotBounsLoading = (): React.ReactElement => {
+const DotBounsLoading = ({ className = "w-full h-full", dotClassName = "w-24 h-24 stroke-8" }: { className?: string; dotClassName?: string }): React.ReactElement => {
   return (
-    <div className="w-full h-full flex">
+    <div className={`flex ${className}`}>
       <div className="flex items-center">
-        <Dot className="w-28 h-28 text-violet-600 animate-bounce stroke-8 bounce-with-pause" style={{}} />
-        <Dot className="w-28 h-28 text-violet-600 animate-bounce stroke-8 bounce-with-pause" style={{ animationDelay: "0.5s" }} />
-        <Dot className="w-28 h-28 text-violet-600 animate-bounce stroke-8 bounce-with-pause" style={{ animationDelay: "1s" }} />
+        <Dot className={`text-violet-600 animate-bounce bounce-with-pause ${dotClassName}`} style={{}} />
+        <Dot className={`text-violet-600 animate-bounce bounce-with-pause ${dotClassName}`} style={{ animationDelay: "0.5s" }} />
+        <Dot className={`text-violet-600 animate-bounce bounce-with-pause ${dotClassName}`} style={{ animationDelay: "1s" }} />
       </div>
     </div>
   );
