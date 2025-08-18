@@ -59,8 +59,8 @@ const CharacterOptionControlCircle = ({
       {options.some((o) => o.type === "stack") && (
         <Popover>
           <PopoverTrigger asChild>
-            <Button disabled={!unlocked} className="bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
-              <Settings className="size-6 " />
+            <Button disabled={!unlocked} className="w-fit bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
+              <Settings className="size-6" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white" side="right">
