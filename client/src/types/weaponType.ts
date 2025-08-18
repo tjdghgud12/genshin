@@ -5,7 +5,7 @@ export interface IWeaponInfo {
   name: string;
   icon: string;
   route: string;
-  option: {
+  options: {
     type: string;
     maxStack: number;
     description: string;
