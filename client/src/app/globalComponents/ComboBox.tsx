@@ -37,19 +37,20 @@ const Combobox = ({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
+      <Tooltip delayDuration={500}>
+        <TooltipTrigger asChild aria-expanded={open} role="combobox">
+          <PopoverTrigger asChild>
             <Button role="combobox" aria-expanded={open} className={`w-full text-center justify-between p-1 overflow-hidden ${className}`}>
               <p className="truncate ">{value ? options.find((option) => option.data.toString() === value)?.label : `${placeholder}`}</p>
               <ChevronsUpDown className="opacity-50" />
             </Button>
-          </TooltipTrigger>
-          <TooltipContent className="w-full max-w-[200px] bg-gray-500 fill-gray-500 ${className} p-2 rounded-lg text-white" side="top">
-            <p>{options.find((option) => option.data.toString() === value)?.label}</p>
-          </TooltipContent>
-        </Tooltip>
-      </PopoverTrigger>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent className="w-full max-w-[200px] bg-gray-500 fill-gray-500 ${className} p-2 rounded-lg text-white" side="top">
+          <p>{options.find((option) => option.data.toString() === value)?.label}</p>
+        </TooltipContent>
+      </Tooltip>
+
       <PopoverContent sideOffset={0} className={`w-full p-0 border-t-0`}>
         <Command id="Command" className={`p-0 ${className}`} value="">
           <CommandInput placeholder="Search Weapon..." className="w-fit h-fit" />
