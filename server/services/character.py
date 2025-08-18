@@ -66,7 +66,7 @@ async def getWeaponArtifactFightProp(fightProp: CharacterFightPropSchema, weapon
 
     # ----------------------- weapon -----------------------
     getWeaponFightProp = getTotalWeaponFightProp[weapon["name"]]
-    weaponData = await getWeaponFightProp(weapon["id"], weapon["level"], weapon["refinement"], weapon["option"], fightProp)
+    weaponData = await getWeaponFightProp(weapon["id"], weapon["level"], weapon["refinement"], weapon["options"], fightProp)
     weaponFightProp = weaponData["fightProp"]
     if weaponData["afterAddProps"] != None:
         for key in weaponData["afterAddProps"]:
@@ -83,7 +83,7 @@ async def getAfterWeaponArtifactFightProp(fightProp: CharacterFightPropSchema, w
     getWeaponFightProp = getTotalWeaponFightProp[weapon["name"]]
 
     if weaponAfterProps != None:
-        finallyWeaponData = await getWeaponFightProp(weapon["id"], weapon["level"], weapon["refinement"], weapon["option"], fightProp)
+        finallyWeaponData = await getWeaponFightProp(weapon["id"], weapon["level"], weapon["refinement"], weapon["options"], fightProp)
         for key in finallyWeaponData["afterAddProps"]:
             fightProp[key] += finallyWeaponData["fightProp"][key]
 

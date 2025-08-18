@@ -153,13 +153,13 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 "refinement": weapon.refinement,
                 "level": weapon.level,
                 "icon": weapon.icon,
-                "option": [],
+                "options": [],
                 "stat": {stat.type.value: stat.value / 100 if stat.is_percentage else stat.value for stat in weapon.stats},
             }
             weaponOption = weaponData.weaponInfo.get(weapon.name)
             if weaponOption is not None:
                 for option in weaponOption:
-                    characterInfo["weapon"]["option"].append({**vars(option), "active": True, "stack": option.maxStack})
+                    characterInfo["weapon"]["options"].append({**vars(option), "active": True, "stack": option.maxStack})
             # ---------------------------------------------------------------------
 
             # -------------------------- 성유물 --------------------------
@@ -177,8 +177,8 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 )
             artifactSetInfo = getArtifactSetInfo(characterInfo["artifact"]["parts"])
             for setInfo in artifactSetInfo:
-                options = setInfo.get("option") if setInfo.get("option") else []
-                characterInfo["artifact"]["setInfo"].append({**setInfo, "option": [{**option, "active": True, "stack": option["maxStack"]} for option in options]})
+                options = setInfo.get("options") if setInfo.get("options") else []
+                characterInfo["artifact"]["setInfo"].append({**setInfo, "options": [{**option, "active": True, "stack": option["maxStack"]} for option in options]})
                 # ---------------------------------------------------------------------
 
                 # 2. 최종 Fight Prop 데이터 계산

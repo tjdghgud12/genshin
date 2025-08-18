@@ -224,6 +224,6 @@ def getArtifactSetInfo(artifacts: list[dict]):
     for setName in setList:
         numberOfParts = sum(1 for artifact in artifacts if artifact.get("setName") == setName)
         if numberOfParts > 2:
-            setInfo.append({"name": setName, "option": artifactSetOptions.get(setName), "numberOfParts": numberOfParts})
+            setInfo.append({"name": setName, "options": artifactSetOptions.get(setName), "numberOfParts": numberOfParts})
 
     return setInfo

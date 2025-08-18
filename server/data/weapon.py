@@ -53,8 +53,8 @@ weaponInfo = {
         weaponDataType(type=weaponOptionType.toggle, description="치유 진행 시 공격력 증가", label="치유 진행"),
     ],
     "고요히 샘솟는 빛": [
-        weaponDataType(type=weaponOptionType.stack, maxStack=3, description="현재 hp 변화 시 원소 전투 스킬 피해 증가", label="hp 변화 횟수"),
-        weaponDataType(type=weaponOptionType.stack, maxStack=2, description="파티 내 다른 캐릭터의 현재 hp 변화 시 장착 캐릭터 hp 최대치 증가", label="hp 변화 횟수"),
+        weaponDataType(type=weaponOptionType.stack, maxStack=3, description="현재 hp 변화 시 원소 전투 스킬 피해 증가", label="hp 변화 횟수(피해 증가)"),
+        weaponDataType(type=weaponOptionType.stack, maxStack=2, description="파티 내 다른 캐릭터의 현재 hp 변화 시 장착 캐릭터 hp 최대치 증가", label="hp 변화 횟수(hp 증가)"),
     ],
     "별지기의 시선": [
         weaponDataType(description="원소 마스터리 증가"),
@@ -66,7 +66,7 @@ weaponInfo = {
     ],
     "타오르는 천 개의 태양": [
         weaponDataType(type=weaponOptionType.toggle, description="원소 전투 스킬 또는 원소 폭발 발동 시 공격력 및 치명타 피해 증가(불빛)", label="불빛"),
-        weaponDataType(type=weaponOptionType.toggle, description="밤혼 가호 상태에서는 불빛 효과 강화"),
+        weaponDataType(type=weaponOptionType.toggle, description="밤혼 가호 상태에서는 불빛 효과 강화", label="밤혼 가호"),
     ],
     "학도의 노트": [],
 }
