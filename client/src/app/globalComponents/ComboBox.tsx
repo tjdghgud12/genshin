@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
@@ -37,13 +38,20 @@ const Combobox = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button role="combobox" aria-expanded={open} className={`w-full text-center justify-between p-1 ${className}`}>
-          {value ? options.find((option) => option.data.toString() === value)?.label : `${placeholder}`}
-          <ChevronsUpDown className="opacity-50" />
-        </Button>
+        <Tooltip delayDuration={500}>
+          <TooltipTrigger asChild>
+            <Button role="combobox" aria-expanded={open} className={`w-full text-center justify-between p-1 overflow-hidden ${className}`}>
+              <p className="truncate ">{value ? options.find((option) => option.data.toString() === value)?.label : `${placeholder}`}</p>
+              <ChevronsUpDown className="opacity-50" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="w-full max-w-[200px] bg-gray-500 fill-gray-500 ${className} p-2 rounded-lg text-white" side="top">
+            <p>{options.find((option) => option.data.toString() === value)?.label}</p>
+          </TooltipContent>
+        </Tooltip>
       </PopoverTrigger>
       <PopoverContent sideOffset={0} className={`w-full p-0 border-t-0`}>
-        <Command id="Command" className={`p-0 ${className}`}>
+        <Command id="Command" className={`p-0 ${className}`} value="">
           <CommandInput placeholder="Search Weapon..." className="w-fit h-fit" />
           <CommandList id="CommandList">
             <CommandEmpty>No Weapon found.</CommandEmpty>
