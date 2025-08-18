@@ -54,6 +54,7 @@ const Combobox = ({
                   key={option.data}
                   value={option.data.toString()}
                   onSelect={(currentValue) => {
+                    onChange(currentValue);
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
