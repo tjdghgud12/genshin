@@ -1,16 +1,65 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+"use client";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Fragment } from "react";
 
-const SingleSelectBox = (): React.ReactElement => {
-  // 검색 완료로 만들자.
+interface option {
+  label: string;
+  data: any;
+  group?: string;
+  [key: string]: any;
+}
+
+const SingleSelectBox = ({
+  options = [],
+  defaultValue = undefined,
+  placeholder = "",
+  groups = [],
+  className = "",
+  optionClassName = "",
+  onChange = (_value): void => {},
+}: {
+  options: option[];
+  defaultValue?: string | undefined;
+  placeholder: string;
+  groups?: string[];
+  className?: string;
+  optionClassName?: string;
+  onChange?: (value?: string) => void;
+}): React.ReactElement => {
   return (
-    <Select>
-      <SelectTrigger className="w-2/3`">
-        <SelectValue placeholder="Theme" />
+    <Select onValueChange={onChange} defaultValue={defaultValue}>
+      <SelectTrigger className={`w-full overflow-hidden ${className}`}>
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent position="popper">
-        <SelectItem value="light">Light</SelectItem>
-        <SelectItem value="dark">Dark</SelectItem>
-        <SelectItem value="system">System</SelectItem>
+      <SelectContent className={`${optionClassName}`} position="popper">
+        {groups.length ? (
+          groups.map((group) => {
+            return (
+              <SelectGroup key={group}>
+                <SelectLabel>{group}</SelectLabel>
+                {options
+                  .filter((o) => o.group === group)
+                  .map((o, i) => {
+                    return (
+                      <SelectItem key={`select-box-option-${group}-${o.data}-${i}`} value={o.data.toString()}>
+                        {o.label}
+                      </SelectItem>
+                    );
+                  })}
+              </SelectGroup>
+            );
+          })
+        ) : (
+          <Fragment>
+            {options.map((o, i) => {
+              return (
+                <SelectItem key={`select-box-option-${o.data}-${i}`} value={o.data.toString()}>
+                  {o.label}
+                </SelectItem>
+              );
+            })}
+          </Fragment>
+        )}
       </SelectContent>
     </Select>
   );
