@@ -28,7 +28,7 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
       })),
     })),
     activeSkill: data.activeSkill.map((skill: IuserSelectoptions) => ({
-      level: skill.level,
+      level: (skill.level as number) > 10 ? 10 : skill.level, // 돌파에 따른 스킬렙 증가는 별도로 back에서 연산하기 위해 최대값을 10으로 제한
       options: skill.options.map((option) => ({ active: option.active, stack: option.stack })),
     })),
     passiveSkill: data.passiveSkill.map((skill: IuserSelectoptions) => ({
@@ -36,10 +36,11 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
       options: skill.options.map((option) => ({ active: option.active, stack: option.stack })),
     })),
     weapon: {
+      id: data.weapon.id,
       name: data.weapon.name,
       level: data.weapon.level,
       refinement: data.weapon.refinement,
-      options: data.weapon.option.map((o: IuserSelectoptions) => ({
+      options: data.weapon.options.map((o: IuserSelectoptions) => ({
         active: o.active,
         stack: o.stack,
       })),

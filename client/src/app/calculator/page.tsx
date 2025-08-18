@@ -48,6 +48,7 @@ const calculatorFormSchema = z.object({
     }),
   ),
   weapon: z.object({
+    id: z.number(),
     name: z.string(),
     level: z.number().max(90, { error: "스킬 레벨을 확인해주세요." }).min(1, { error: "스킬 레벨을 확인해주세요." }),
     refinement: z.number().max(5, { error: "스킬 레벨을 확인해주세요." }).min(0, { error: "스킬 레벨을 확인해주세요." }),
@@ -106,7 +107,7 @@ const CalculatorPage = (): React.ReactElement => {
     },
     mode: "onBlur",
   });
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     name: "data",
     control: form.control,
   });
@@ -131,7 +132,13 @@ const CalculatorPage = (): React.ReactElement => {
   return (
     <div>
       <Form {...form}>
-        <form id="page form" onSubmit={form.handleSubmit(onSubmit)} className="w-full mx-auto">
+        <form
+          id="page form"
+          onSubmit={form.handleSubmit(onSubmit, (err) => {
+            console.log(err);
+          })}
+          className="w-full mx-auto"
+        >
           <Tabs value={selectedCharacter} onValueChange={setSelectedCharacter} className="w-[90%] mx-auto gap-0">
             <TabsList className="w-full h-fit justify-around pt-3 px-3 rounded-2xl mx-auto">
               {fields.map((item, i) => {
@@ -155,7 +162,7 @@ const CalculatorPage = (): React.ReactElement => {
               const rawInfo = item.raw;
               const name = rawInfo.name;
               return (
-                <TabsContent key={`calculator-tab-content-${index}`} className={`w-full h-fit flex ${elementBgColors[rawInfo.element]} rounded-2xl text-stone-600`} value={name}>
+                <TabsContent key={`calculator-tab-content-${index}`} className={`w-full h-fit`} value={name}>
                   <CharacterSettingCard form={form} item={item} index={index} />
                 </TabsContent>
               );

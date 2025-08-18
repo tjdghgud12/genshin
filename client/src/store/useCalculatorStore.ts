@@ -20,7 +20,7 @@ export interface IUserCalculaterStore {
 export const useCalculatorStore = create<IUserCalculaterStore>((set) => ({
   weaponList: [],
   calculatorData: [],
-  setWeaponList: (newWeaponList): void => set((state) => ({ weaponList: newWeaponList })),
+  setWeaponList: (newWeaponList): void => set(() => ({ weaponList: newWeaponList })),
   setCharacterInfo: (newCharactersInfo): void => set((state) => ({ calculatorData: { ...state.calculatorData, info: newCharactersInfo } })),
   setCalculateData: (newResult): void => set((state) => ({ calculatorData: { ...state.calculatorData, result: newResult } })),
   setTotalCalculatorData: (newTotalCalculatorData): void => set({ calculatorData: newTotalCalculatorData }),
