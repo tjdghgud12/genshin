@@ -14,8 +14,9 @@ const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>)
 
   return (
     <html className="w-full h-full" lang="en">
-      <body className="w-full h-full min-w-[1200px] min-h-[500px] mb-10">
+      <body className="w-full h-full min-w-[1200px] min-h-[500px] mb-10 flex flex-col">
         <Store weaponList={weaponList}>{children}</Store>
+        <footer className="text-gray-600 p-2 mt-5 mx-auto">made by JjoriButler</footer>
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCalculatorStore } from "@/store/useCalculatorStore";
-import { ReactElement, ReactNode, useEffect } from "react";
+import { Fragment, ReactElement, ReactNode, useEffect } from "react";
 
 interface StoreProps {
   children: ReactNode;
@@ -15,7 +15,7 @@ const Store = ({ children, ...props }: StoreProps): ReactElement => {
     if ((props as any).weaponList) setWeaponList((props as any).weaponList);
   }, [props, setWeaponList]);
 
-  return <div className="w-full h-full">{children}</div>;
+  return <Fragment>{children}</Fragment>;
 };
 
 export default Store;
