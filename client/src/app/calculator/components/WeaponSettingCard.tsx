@@ -29,6 +29,13 @@ const weaponSubOption = {
 type IWeaponData = z.infer<typeof calculatorFormSchema>["weapon"];
 type TWeaponSubOptionKey = keyof typeof weaponSubOption;
 
+interface IWeaponDetail {
+  rank: number;
+  icon: string;
+  upgrade: { prop: Record<string, unknown>[] };
+  [key: string]: unknown; // 나머지는 다 허용
+}
+
 const WeaponSettingCard = ({
   className = "",
   type = "WEAPON_SWORD_ONE_HAND",
@@ -47,12 +54,12 @@ const WeaponSettingCard = ({
   onOptionsChange?: ((value: boolean | number) => void)[];
 }): React.ReactElement => {
   const totalWeaponList = useCalculatorStore((state) => state.weaponList);
-  const [weaponDetail, setWeaponDetail] = useState<any>();
+  const [weaponDetail, setWeaponDetail] = useState<IWeaponDetail | null>(null);
   const [imgLoading, setImgLoading] = useState<boolean>(false);
   const [weaponList, setWeaponList] = useState<IWeaponInfo[]>([]);
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponInfo | undefined>(undefined);
 
-  const getWeaponDetail = async (id: number) => {
+  const getWeaponDetail = async (id: number): Promise<void> => {
     api.get(`weapons/${id}`).then((res) => {
       setWeaponDetail(res.data);
     });
@@ -69,7 +76,7 @@ const WeaponSettingCard = ({
   }, [totalWeaponList, type, weapon.id]);
 
   return (
-    <Card className={`w-[90%] h-full border-0 border-gray-400 p-1 shadow-md bg-transparent ${className}`}>
+    <Card className={`w-full h-full border-0 border-gray-400 p-1 shadow-md bg-transparent ${className}`}>
       <CardContent className="w-full h-full p-1 text-gray-700">
         <div className="w-full h-fit flex">
           <div className="w-[7vw] h-[7vw] min-w-[84px] min-h-[84px] flex flex-col mr-2">

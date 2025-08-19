@@ -10,7 +10,7 @@ export interface IArtifactPartInfo {
 
 export interface IArtifactSetsInfo {
   name: string;
-  option: {
+  options: {
     type: string;
     maxStack: number;
     description: string;
@@ -21,8 +21,5 @@ export interface IArtifactSetsInfo {
 
 export interface IArtifactInfo {
   parts: IArtifactPartInfo[];
-  setInfo: {
-    name: string;
-    option: IArtifactSetsInfo[];
-  }[];
+  setInfo: IArtifactSetsInfo[];
 }

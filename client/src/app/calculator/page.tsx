@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const calculatorFormSchema = z.object({
@@ -127,18 +128,12 @@ const CalculatorPage = (): React.ReactElement => {
     return (): void => {
       form.reset();
     };
-  }, []);
+  }, [append, form]);
 
   return (
     <div>
       <Form {...form}>
-        <form
-          id="page form"
-          onSubmit={form.handleSubmit(onSubmit, (err) => {
-            console.log(err);
-          })}
-          className="w-full mx-auto"
-        >
+        <form id="page form" onSubmit={form.handleSubmit(onSubmit, (err) => toast.error(JSON.stringify(err)))} className="w-full mx-auto">
           <Tabs value={selectedCharacter} onValueChange={setSelectedCharacter} className="w-[90%] mx-auto gap-0">
             <TabsList className="w-full h-fit justify-around pt-3 px-3 rounded-2xl mx-auto">
               {fields.map((item, i) => {
