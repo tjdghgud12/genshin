@@ -49,10 +49,11 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
       loading: "로딩 중",
       success: (res) => {
         setCalculatorData(res.data.characters);
+        window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
         const searchParams = new URLSearchParams({ uid: valus.uid });
         router.push(`/calculator?${searchParams.toString()}`);
         setWaitUserInfoFlag(false);
-        return "성공요";
+        return "캐릭터 진열장의 정보를 읽어왔습니다.";
       },
       error: (err) => {
         console.log(err);
