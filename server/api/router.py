@@ -185,7 +185,9 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             getTotalFightProp = getFightProp.get(avatar.name)
             avatarRawData = rawRes["avatarInfoList"][i]
             if getTotalFightProp is not None:
-                characterInfo["totalStat"] = await getTotalFightProp(ambrCharacterDetail, CharacterInfo(**characterInfo))
+                newFightProp = await getTotalFightProp(ambrCharacterDetail, CharacterInfo(**characterInfo))
+                characterInfo["totalStat"] = newFightProp.fightProp
+                characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i]["level"]} for i, active in enumerate(characterInfo["activeSkill"])]
 
             # 3. 최종 캐릭터 스텟 및 데미지 계산
 
