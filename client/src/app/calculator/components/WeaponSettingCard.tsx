@@ -26,7 +26,7 @@ const weaponSubOption = {
   FIGHT_PROP_PHYSICAL_ADD_HURT: "물리 피해 보너스(%)",
 };
 
-type IWeaponData = z.infer<typeof calculatorFormSchema>["weapon"];
+type TWeaponData = z.infer<typeof calculatorFormSchema>["weapon"];
 type TWeaponSubOptionKey = keyof typeof weaponSubOption;
 
 interface IWeaponDetail {
@@ -47,7 +47,7 @@ const WeaponSettingCard = ({
 }: {
   className?: string;
   type?: string;
-  weapon?: IWeaponData;
+  weapon?: TWeaponData;
   onChange?: (weapon: IWeaponInfo | undefined) => void;
   onLevelChange?: (level: number) => void;
   onRefinementChange?: (refinement: number) => void;
