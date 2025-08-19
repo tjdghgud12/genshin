@@ -1,23 +1,23 @@
 "use client";
 
 import { useCalculatorStore } from "@/store/useCalculatorStore";
+import { IArtifactSetsInfo } from "@/types/artifactType";
+import { IWeaponInfo } from "@/types/weaponType";
 import { Fragment, ReactElement, ReactNode, useEffect } from "react";
 
 interface StoreProps {
   children: ReactNode;
-  [key: string]: any;
+  weaponList?: IWeaponInfo[];
+  artifactSets?: IArtifactSetsInfo[];
 }
 
-const Store = ({ children, weaponList, artifactSets, ...props }: StoreProps): ReactElement => {
+const Store = ({ children, weaponList, artifactSets, ..._props }: StoreProps): ReactElement => {
   const { setWeaponList, setArtifactSets } = useCalculatorStore();
 
   useEffect(() => {
     if (weaponList) setWeaponList(weaponList);
-  }, [weaponList, setWeaponList]);
-
-  useEffect(() => {
     if (artifactSets) setArtifactSets(artifactSets);
-  }, [artifactSets, setArtifactSets]);
+  }, [weaponList, artifactSets, setWeaponList, setArtifactSets]);
 
   return <Fragment>{children}</Fragment>;
 };
