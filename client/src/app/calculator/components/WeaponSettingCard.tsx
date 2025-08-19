@@ -6,6 +6,7 @@ import GradientStar from "@/app/globalComponents/GradientStar";
 import { DotBounsLoading } from "@/app/loading";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import api from "@/lib/axios";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
@@ -13,7 +14,6 @@ import { IWeaponInfo } from "@/types/weaponType";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { z } from "zod";
-import { Label } from "../../../components/ui/label";
 
 const weaponSubOption = {
   FIGHT_PROP_ATTACK_PERCENT: "공격력(%)",
