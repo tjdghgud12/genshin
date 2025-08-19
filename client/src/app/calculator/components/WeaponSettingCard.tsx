@@ -53,7 +53,7 @@ const WeaponSettingCard = ({
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponInfo | undefined>(undefined);
 
   const getWeaponDetail = async (id: number) => {
-    api(`api/weaponDetail/${id}`).then((res) => {
+    api.get(`api/weapons/${id}`).then((res) => {
       setWeaponDetail(res.data);
     });
   };
@@ -77,6 +77,7 @@ const WeaponSettingCard = ({
             {weaponDetail ? (
               <div className="w-full h-full relative">
                 <Image src={weaponDetail.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
+                {/* <div>{weapon.name.slice(0, 1)}</div> */}
               </div>
             ) : (
               <></>
