@@ -42,7 +42,7 @@ const Home = (): React.ReactElement => {
 
   const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
     setWaitUserInfoFlag(true);
-    toast.promise(api.get(`/api/user/${valus.uid}`), {
+    toast.promise(api.get(`/user/${valus.uid}`), {
       loading: "캐릭터 진열장의 정보를 읽어오는 중 입니다.",
       success: (res) => {
         setCalculatorData(res.data.characters);

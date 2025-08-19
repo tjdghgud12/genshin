@@ -53,7 +53,7 @@ const WeaponSettingCard = ({
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponInfo | undefined>(undefined);
 
   const getWeaponDetail = async (id: number) => {
-    api.get(`api/weapons/${id}`).then((res) => {
+    api.get(`weapons/${id}`).then((res) => {
       setWeaponDetail(res.data);
     });
   };

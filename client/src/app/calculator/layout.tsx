@@ -45,7 +45,7 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
 
   const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
     setWaitUserInfoFlag(true);
-    toast.promise(api.get(`/api/user/${valus.uid}`), {
+    toast.promise(api.get(`/user/${valus.uid}`), {
       loading: "로딩 중",
       success: (res) => {
         setCalculatorData(res.data.characters);

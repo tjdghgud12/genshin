@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>): Promise<React.ReactElement> => {
-  const weaponList = (await api.get(`/api/weapons`)).data;
+  const weaponList = (await api.get(`/weapons`)).data;
+  const artifactSets = (await api.get(`/artifactsets`)).data;
 
   return (
     <html className="w-full h-full" lang="en">
