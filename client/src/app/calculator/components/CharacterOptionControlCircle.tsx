@@ -13,8 +13,11 @@ const CharacterOptionControlCircle = ({
   unlocked = false,
   options = [],
   icon = "",
+  useLevel = false,
+  level = 1,
   onClick = (): void => {},
   onChange = (): void => {},
+  onLevelChange = (): void => {},
 }: {
   unlocked: boolean;
   name?: string;
@@ -27,8 +30,11 @@ const CharacterOptionControlCircle = ({
     inputLabel: string;
   }[];
   icon: string;
+  useLevel?: boolean;
+  level?: number;
   onClick?: () => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
+  onLevelChange?: (level: number) => void;
 }): React.ReactElement => {
   return (
     <div className="w-fit h-fit flex">
@@ -56,32 +62,49 @@ const CharacterOptionControlCircle = ({
           <p className="mb-2">{description}</p>
         </TooltipContent>
       </Tooltip>
-      {options.some((o) => o.type === "stack") && (
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button disabled={!unlocked} className="w-fit bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
-              <Settings className="size-6" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white" side="right">
-            <Arrow />
-            {options.map((o, i) => {
-              return (
-                <div key={`skill-option-${o.inputLabel}`} className="flex">
-                  <p className="my-auto mr-3">{o.inputLabel}:</p>
-                  <Input
-                    className="w-auto max-w-[100px] border-x-0 border-t-0 shadow-none focus-visible:ring-0 rounded-none input-removeArrow text-center"
-                    value={o.stack}
-                    max={o.maxStack}
-                    min={0}
-                    onChange={(e) => onChange(e, i)}
-                  />
-                </div>
-              );
-            })}
-          </PopoverContent>
-        </Popover>
-      )}
+      <div className="flex flex-col">
+        {options.some((o) => o.type === "stack") && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button disabled={!unlocked} className="w-fit bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
+                <Settings className="size-6" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white" side="right">
+              <Arrow />
+              {options.map((o, i) => {
+                return (
+                  <div key={`skill-option-${o.inputLabel}`} className="flex">
+                    <p className="my-auto mr-3">{o.inputLabel}:</p>
+                    <Input
+                      className="w-auto max-w-[100px] border-x-0 border-t-0 shadow-none focus-visible:ring-0 rounded-none input-removeArrow text-center"
+                      value={o.stack}
+                      max={o.maxStack}
+                      min={0}
+                      onChange={(e) => onChange(e, i)}
+                    />
+                  </div>
+                );
+              })}
+            </PopoverContent>
+          </Popover>
+        )}
+        {useLevel && (
+          <Input
+            className="size-6 border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
+            placeholder="Lv"
+            type="number"
+            value={level.toString()}
+            max={10}
+            min={0}
+            onChange={(e) => {
+              let newLevel = Number(e.target.value);
+              if (newLevel > 10) newLevel = 10;
+              onLevelChange(newLevel);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 };

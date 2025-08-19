@@ -64,6 +64,8 @@ const CharacterSettingCard = ({
               </FormItem>
             )}
           />
+
+          {/* 패시브 스킬 */}
           <div className="w-full h-auto flex">
             <div className="flex-1 flex flex-col mt-auto">
               {item.passiveSkill.map((passive, j) => {
@@ -107,6 +109,8 @@ const CharacterSettingCard = ({
                 );
               })}
             </div>
+
+            {/* 액티브 스킬 */}
             <div className="w-[22%] h-full flex flex-col mt-auto mr-0.5">
               {item.activeSkill.map((active, j) => {
                 const activeInfo = item.raw.activeSkill[j];
@@ -116,7 +120,7 @@ const CharacterSettingCard = ({
                     key={`activeSkill-${index}-${j}`}
                     control={form.control}
                     name={`data.${index}.activeSkill.${j}`}
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem className="w-fit mt-3">
                         <div className="flex">
                           <FormControl className="w-fit h-fit flex flex-col">
@@ -126,6 +130,8 @@ const CharacterSettingCard = ({
                               unlocked
                               options={active.options.map((o, k) => ({ ...activeInfo.options[k], ...o, inputLabel: activeInfo.options[k].label }))}
                               icon={activeInfo.icon}
+                              useLevel
+                              level={field.value.level}
                               onClick={() => {
                                 const options = form.getValues(`data.${index}.activeSkill.${j}.options`);
                                 form.setValue(
@@ -140,6 +146,9 @@ const CharacterSettingCard = ({
                                   form.setValue(`data.${index}.activeSkill.${j}.options.${k}.stack`, value > maxStack ? maxStack : value);
                                 }
                               }}
+                              onLevelChange={(level) => {
+                                form.setValue(`data.${index}.activeSkill.${j}.level`, level);
+                              }}
                             />
                           </FormControl>
                         </div>
@@ -150,6 +159,8 @@ const CharacterSettingCard = ({
                 );
               })}
             </div>
+
+            {/* 운명의 자리 */}
             <div className="w-[22%] h-full flex flex-col mt-auto">
               {item.constellations.map((constellation, j) => {
                 const constellationInfo = item.raw.constellations[j];
@@ -196,7 +207,7 @@ const CharacterSettingCard = ({
           </div>
         </div>
         <div className="w-3/5  h-fit flex py-3">
-          <div className="w-1/2 flex flex-col">
+          <div className="w-1/2 flex flex-col gap-2">
             <div className="w-full h-full flex">
               <FormField
                 control={form.control}
@@ -240,16 +251,17 @@ const CharacterSettingCard = ({
                 )}
               />
             </div>
-            <div className="w-full h-full flex">
+            <div className="w-full h-full flex flex-col">
               <FormField
                 control={form.control}
-                name={`data.${index}.artifact.setInfo`}
+                name={`data.${index}.artifact`}
                 render={({ field }) => (
                   <FormItem className="w-full h-fit mb-auto justify-start">
-                    {field.value.map((val, i) => {
+                    {field.value.setInfo.map((val, i) => {
+                      const parts = field.value.parts;
                       return (
                         <FormControl key={`${val.name}-${i}`} className="w-full">
-                          <ArtifactSetOptionCard val={val} />
+                          <ArtifactSetOptionCard val={val} parts={[]} />
                         </FormControl>
                       );
                     })}
