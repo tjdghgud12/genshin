@@ -14,7 +14,7 @@ def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict], _
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value] += 0.15
@@ -29,7 +29,7 @@ def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict], _cha
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
 
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.ICE_ADD_HURT.value] += 0.15
@@ -46,7 +46,7 @@ def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict], _cha
 def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.ELEC_ADD_HURT.value] += 0.15
@@ -63,7 +63,7 @@ def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict], _char
 def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.GRASS_ADD_HURT.value] += 0.15
@@ -76,7 +76,7 @@ def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict], _ch
 def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.CHARGE_EFFICIENCY.value] += 0.2
@@ -89,7 +89,7 @@ def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], 
 def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.FIRE_ADD_HURT.value] += 0.15
@@ -107,7 +107,7 @@ def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict],
 def getGoldenTroupeSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value] += 0.20
@@ -123,7 +123,7 @@ def getGoldenTroupeSetOption(numberOfParts: int, optionInfo: list[dict], _charac
 def getFinaleOfTheDeepGalleriesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     fightProp[fightPropKeys.ICE_ADD_HURT.value] += 0.15
@@ -138,7 +138,7 @@ def getFinaleOfTheDeepGalleriesSetOption(numberOfParts: int, optionInfo: list[di
 def getScrollOfTheHeroOfCinderCitySetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 1:
                     if info["active"]:
@@ -153,7 +153,7 @@ def getScrollOfTheHeroOfCinderCitySetOption(numberOfParts: int, optionInfo: list
 def getObsidianCodexSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: CharacterFightPropSchema) -> ArtifactDataReturnSchema:
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for i, info in enumerate(optionInfo):
-        if numberOfParts >= info["numberOfParts"]:
+        if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
                     if info["active"]:
@@ -202,7 +202,7 @@ def getArtifactSetData(setInfos: list[dict], characterFightProp: CharacterFightP
     fightProp: CharacterFightPropSchema = {**fightPropTemplate}
     for setInfo in setInfos:
         getSetFightProp = getArtifactSetsFightProp[setInfo["name"]]
-        setOptionFightProp = getSetFightProp(setInfo["numberOfParts"], setInfo.get("options") or [], characterFightProp)
+        setOptionFightProp = getSetFightProp(setInfo["requiredParts"], setInfo.get("options") or [], characterFightProp)
         afterAddProps = setOptionFightProp["afterAddProps"]
         for fightPropKey, value in setOptionFightProp["fightProp"].items():
             fightProp[fightPropKey] += value
@@ -219,6 +219,6 @@ def getArtifactSetInfo(artifacts: list[dict]):
     for setName in setList:
         numberOfParts = sum(1 for artifact in artifacts if artifact.get("setName") == setName)
         if numberOfParts > 2:
-            setInfo.append({"name": setName, "options": artifactSetOptions.get(setName), "numberOfParts": numberOfParts})
+            setInfo.append({"name": setName, "options": artifactSetOptions.get(setName), "requiredParts": numberOfParts})
 
     return setInfo

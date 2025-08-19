@@ -34,6 +34,18 @@ async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
     return list(map(lambda weapon: {**vars(weapon), "options": weaponInfo.get(weapon.name, None)}, filter(lambda weapon: weaponInfo.get(weapon.name, None) != None, ambrWeapons)))
 
 
+@router.get("/artifactsets")
+async def genArtifactSetList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
+    if ambrApi is None:
+        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+    setOptions = artifactData.artifactSetOptions
+    ambrArtifactSets = await ambrApi.fetch_artifact_sets()
+
+    asdsad = await ambrApi.fetch_artifact_set_detail(15003)
+
+    return list(map(lambda set: {**vars(set), "options": setOptions.get(set.name, None)}, filter(lambda set: setOptions.get(set.name, None) != None, ambrArtifactSets)))
+
+
 @router.get("/user/{uid}")
 async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
@@ -180,9 +192,9 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             for setInfo in artifactSetInfo:
                 options = setInfo.get("options") if setInfo.get("options") else []
                 characterInfo["artifact"]["setInfo"].append({**setInfo, "options": [{**vars(option), "active": True, "stack": option.maxStack} for option in options]})
-                # ---------------------------------------------------------------------
+            # ---------------------------------------------------------------------
 
-                # 2. 최종 Fight Prop 데이터 계산
+            # 2. 최종 Fight Prop 데이터 계산
             getTotalFightProp = getFightProp.get(avatar.name)
             avatarRawData = rawRes["avatarInfoList"][i]
             if getTotalFightProp is not None:
