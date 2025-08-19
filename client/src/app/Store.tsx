@@ -8,13 +8,16 @@ interface StoreProps {
   [key: string]: any;
 }
 
-const Store = ({ children, ...props }: StoreProps): ReactElement => {
+const Store = ({ children, weaponList, artifactSets, ...props }: StoreProps): ReactElement => {
   const { setWeaponList, setArtifactSets } = useCalculatorStore();
 
   useEffect(() => {
-    if ((props as any).weaponList) setWeaponList((props as any).weaponList);
-    if ((props as any).artifactSets) setArtifactSets((props as any).artifactSets);
-  }, [props, setWeaponList, setArtifactSets]);
+    if (weaponList) setWeaponList(weaponList);
+  }, [weaponList, setWeaponList]);
+
+  useEffect(() => {
+    if (artifactSets) setArtifactSets(artifactSets);
+  }, [artifactSets, setArtifactSets]);
 
   return <Fragment>{children}</Fragment>;
 };
