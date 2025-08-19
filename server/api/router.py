@@ -3,6 +3,7 @@ from ambr import CharacterDetail, WeaponDetail, AmbrAPI, Talent, Constellation
 import enka
 from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, activeSkillType, skillConstellationOptionType, skillConstellationType
 import data.weapon as weaponData
+import data.artifact as artifactData
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
 from services.artifact import getArtifactSetInfo
@@ -16,14 +17,14 @@ router = APIRouter()
 # ambrArtifacts = await ambrApi.fetch_artifact_sets() # 55개
 
 
-@router.get("/weaponDetail/{id}")
+@router.get("/weapons/{id}")
 async def getWeaponDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     return await ambrApi.fetch_weapon_detail(id)
 
 
-@router.get("/weaponlist")
+@router.get("/weapons")
 async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
@@ -178,7 +179,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             artifactSetInfo = getArtifactSetInfo(characterInfo["artifact"]["parts"])
             for setInfo in artifactSetInfo:
                 options = setInfo.get("options") if setInfo.get("options") else []
-                characterInfo["artifact"]["setInfo"].append({**setInfo, "options": [{**option, "active": True, "stack": option["maxStack"]} for option in options]})
+                characterInfo["artifact"]["setInfo"].append({**setInfo, "options": [{**vars(option), "active": True, "stack": option.maxStack} for option in options]})
                 # ---------------------------------------------------------------------
 
                 # 2. 최종 Fight Prop 데이터 계산

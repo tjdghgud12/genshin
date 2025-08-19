@@ -1,4 +1,5 @@
 from enum import Enum
+from dataclasses import dataclass
 
 
 class artifactSetOptionType(Enum):
@@ -7,90 +8,87 @@ class artifactSetOptionType(Enum):
     stack = "stack"
 
 
+@dataclass
+class artifactSetDataType:
+    type: artifactSetOptionType = artifactSetOptionType.always
+    maxStack: int = 1
+    description: str = ""
+    label: str = ""
+    numberOfParts: int = 0
+
+
 artifactSetOptions = {
     "그림자 사냥꾼": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "일반공격 및 강공격 피해 증가"},
-        {
-            "type": artifactSetOptionType.stack,
-            "maxStack": 3,
-            "description": "현재 체력 변화 시 치명타 확률 증가",
-        },
+        artifactSetDataType(description="일반공격 및 강공격 피해 증가", numberOfParts=2),
+        artifactSetDataType(type=artifactSetOptionType.stack, maxStack=3, description="현재 체력 변화 시 치명타 확률 증가", label="체력 변화", numberOfParts=4),
     ],
     "얼음바람 속에서 길잃은 용사": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "얼음 원소 피해 증가"},
-        {
-            "type": artifactSetOptionType.stack,
-            "maxStack": 2,
-            "description": "얼음 원소 부착 적 공격 시 치명타 확률 증가. 빙결 상태 적 공격 시 치명타 확률 추가 증가",
-        },
+        artifactSetDataType(description="얼음 원소 피해 증가", numberOfParts=2),
+        artifactSetDataType(
+            type=artifactSetOptionType.toggle,
+            description="얼음 원소 부착 적 공격 시 치명타 확률 증가",
+            numberOfParts=4,
+            label="얼음 원소 부착",
+        ),
+        artifactSetDataType(
+            type=artifactSetOptionType.toggle,
+            description="빙결 상태 적 공격 시 치명타 확률 추가 증가",
+            numberOfParts=4,
+            label="빙결",
+        ),
     ],
     "번개 같은 분노": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "번개 원소 피해 증가"},
-        {
-            "type": artifactSetOptionType.always,
-            "maxStack": 1,
-            "description": "번개 관련 피해 계수 증가 및 번개 관련 반응 발동 시 원소 전투 스킬 재사용 대기시간 1초 감소",
-        },
+        artifactSetDataType(description="번개 원소 피해 증가", numberOfParts=2),
+        artifactSetDataType(description="번개 관련 피해 계수 증가 및 번개 관련 반응 발동 시 원소 전투 스킬 재사용 대기시간 1초 감소", numberOfParts=4),
     ],
     "숲의 기억": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "풀 원소 피해 증가"},
-        {
-            "type": artifactSetOptionType.toggle,
-            "maxStack": 1,
-            "description": "원소 전투 스킬 또는 원소 폭발에 명중된 적은 풀 원소 내성 감소",
-        },
+        artifactSetDataType(description="풀 원소 피해 증가", numberOfParts=2),
+        artifactSetDataType(description="원소 전투 스킬 또는 원소 폭발에 명중된 적은 풀 원소 내성 감소", label="원소 전투 스킬 또는 원소 폭발 명중", numberOfParts=4),
     ],
     "절연의 기치": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "원소 충전 효율 증가"},
-        {
-            "type": artifactSetOptionType.always,
-            "maxStack": 1,
-            "description": "원소 충전 효율의 25%만큼 원소 폭발 피해 증가",
-        },
+        artifactSetDataType(description="원소 충전 효율 증가", numberOfParts=2),
+        artifactSetDataType(description="원소 충전 효율의 25%만큼 원소 폭발 피해 증가", numberOfParts=4),
     ],
     "불타오르는 화염의 마녀": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "불 원소 피해 증가"},
-        {
-            "type": artifactSetOptionType.always,
-            "maxStack": 3,
-            "description": "과부하, 연소, 발화 반응 피해 40% 증가 + 융해 반응 보너스 계수 15%증가. 원소 전투 스킬 사용 시 2세트 옵션 50%씩 상승",
-        },
+        artifactSetDataType(description="불 원소 피해 증가", numberOfParts=2),
+        artifactSetDataType(
+            type=artifactSetOptionType.stack,
+            maxStack=3,
+            description="과부하, 연소, 발화 반응 피해 40% 증가 + 융해 반응 보너스 계수 15%증가. 원소 전투 스킬 사용 시 2세트 옵션 50%씩 상승",
+            numberOfParts=4,
+            label="원소 전투 스킬 사용 횟수",
+        ),
     ],
     "황금 극단": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "원소 전투 스킬 피해 증가"},
-        {
-            "type": artifactSetOptionType.toggle,
-            "maxStack": 1,
-            "description": "원소 전투 스킬 피해 증가. 대기 상태일 때 원소 전투 스킬 피해 추가 증가 ",
-        },
+        artifactSetDataType(description="원소 전투 스킬 피해 증가", numberOfParts=2),
+        artifactSetDataType(description="원소 전투 스킬 피해 증가", numberOfParts=4),
+        artifactSetDataType(type=artifactSetOptionType.toggle, description="대기 상태일 때 원소 전투 스킬 피해 추가 증가", numberOfParts=4, label="대기 상태"),
     ],
     "깊은 회랑의 피날레": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "얼음 원소 피해 증가"},
-        {
-            "type": artifactSetOptionType.toggle,
-            "maxStack": 1,
-            "description": "원소 게이지가 0pt일 시 일반 공격 또는 원소 폭발로 주는 피해 증가",
-        },
+        artifactSetDataType(description="얼음 원소 피해 증가", numberOfParts=2),
+        artifactSetDataType(
+            type=artifactSetOptionType.toggle, description="원소 게이지가 0pt일 시 일반 공격 또는 원소 폭발로 주는 피해 증가", numberOfParts=4, label="원소 게이지 0pt"
+        ),
     ],
     "잿더미성 용사의 두루마리": [
-        {"type": artifactSetOptionType.always, "maxStack": 1, "description": "주변 파티 내 캐릭터가 밤혼 발산 발동 시, 장착 캐릭터 원소 에너지 회복"},
-        {
-            "type": artifactSetOptionType.toggle,
-            "maxStack": 1,
-            "description": "장착캐릭터가 원소 반응 발동 시 파티 내 모든 캐릭터의 해당 원소 반응과 관련된 피해 12% 증가",
-        },
-        {
-            "type": artifactSetOptionType.toggle,
-            "maxStack": 1,
-            "description": "장착캐릭터가 원소 반응 발동 시 장착 캐릭터가 밤혼 가호 상태인 경우 파티 내 모든 캐릭터의 해당 원소 반응과 관련된 피해 28% 증가",
-        },
+        artifactSetDataType(description="주변 파티 내 캐릭터가 밤혼 발산 발동 시, 장착 캐릭터 원소 에너지 회복", numberOfParts=2),
+        artifactSetDataType(
+            type=artifactSetOptionType.toggle,
+            description="장착캐릭터가 원소 반응 발동 시 파티 내 모든 캐릭터의 해당 원소 반응과 관련된 피해 12% 증가",
+            numberOfParts=4,
+            label="원소 반응",
+        ),
+        artifactSetDataType(
+            type=artifactSetOptionType.toggle,
+            description="장착캐릭터가 원소 반응 발동 시 장착 캐릭터가 밤혼 가호 상태인 경우 파티 내 모든 캐릭터의 해당 원소 반응과 관련된 피해 28% 증가",
+            numberOfParts=4,
+            label="밤혼",
+        ),
     ],
     "흑요석 비전": [
-        {"type": artifactSetOptionType.toggle, "maxStack": 1, "description": "밤혼 가호 상태의 장착 캐릭터가 필드 위에 있을 시 주는 피해 15% 증가"},
-        {
-            "type": artifactSetOptionType.toggle,
-            "maxStack": 1,
-            "description": "장착 캐릭터가 필드 위에서 밤혼을 1pt 소모한 후 치명타 확률이 40% 증가",
-        },
+        artifactSetDataType(type=artifactSetOptionType.toggle, description="밤혼 가호 상태의 장착 캐릭터가 필드 위에 있을 시 주는 피해 15% 증가", numberOfParts=2, label="밤혼"),
+        artifactSetDataType(
+            type=artifactSetOptionType.toggle, description="장착 캐릭터가 필드 위에서 밤혼을 1pt 소모한 후 치명타 확률이 40% 증가", numberOfParts=4, label="밤혼 소모"
+        ),
     ],
 }
