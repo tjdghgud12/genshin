@@ -1,21 +1,28 @@
-export interface IArtifactInfo {
-  parts: {
-    name: string;
-    setName: string;
-    id: number;
+export interface IArtifactPartInfo {
+  name: string;
+  setName: string;
+  id: number;
+  type: string;
+  mainStat: object;
+  subStat: object[];
+  icon: string;
+}
+
+export interface IArtifactSetsInfo {
+  name: string;
+  option: {
     type: string;
-    mainStat: object;
-    subStat: object[];
-    icon: string;
+    maxStack: number;
+    description: string;
+    label: string;
+    requiredParts: number;
   }[];
+}
+
+export interface IArtifactInfo {
+  parts: IArtifactPartInfo[];
   setInfo: {
     name: string;
-    option: {
-      type: string;
-      maxStack: number;
-      description: string;
-      active: boolean;
-      stack: string;
-    }[];
+    option: IArtifactSetsInfo[];
   }[];
 }
