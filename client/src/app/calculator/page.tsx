@@ -51,8 +51,8 @@ const calculatorFormSchema = z.object({
   weapon: z.object({
     id: z.number(),
     name: z.string(),
-    level: z.number().max(90, { error: "스킬 레벨을 확인해주세요." }).min(1, { error: "스킬 레벨을 확인해주세요." }),
-    refinement: z.number().max(5, { error: "스킬 레벨을 확인해주세요." }).min(0, { error: "스킬 레벨을 확인해주세요." }),
+    level: z.number().max(90, { error: "무기 레벨을 확인해주세요." }).min(1, { error: "무기 레벨을 확인해주세요." }),
+    refinement: z.number().max(5, { error: "재련을 확인해주세요." }).min(1, { error: "재련을 확인해주세요." }),
     options: z.array(
       z.object({
         active: z.boolean(),
