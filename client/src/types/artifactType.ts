@@ -10,6 +10,9 @@ export interface IArtifactPartInfo {
 
 export interface IArtifactSetsInfo {
   name: string;
+  id: number;
+  icon: string;
+  affix_list: { id: string; effect: string }[];
   options: {
     type: string;
     maxStack: number;
