@@ -34,14 +34,20 @@ async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
     return list(map(lambda weapon: {**vars(weapon), "options": weaponInfo.get(weapon.name, None)}, filter(lambda weapon: weaponInfo.get(weapon.name, None) != None, ambrWeapons)))
 
 
+@router.get("/artifactsets/{id}")
+async def getArtifactSetDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
+    if ambrApi is None:
+        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+
+    return await ambrApi.fetch_artifact_set_detail(id)
+
+
 @router.get("/artifactsets")
 async def genArtifactSetList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     setOptions = artifactData.artifactSetOptions
     ambrArtifactSets = await ambrApi.fetch_artifact_sets()
-
-    asdsad = await ambrApi.fetch_artifact_set_detail(15003)
 
     return list(map(lambda set: {**vars(set), "options": setOptions.get(set.name, None)}, filter(lambda set: setOptions.get(set.name, None) != None, ambrArtifactSets)))
 
@@ -182,7 +188,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                         "name": artifact.name,
                         "setName": artifact.set_name,
                         "id": artifact.id,
-                        "type": artifact.equip_type.name,
+                        "type": artifact.equip_type.value,
                         "mainStat": {artifact.main_stat.type.value: artifact.main_stat.value / 100 if artifact.main_stat.is_percentage else artifact.main_stat.value},
                         "subStat": [{subStat.type.value: subStat.value / 100 if subStat.is_percentage else subStat.value} for subStat in artifact.sub_stats],
                         "icon": artifact.icon,
