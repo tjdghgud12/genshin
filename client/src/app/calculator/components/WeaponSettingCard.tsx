@@ -13,7 +13,7 @@ import api from "@/lib/axios";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { IWeaponInfo } from "@/types/weaponType";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
 const weaponSubOption = {
@@ -35,7 +35,7 @@ interface IWeaponDetail {
   icon: string;
   description: string;
   upgrade: { prop: Record<string, unknown>[] };
-  affix: { name: string; upgrade: { level: number; description: string }[] };
+  affix: { name: string; upgrade: { level: number; description: string }[] } | null;
   [key: string]: unknown; // 나머지는 다 허용
 }
 
@@ -62,15 +62,15 @@ const WeaponSettingCard = ({
   const [weaponList, setWeaponList] = useState<IWeaponInfo[]>([]);
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponInfo | undefined>(undefined);
 
-  const getWeaponDetail = async (id: number): Promise<void> => {
+  const getWeaponDetail = useCallback(async (id: number): Promise<void> => {
     api.get(`weapons/${id}`).then((res) => {
       setWeaponDetail(res.data);
     });
-  };
+  }, []);
 
   useEffect(() => {
     getWeaponDetail(weapon.id);
-  }, [weapon.id]);
+  }, [weapon.id, getWeaponDetail]);
 
   useEffect(() => {
     const newWeaponList = totalWeaponList.filter((w) => w.type === type);
@@ -92,10 +92,14 @@ const WeaponSettingCard = ({
                     {/* <div>{weapon.name.slice(0, 1)}</div> */}
                   </div>
                 </TooltipTrigger>
-                <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
-                  <Label className="font-bold mb-3">{weaponDetail.affix.name}</Label>
-                  <Label className="leading-normal">{weaponDetail.affix.upgrade[weapon.refinement - 1].description}</Label>
-                </TooltipContent>
+                {weaponDetail.affix ? (
+                  <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
+                    <Label className="font-bold mb-3">{weaponDetail.affix.name}</Label>
+                    <Label className="leading-normal">{weaponDetail.affix.upgrade[weapon.refinement - 1].description}</Label>
+                  </TooltipContent>
+                ) : (
+                  <></>
+                )}
               </Tooltip>
             ) : (
               <></>
