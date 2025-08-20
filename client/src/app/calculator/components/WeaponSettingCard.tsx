@@ -95,7 +95,7 @@ const WeaponSettingCard = ({
                 {weaponDetail.affix ? (
                   <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
                     <Label className="font-bold mb-3">{weaponDetail.affix.name}</Label>
-                    <Label className="leading-normal">{weaponDetail.affix.upgrade[weapon.refinement - 1].description}</Label>
+                    <Label className="leading-normal">{weaponDetail.affix.upgrade[weapon.refinement].description}</Label>
                   </TooltipContent>
                 ) : (
                   <></>
@@ -151,7 +151,7 @@ const WeaponSettingCard = ({
             />
           </div>
           <div className="w-1/2 flex m-auto">
-            <Label className="w-fit text-xl font-bold my-auto pr-2">Lv: </Label>
+            <Label className="w-fit text-xl font-bold my-auto pr-2">재련: </Label>
             <Input
               className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="refinement"
