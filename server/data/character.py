@@ -38,6 +38,7 @@ class CharacterFightPropSchema(TypedDict, total=True):
     FIGHT_PROP_ROCK_RES_MINUS: float
     FIGHT_PROP_DEFENSE_MINUS: float
     FIGHT_PROP_DEFENSE_IGNORE: float
+    FIGHT_PROP_HEAL_ADD: float
 
     # 일반공격 관련
     FIGHT_PROP_NOMAL_ATTACK_CRITICAL: float
