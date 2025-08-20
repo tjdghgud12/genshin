@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import api from "@/lib/axios";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { IWeaponInfo } from "@/types/weaponType";
@@ -32,7 +33,9 @@ type TWeaponSubOptionKey = keyof typeof weaponSubOption;
 interface IWeaponDetail {
   rank: number;
   icon: string;
+  description: string;
   upgrade: { prop: Record<string, unknown>[] };
+  affix: { name: string; upgrade: { level: number; description: string }[] };
   [key: string]: unknown; // 나머지는 다 허용
 }
 
@@ -82,10 +85,18 @@ const WeaponSettingCard = ({
           <div className="w-[7vw] h-[7vw] min-w-[84px] min-h-[84px] flex flex-col mr-2">
             {!imgLoading && !weaponDetail && <DotBounsLoading className="w-fit h-fit m-auto" dotClassName="size-4 stroke-8" />}
             {weaponDetail ? (
-              <div className="w-full h-full relative">
-                <Image src={weaponDetail.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
-                {/* <div>{weapon.name.slice(0, 1)}</div> */}
-              </div>
+              <Tooltip delayDuration={500}>
+                <TooltipTrigger asChild>
+                  <div className="w-full h-full relative">
+                    <Image src={weaponDetail.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
+                    {/* <div>{weapon.name.slice(0, 1)}</div> */}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
+                  <Label className="font-bold mb-3">{weaponDetail.affix.name}</Label>
+                  <Label className="leading-normal">{weaponDetail.affix.upgrade[weapon.refinement - 1].description}</Label>
+                </TooltipContent>
+              </Tooltip>
             ) : (
               <></>
             )}
@@ -116,14 +127,14 @@ const WeaponSettingCard = ({
               }}
             />
             {weaponDetail && (
-              <p className="m-auto font-bold">{weaponDetail.upgrade.prop[1] ? weaponSubOption[weaponDetail.upgrade.prop[1].propType as TWeaponSubOptionKey] : ""}</p>
+              <Label className="m-auto font-bold">{weaponDetail.upgrade.prop[1] ? weaponSubOption[weaponDetail.upgrade.prop[1].propType as TWeaponSubOptionKey] : ""}</Label>
             )}
           </div>
         </div>
 
         <div className="w-full flex mt-1 mb-1">
           <div className="w-1/2 flex m-auto">
-            <p className="w-fit text-xl font-bold my-auto pr-2">Lv: </p>
+            <Label className="w-fit text-xl font-bold my-auto pr-2">Lv: </Label>
             <Input
               className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="level"
@@ -136,7 +147,7 @@ const WeaponSettingCard = ({
             />
           </div>
           <div className="w-1/2 flex m-auto">
-            <p className="w-fit text-xl font-bold my-auto pr-2">Lv: </p>
+            <Label className="w-fit text-xl font-bold my-auto pr-2">Lv: </Label>
             <Input
               className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="refinement"
