@@ -26,13 +26,13 @@ const createFloatSchema = (min?: number, max?: number, errorMessage?: string) =>
             message: errorMessage,
             input: val,
           });
-          return NaN;
+          return min || 0;
         }
 
         return parseFloat(cleaned);
       }
       if (typeof val === "number") return val;
-      return NaN;
+      return min || 0;
     }),
   );
 };
