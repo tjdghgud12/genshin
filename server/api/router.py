@@ -21,7 +21,10 @@ router = APIRouter()
 async def getWeaponDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
-    return await ambrApi.fetch_weapon_detail(id)
+    try:
+        return await ambrApi.fetch_weapon_detail(id)
+    except:
+        raise HTTPException(status_code=404, detail="weapon detail is not found")
 
 
 @router.get("/weapons")
@@ -39,7 +42,10 @@ async def getArtifactSetDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
 
-    return await ambrApi.fetch_artifact_set_detail(id)
+    try:
+        return await ambrApi.fetch_artifact_set_detail(id)
+    except:
+        raise HTTPException(status_code=404, detail="artifactsets detail is not found")
 
 
 @router.get("/artifactsets")
