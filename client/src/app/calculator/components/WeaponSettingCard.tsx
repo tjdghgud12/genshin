@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import api from "@/lib/axios";
+import { inputNumberWithSpace } from "@/lib/utils";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { IWeaponInfo } from "@/types/weaponType";
 import Image from "next/image";
@@ -52,9 +53,9 @@ const WeaponSettingCard = ({
   type?: string;
   weapon?: TWeaponData;
   onChange?: (weapon: IWeaponInfo | undefined) => void;
-  onLevelChange?: (level: number) => void;
-  onRefinementChange?: (refinement: number) => void;
-  onOptionsChange?: ((value: boolean | number) => void)[];
+  onLevelChange?: (level: number | string) => void;
+  onRefinementChange?: (refinement: number | string) => void;
+  onOptionsChange?: ((value: boolean | number | string) => void)[];
 }): React.ReactElement => {
   const totalWeaponList = useCalculatorStore((state) => state.weaponList);
   const [weaponDetail, setWeaponDetail] = useState<IWeaponDetail | null>(null);
@@ -63,9 +64,12 @@ const WeaponSettingCard = ({
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponInfo | undefined>(undefined);
 
   const getWeaponDetail = useCallback(async (id: number): Promise<void> => {
-    api.get(`weapons/${id}`).then((res) => {
-      setWeaponDetail(res.data);
-    });
+    api
+      .get(`weapons/${id}`)
+      .then((res) => {
+        setWeaponDetail(res.data);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
@@ -95,7 +99,7 @@ const WeaponSettingCard = ({
                 {weaponDetail.affix ? (
                   <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
                     <Label className="font-bold mb-3">{weaponDetail.affix.name}</Label>
-                    <Label className="leading-normal">{weaponDetail.affix.upgrade[weapon.refinement].description}</Label>
+                    <Label className="leading-normal">{weaponDetail.affix.upgrade[Number(weapon.refinement) > 1 ? Number(weapon.refinement) - 1 : 0].description}</Label>
                   </TooltipContent>
                 ) : (
                   <></>
@@ -143,11 +147,14 @@ const WeaponSettingCard = ({
               className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="level"
               type="number"
-              value={weapon.level.toString()}
+              value={weapon.level}
               min={1}
               max={90}
-              placeholder="Level"
-              onChange={(e) => onLevelChange(Number(e.target.value))}
+              placeholder="Lv"
+              onChange={(e) => {
+                const value = inputNumberWithSpace(e.target.value);
+                onLevelChange(Number(value) > 90 ? 90 : value);
+              }}
             />
           </div>
           <div className="w-1/2 flex m-auto">
@@ -156,11 +163,14 @@ const WeaponSettingCard = ({
               className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="refinement"
               type="number"
-              value={weapon.refinement.toString()}
-              min={0}
+              value={weapon.refinement}
+              min={1}
               max={5}
               placeholder="재련"
-              onChange={(e) => onRefinementChange(Number(e.target.value))}
+              onChange={(e) => {
+                const value = inputNumberWithSpace(e.target.value);
+                onRefinementChange(Number(value) > 5 ? 5 : value);
+              }}
             />
           </div>
         </div>
@@ -190,8 +200,11 @@ const WeaponSettingCard = ({
                         value={optionValue.stack.toString()}
                         min={0}
                         max={option.maxStack}
-                        placeholder="재련"
-                        onChange={(e) => onOptionsChange[i](Number(e.target.value))}
+                        placeholder="중첩"
+                        onChange={(e) => {
+                          const value = inputNumberWithSpace(e.target.value);
+                          onOptionsChange[i](value);
+                        }}
                       />
                     </div>
                   ) : (

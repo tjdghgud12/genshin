@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { inputNumberWithSpace } from "@/lib/utils";
 import { Arrow } from "@radix-ui/react-popover";
 import { Settings } from "lucide-react";
 import Image from "next/image";
@@ -31,10 +33,10 @@ const CharacterOptionControlCircle = ({
   }[];
   icon: string;
   useLevel?: boolean;
-  level?: number;
+  level?: number | string;
   onClick?: () => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
-  onLevelChange?: (level: number) => void;
+  onLevelChange?: (level: number | string) => void;
 }): React.ReactElement => {
   return (
     <div className="w-fit h-fit flex">
@@ -75,12 +77,14 @@ const CharacterOptionControlCircle = ({
               {options.map((o, i) => {
                 return (
                   <div key={`skill-option-${o.inputLabel}`} className="flex">
-                    <p className="my-auto mr-3">{o.inputLabel}:</p>
+                    <Label className="my-auto mr-3">{o.inputLabel}:</Label>
                     <Input
+                      type="number"
                       className="w-auto max-w-[100px] border-x-0 border-t-0 shadow-none focus-visible:ring-0 rounded-none input-removeArrow text-center"
                       value={o.stack}
                       max={o.maxStack}
                       min={0}
+                      placeholder="중첩"
                       onChange={(e) => onChange(e, i)}
                     />
                   </div>
@@ -98,9 +102,8 @@ const CharacterOptionControlCircle = ({
             max={10}
             min={0}
             onChange={(e) => {
-              let newLevel = Number(e.target.value);
-              if (newLevel > 10) newLevel = 10;
-              onLevelChange(newLevel);
+              const value = inputNumberWithSpace(e.target.value);
+              onLevelChange(Number(value) > 10 ? 10 : value);
             }}
           />
         )}

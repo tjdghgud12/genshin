@@ -1,6 +1,6 @@
 "use Client";
 
-import ArtifactSetOptionCard from "@/app/calculator/components/ArtifactSetOptionCard";
+import { ArtifactPartCard, ArtifactSetOptionCard } from "@/app/calculator/components/ArtifactCard";
 import CharacterOptionControlCircle from "@/app/calculator/components/CharacterOptionControlCircle";
 import WeaponSettingCard from "@/app/calculator/components/WeaponSettingCard";
 import { calculatorFormSchema, formSchema } from "@/app/calculator/page";
@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { inputNumberWithSpace } from "@/lib/utils";
+import { useCalculatorStore } from "@/store/useCalculatorStore";
+import { IArtifactOptionInfo } from "@/types/artifactType";
 import React from "react";
-import { UseFormReturn, useWatch } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
 const CharacterSettingCard = ({
@@ -21,7 +24,7 @@ const CharacterSettingCard = ({
   item: z.infer<typeof calculatorFormSchema>;
   index: number;
 }): React.ReactElement => {
-  useWatch({ control: form.control, name: `data.${index}` }); // useWatch가 없는 상태에서는 React Hook Form이 이 컴포넌트를 “변화 감지 대상”으로 인식하지 않아서, 입력이 제대로 반영되지 않는 것처럼 보임
+  const artifactSets = useCalculatorStore((store) => store.artifactSets);
   const elementColors: Record<string, Record<string, string>> = {
     Fire: { bg: `bg-Fire`, shadow: "shadow-shadow-Fire" },
     Water: { bg: `bg-Water`, shadow: "shadow-shadow-Water" },
@@ -37,7 +40,7 @@ const CharacterSettingCard = ({
       <CardContent className={`flex ${elementColors[item.raw.element].bg} rounded-2xl text-stone-600`}>
         <div className={`w-[45%] h-fit min-h-[500px] bg-center bg-cover bg-no-repeat opacity-90 flex flex-col pl-8 py-3`}>
           {/* <div
-          className={`w-[45%] h-fit min-h-[500px] bg-[54%_center] bg-cover bg-no-repeat opacity-90 flex flex-col pl-1 py-3`}
+          className={`w-[45%] h-full min-h-[500px] bg-[54%_center] bg-cover bg-no-repeat opacity-90 flex flex-col pl-1 py-3 mt-auto`}
           style={{ backgroundImage: `url('${item.raw.icon.gacha}')` }}
         > */}
           <FormField
@@ -52,11 +55,11 @@ const CharacterSettingCard = ({
                       className="w-full border-none text-xl font-bold shadow-none focus-visible:ring-0 input-removeArrow"
                       {...field}
                       value={field.value}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => form.setValue(`data.${index}.level`, Number(e.target.value))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(inputNumberWithSpace(e.target.value))}
                       type="number"
                       min={1}
                       max={90}
-                      placeholder="Level"
+                      placeholder="Lv"
                     />
                   </FormControl>
                 </div>
@@ -68,36 +71,32 @@ const CharacterSettingCard = ({
           {/* 패시브 스킬 */}
           <div className="w-full h-auto flex">
             <div className="flex-1 flex flex-col mt-auto">
-              {item.passiveSkill.map((passive, j) => {
+              {item.passiveSkill.map((_passive, j) => {
                 const passiveInfo = item.raw.passiveSkill[j];
                 return (
                   <FormField
                     key={`passive-${index}-${j}`}
                     control={form.control}
                     name={`data.${index}.passiveSkill.${j}`}
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem className="w-fit mt-3 justify-start">
                         <div className="flex">
                           <FormControl className="w-fit h-fit flex flex-col">
                             <CharacterOptionControlCircle
                               name={passiveInfo.name}
                               description={passiveInfo.description}
-                              unlocked={passive.unlocked}
-                              options={passive.options.map((o, k) => ({ ...passiveInfo.options[k], ...o, inputLabel: passiveInfo.options[k].label }))}
+                              unlocked={field.value.unlocked}
+                              options={field.value.options.map((o, k) => ({ ...passiveInfo.options[k], ...o, inputLabel: passiveInfo.options[k].label }))}
                               icon={passiveInfo.icon}
                               onClick={() => {
-                                const options = form.getValues(`data.${index}.passiveSkill.${j}.options`);
-                                form.setValue(
-                                  `data.${index}.passiveSkill.${j}.options`,
-                                  options.map((o) => ({ ...o, active: !o.active })),
-                                );
+                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.onChange(field.value);
                               }}
                               onChange={(e, k) => {
-                                if (/^\d*$/.test(e.target.value)) {
-                                  const value = Number(e.target.value);
-                                  const maxStack = passiveInfo.options[k].maxStack;
-                                  form.setValue(`data.${index}.passiveSkill.${j}.options.${k}.stack`, value > maxStack ? maxStack : value);
-                                }
+                                const maxStack = passiveInfo.options[k].maxStack;
+                                const value = inputNumberWithSpace(e.target.value);
+                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                                field.onChange(field.value);
                               }}
                             />
                           </FormControl>
@@ -128,26 +127,23 @@ const CharacterSettingCard = ({
                               name={activeInfo.name}
                               description={activeInfo.description}
                               unlocked
-                              options={active.options.map((o, k) => ({ ...activeInfo.options[k], ...o, inputLabel: activeInfo.options[k].label }))}
+                              options={field.value.options.map((o, k) => ({ ...activeInfo.options[k], ...o, inputLabel: activeInfo.options[k].label }))}
                               icon={activeInfo.icon}
                               useLevel
                               level={field.value.level}
                               onClick={() => {
-                                const options = form.getValues(`data.${index}.activeSkill.${j}.options`);
-                                form.setValue(
-                                  `data.${index}.activeSkill.${j}.options`,
-                                  options.map((o) => ({ ...o, active: !o.active })),
-                                );
+                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.onChange(field.value);
                               }}
                               onChange={(e, k) => {
-                                if (/^\d*$/.test(e.target.value)) {
-                                  const value = Number(e.target.value);
-                                  const maxStack = activeInfo.options[k].maxStack;
-                                  form.setValue(`data.${index}.activeSkill.${j}.options.${k}.stack`, value > maxStack ? maxStack : value);
-                                }
+                                const maxStack = activeInfo.options[k].maxStack;
+                                const value = inputNumberWithSpace(e.target.value);
+                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                                field.onChange(field.value);
                               }}
                               onLevelChange={(level) => {
-                                form.setValue(`data.${index}.activeSkill.${j}.level`, level);
+                                field.value.level = level;
+                                field.onChange(field.value);
                               }}
                             />
                           </FormControl>
@@ -170,29 +166,25 @@ const CharacterSettingCard = ({
                     key={`constellations-${index}-${j}`}
                     control={form.control}
                     name={`data.${index}.constellations.${j}`}
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem className="w-fit mt-3 justify-start">
                         <div className="flex">
                           <FormControl className="w-fit h-fit flex flex-col">
                             <CharacterOptionControlCircle
                               name={constellationInfo.name}
                               description={constellationInfo.description}
-                              unlocked={constellation.unlocked}
-                              options={constellation.options.map((o, k) => ({ ...constellationInfo.options[k], ...o, inputLabel: constellationInfo.options[k].label }))}
+                              unlocked={field.value.unlocked}
+                              options={field.value.options.map((o, k) => ({ ...constellationInfo.options[k], ...o, inputLabel: constellationInfo.options[k].label }))}
                               icon={constellationInfo.icon}
                               onClick={() => {
-                                const options = form.getValues(`data.${index}.constellations.${j}.options`);
-                                form.setValue(
-                                  `data.${index}.constellations.${j}.options`,
-                                  options.map((o) => ({ ...o, active: !o.active })),
-                                );
+                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.onChange(field.value);
                               }}
                               onChange={(e, k) => {
-                                if (/^\d*$/.test(e.target.value)) {
-                                  const value = Number(e.target.value);
-                                  const maxStack = constellationInfo.options[k].maxStack;
-                                  form.setValue(`data.${index}.constellations.${j}.options.${k}.stack`, value > maxStack ? maxStack : value);
-                                }
+                                const maxStack = constellationInfo.options[k].maxStack;
+                                const value = inputNumberWithSpace(e.target.value);
+                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                                field.onChange(field.value);
                               }}
                             />
                           </FormControl>
@@ -206,15 +198,17 @@ const CharacterSettingCard = ({
             </div>
           </div>
         </div>
-        <div className="w-3/5  h-fit flex py-3">
-          <div className="w-1/2 flex flex-col gap-2">
-            <div className="w-full h-full flex">
+
+        <div className="w-3/5 h-auto flex py-3 gap-3">
+          <div className="flex flex-col gap-2">
+            {/* 무기 */}
+            <div className="flex justify-start mb-auto">
               <FormField
                 control={form.control}
                 name={`data.${index}.weapon`}
                 render={({ field }) => (
-                  <FormItem className="w-full h-fit mb-auto justify-start">
-                    <FormControl className="w-full">
+                  <FormItem className="w-full h-fit mb-auto">
+                    <FormControl>
                       <WeaponSettingCard
                         className={`${elementColors[item.raw.element].shadow}`}
                         type={item.raw.weaponType}
@@ -231,18 +225,17 @@ const CharacterSettingCard = ({
                           }
                         }}
                         onLevelChange={(level) => {
-                          if (level > 90) level = 90;
                           field.onChange({ ...field.value, level });
                         }}
                         onRefinementChange={(refinement) => {
-                          if (refinement > 5) refinement = 5;
                           field.onChange({ ...field.value, refinement });
                         }}
-                        onOptionsChange={field.value.options.map((_option, i) => (val) => {
-                          if (typeof val === "number" && val > item.raw.weapon.options[i].maxStack) {
+                        onOptionsChange={field.value.options.map((option, i) => (val) => {
+                          if (typeof val !== "boolean" && Number(val) > item.raw.weapon.options[i].maxStack) {
                             val = item.raw.weapon.options[i].maxStack;
                           }
-                          form.setValue(`data.${index}.weapon.options.${i}.${typeof val === "boolean" ? "active" : "stack"}`, val);
+                          field.value.options[i] = { ...option, [typeof val === "boolean" ? "active" : "stack"]: val };
+                          field.onChange(field.value);
                         })}
                       />
                     </FormControl>
@@ -251,17 +244,63 @@ const CharacterSettingCard = ({
                 )}
               />
             </div>
-            <div className="w-full h-full flex flex-col">
+
+            {/* 성유물 세트 옵션*/}
+            <div className="w-full h-fit flex flex-col mx-auto">
               <FormField
                 control={form.control}
-                name={`data.${index}.artifact`}
+                name={`data.${index}.artifact.setInfo`}
                 render={({ field }) => (
-                  <FormItem className="w-full h-fit mb-auto justify-start">
-                    {field.value.setInfo.map((val, i) => {
-                      const parts = field.value.parts;
+                  <FormItem className="w-full h-fit mb-auto">
+                    {field.value.map((set, i) => {
+                      const parts = form.getValues(`data.${index}.artifact.parts`);
+                      const rawInfo = artifactSets.find((s) => s.name === set.name);
+                      const numberOfParts = parts.filter((p) => p.setName === set.name).length;
+                      if (rawInfo) {
+                        const options = rawInfo.options.map((o, j) => ({ ...o, ...field.value[i].options[j] }));
+                        return (
+                          <FormControl key={`${set.name}-${i}`}>
+                            <ArtifactSetOptionCard
+                              className={`${elementColors[item.raw.element].shadow}`}
+                              setInfo={{ ...rawInfo, ...set, options: options, numberOfParts: numberOfParts }}
+                              onChnage={field.value[i].options.map((option, j) => (val) => {
+                                if (typeof val === "number" && val > options[j].maxStack) val = options[j].maxStack;
+                                field.value[i].options[j] = { ...option, [typeof val === "boolean" ? "active" : "stack"]: val };
+                                field.onChange(field.value);
+                              })}
+                            />
+                          </FormControl>
+                        );
+                      }
+                    })}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col flex-1">
+            <Button type="submit" className="bg-gray-800 hover:bg-gray-600 mb-auto">
+              Submit
+            </Button>
+            {/* 성유물 파츠 영역 */}
+            <div className="flex flex-col">
+              <FormField
+                key={`data.${index}.artifact.parts`}
+                control={form.control}
+                name={`data.${index}.artifact.parts`}
+                render={({ field }) => (
+                  <FormItem className="w-full h-fit mb-auto">
+                    {field.value.map((artifact, i) => {
+                      const [mainKey, mainValue] = Object.entries(artifact.mainStat)[0];
+                      const subOptions: IArtifactOptionInfo[] = artifact.subStat.map((o) => {
+                        const [key, val] = Object.entries(o)[0];
+                        return { key, value: val };
+                      });
+
                       return (
-                        <FormControl key={`${val.name}-${i}`} className="w-full">
-                          <ArtifactSetOptionCard val={val} parts={[]} />
+                        <FormControl key={`artifact-part-${i}`}>
+                          <ArtifactPartCard className={`${elementColors[item.raw.element].shadow}`} field={artifact} main={{ key: mainKey, value: mainValue }} sub={subOptions} />
                         </FormControl>
                       );
                     })}
@@ -270,11 +309,6 @@ const CharacterSettingCard = ({
                 )}
               />
             </div>
-          </div>
-          <div className="w-1/2 flex flex-col">
-            <Button type="submit" className="bg-gray-800 hover:bg-gray-600">
-              Submit
-            </Button>
           </div>
         </div>
       </CardContent>
