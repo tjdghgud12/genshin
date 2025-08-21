@@ -26,7 +26,7 @@ const Combobox = ({
 }: {
   options: option[];
   defaultValue?: string | undefined;
-  placeholder: string;
+  placeholder?: string;
   groups?: string[];
   className?: string;
   optionClassName?: string;
