@@ -1,5 +1,6 @@
 import { calculatorFormSchema } from "@/app/calculator/page";
 import { z } from "zod";
+import { fightPropLabels } from "./fightProps";
 
 type TCalculatorData = z.infer<typeof calculatorFormSchema>;
 
@@ -50,8 +51,10 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
         name: part.name,
         setName: part.setName,
         type: part.type,
-        mainStat: part.mainStat,
-        subStat: part.subStat.map((s: { [key: string]: number }) => s),
+        mainStat: Object.fromEntries(Object.entries(part.mainStat).map(([k, v]) => [k, fightPropLabels[k].includes("%") ? (v * 100).toFixed(2) : v])),
+        subStat: part.subStat.map((s: { [key: string]: number }) =>
+          Object.fromEntries(Object.entries(s).map(([k, v]) => [k, fightPropLabels[k].includes("%") ? (v * 100).toFixed(2) : v])),
+        ),
       })),
       setInfo: data.artifact.setInfo.map((s: IuserSelectoptions) => ({
         name: s.name,

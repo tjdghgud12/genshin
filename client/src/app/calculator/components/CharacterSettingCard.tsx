@@ -264,7 +264,7 @@ const CharacterSettingCard = ({
                               className={`${elementColors[item.raw.element].shadow}`}
                               setInfo={{ ...rawInfo, ...set, options: options, numberOfParts: numberOfParts }}
                               onChnage={field.value[i].options.map((option, j) => (val) => {
-                                if (typeof val === "number" && val > options[j].maxStack) val = options[j].maxStack;
+                                if (typeof val !== "boolean" && Number(val) > options[j].maxStack) val = options[j].maxStack;
                                 field.value[i].options[j] = { ...option, [typeof val === "boolean" ? "active" : "stack"]: val };
                                 field.onChange(field.value);
                               })}
@@ -285,29 +285,43 @@ const CharacterSettingCard = ({
             </Button>
             {/* 성유물 파츠 영역 */}
             <div className="flex flex-col">
-              <FormField
-                key={`data.${index}.artifact.parts`}
-                control={form.control}
-                name={`data.${index}.artifact.parts`}
-                render={({ field }) => (
-                  <FormItem className="w-full h-fit mb-auto">
-                    {field.value.map((artifact, i) => {
-                      const [mainKey, mainValue] = Object.entries(artifact.mainStat)[0];
-                      const subOptions: IArtifactOptionInfo[] = artifact.subStat.map((o) => {
+              {item.artifact.parts.map((artifact, i) => {
+                return (
+                  <FormField
+                    key={`data.${index}.artifact.parts.${i}`}
+                    // className="w-full h-fit mb-auto"
+                    control={form.control}
+                    name={`data.${index}.artifact.parts.${i}`}
+                    render={({ field }) => {
+                      const [mainKey, mainValue] = Object.entries(field.value.mainStat)[0];
+                      const subOptions: IArtifactOptionInfo[] = field.value.subStat.map((o) => {
                         const [key, val] = Object.entries(o)[0];
                         return { key, value: val };
                       });
 
                       return (
-                        <FormControl key={`artifact-part-${i}`}>
-                          <ArtifactPartCard className={`${elementColors[item.raw.element].shadow}`} field={artifact} main={{ key: mainKey, value: mainValue }} sub={subOptions} />
-                        </FormControl>
+                        <FormItem className="w-full h-fit mb-auto">
+                          <ArtifactPartCard
+                            key={`artifact-part-${i}`}
+                            className={`${elementColors[item.raw.element].shadow}`}
+                            artifact={artifact}
+                            main={{ key: mainKey, value: mainValue }}
+                            sub={subOptions}
+                            onMainChange={(mainValue) => {
+                              field.value.mainStat = mainValue;
+                              field.onChange(field.value);
+                            }}
+                            onSubChange={subOptions.map((_o, j) => (subValue) => {
+                              field.value.subStat[j] = subValue;
+                              field.onChange(field.value);
+                            })}
+                          />
+                        </FormItem>
                       );
-                    })}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

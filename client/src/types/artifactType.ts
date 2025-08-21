@@ -1,10 +1,15 @@
+export interface IArtifactOptionInfo {
+  key: string;
+  value: number | string;
+}
+
 export interface IArtifactPartInfo {
   name: string;
   setName: string;
   id: number;
   type: string;
-  mainStat: object;
-  subStat: object[];
+  mainStat: IArtifactOptionInfo;
+  subStat: IArtifactOptionInfo[];
   icon: string;
 }
 
