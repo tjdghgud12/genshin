@@ -195,7 +195,7 @@ const CharacterSettingCard = ({
           </div>
 
           <div className="w-3/5 h-auto flex py-3 gap-3">
-            <div className="flex flex-col gap-2">
+            <div className="w-[40%] flex flex-col gap-2">
               {/* 무기 */}
               <div className="flex justify-start mb-auto">
                 <FormField
@@ -274,7 +274,7 @@ const CharacterSettingCard = ({
                 />
               </div>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-1">
               <Button type="submit" className="h-[8%] bg-gray-800 hover:bg-gray-600 mb-3">
                 Submit
               </Button>
