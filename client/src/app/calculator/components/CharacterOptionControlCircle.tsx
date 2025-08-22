@@ -7,7 +7,7 @@ import { inputNumberWithSpace } from "@/lib/utils";
 import { Arrow } from "@radix-ui/react-popover";
 import { Settings } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { Fragment } from "react";
 
 const CharacterOptionControlCircle = ({
   name = "",
@@ -77,22 +77,22 @@ const CharacterOptionControlCircle = ({
                 <Settings style={{ width: "100cqw", height: "100cqw" }} />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white" side="right">
+            <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white grid grid-cols-[max-content_max-content] gap-1 items-start" side="right">
               <Arrow />
               {options.map((o, i) => {
                 return (
-                  <div key={`skill-option-${o.inputLabel}`} className="flex">
-                    <Label className="my-auto mr-3">{o.inputLabel}:</Label>
+                  <Fragment key={`skill-option-${o.inputLabel}`}>
+                    <Label className="w-fit my-auto">{o.inputLabel}:</Label>
                     <Input
                       type="number"
-                      className="w-auto max-w-[100px] border-x-0 border-t-0 shadow-none focus-visible:ring-0 rounded-none input-removeArrow text-center"
+                      className="w-fit border-x-0 border-t-0 shadow-none focus-visible:ring-0 rounded-none input-removeArrow text-center"
                       value={o.stack}
                       max={o.maxStack}
                       min={0}
                       placeholder="중첩"
                       onChange={(e) => onChange(e, i)}
                     />
-                  </div>
+                  </Fragment>
                 );
               })}
             </PopoverContent>
