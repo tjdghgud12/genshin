@@ -146,7 +146,7 @@ const WeaponSettingCard = ({
           <div className="w-1/2 flex m-auto">
             <Label className="w-fit text-xl font-bold my-auto pr-2">Lv: </Label>
             <Input
-              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="level"
               type="number"
               value={weapon.level}
@@ -162,7 +162,7 @@ const WeaponSettingCard = ({
           <div className="w-1/2 flex m-auto">
             <Label className="w-fit text-xl font-bold my-auto pr-2">재련: </Label>
             <Input
-              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="refinement"
               type="number"
               value={weapon.refinement}
@@ -194,9 +194,9 @@ const WeaponSettingCard = ({
                     </div>
                   ) : option.type === "stack" ? (
                     <div className="flex mb-1">
-                      <Label className="font-bold mr-1">{option.label}:</Label>
+                      <Label className="font-bold text-lg mr-1">{option.label}:</Label>
                       <Input
-                        className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+                        className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
                         name={`options.${i}`}
                         type="number"
                         value={optionValue.stack.toString()}
