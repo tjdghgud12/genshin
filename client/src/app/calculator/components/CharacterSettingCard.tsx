@@ -37,7 +37,7 @@ const CharacterSettingCard = ({
   };
 
   return (
-    <Card className={`aspect-[2/1] p-0 ${elementColors[item.raw.element].bg} shadow-lg ${elementColors[item.raw.element].shadow}`}>
+    <Card className={`aspect-[2/1.1] p-0 ${elementColors[item.raw.element].bg} shadow-lg ${elementColors[item.raw.element].shadow}`}>
       <CardContent className={`h-full flex ${elementColors[item.raw.element].bg} rounded-2xl text-gray-700 pl-0 relative`}>
         <div className="w-[70%] h-full absolute z-0">
           <Image src={item.raw.icon.gacha} alt="" fill className={`object-cover object-[100%_center] opacity-90`} />
