@@ -37,7 +37,7 @@ const CharacterSettingCard = ({
   };
 
   return (
-    <Card className={`aspect-[2/1] p-0 shadow-lg shadow-gray-400`}>
+    <Card className={`aspect-[2/1] p-0 ${elementColors[item.raw.element].bg} shadow-lg ${elementColors[item.raw.element].shadow}`}>
       <CardContent className={`h-full flex ${elementColors[item.raw.element].bg} rounded-2xl text-gray-700 pl-0 relative`}>
         <div className="w-[70%] h-full absolute z-0">
           <Image src={item.raw.icon.gacha} alt="" fill className={`object-cover object-[100%_center] opacity-90`} />
@@ -241,7 +241,7 @@ const CharacterSettingCard = ({
               </div>
 
               {/* 성유물 세트 옵션*/}
-              <div className="w-full h-fit flex flex-col mx-auto">
+              <div className="flex flex-col justify-end">
                 <FormField
                   control={form.control}
                   name={`data.${index}.artifact.setInfo`}
