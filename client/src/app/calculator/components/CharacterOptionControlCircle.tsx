@@ -39,18 +39,18 @@ const CharacterOptionControlCircle = ({
   onLevelChange?: (level: number | string) => void;
 }): React.ReactElement => {
   return (
-    <div className="w-fit h-fit flex">
+    <div className="w-full h-fit flex mt-auto">
       <Tooltip delayDuration={500}>
         <TooltipTrigger asChild>
           {options.every((o) => o.type === "always") ? (
             <div
-              className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full ${unlocked ? "border-white" : "border-gray-600 opacity-50"} flex justify-center relative`}
+              className={`w-[70%] h-fit aspect-square flex-none min-w-16 min-h-16 border-3 bg-gray-500 rounded-full ${unlocked ? "border-white" : "border-gray-600 opacity-50"} flex justify-center relative mt-auto`}
             >
               <Image src={icon} alt="" priority fill sizes="(max-width: 768px) 5vw, (max-width: 1200px) 50vw, 5vw" />
             </div>
           ) : (
             <Button
-              className={`w-[5vw] h-[5vw] min-w-16 min-h-16 border-3 bg-gray-500 rounded-full relative ${options.every((o) => o.active) && unlocked ? "border-white" : "border-gray-600"} hover:bg-gray-800`}
+              className={`w-[70%] h-fit aspect-square min-w-16 min-h-16 border-3 bg-gray-500 rounded-full relative ${options.every((o) => o.active) && unlocked ? "border-white" : "border-gray-600"} mt-auto hover:bg-gray-800`}
               type="button"
               disabled={!unlocked}
               onClick={onClick}
@@ -64,12 +64,17 @@ const CharacterOptionControlCircle = ({
           <p className="mb-2">{description}</p>
         </TooltipContent>
       </Tooltip>
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-1">
         {options.some((o) => o.type === "stack") && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button disabled={!unlocked} className="w-fit bg-transparent shadow-none mb-auto text-stone-700 hover:text-white hover:bg-transparent" size={"icon"}>
-                <Settings className="size-6" />
+              <Button
+                disabled={!unlocked}
+                className="w-[70%] aspect-square bg-transparent shadow-none text-stone-700 mb-auto hover:text-white hover:bg-transparent"
+                size={"icon"}
+                style={{ containerType: "size" }}
+              >
+                <Settings style={{ width: "100cqw", height: "100cqw" }} />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-fit rounded-xl border-2 bg-gray-600 text-white" side="right">
@@ -95,7 +100,7 @@ const CharacterOptionControlCircle = ({
         )}
         {useLevel && (
           <Input
-            className="size-6 border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
+            className="w-[80%] !text-lg border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
             placeholder="Lv"
             type="number"
             value={level.toString()}

@@ -71,7 +71,7 @@ const CharacterSettingCard = ({
 
             <div className="w-full h-auto flex">
               {/* 패시브 스킬 */}
-              <div className="flex-1 flex flex-col mt-auto">
+              <div className="w-[18%] h-full flex flex-col justify-end mr-auto">
                 {item.passiveSkill.map((_passive, j) => {
                   const passiveInfo = item.raw.passiveSkill[j];
                   return (
@@ -80,28 +80,26 @@ const CharacterSettingCard = ({
                       control={form.control}
                       name={`data.${index}.passiveSkill.${j}`}
                       render={({ field }) => (
-                        <FormItem className="w-fit mt-3 justify-start">
-                          <div className="flex">
-                            <FormControl className="w-fit h-fit flex flex-col">
-                              <CharacterOptionControlCircle
-                                name={passiveInfo.name}
-                                description={passiveInfo.description}
-                                unlocked={field.value.unlocked}
-                                options={field.value.options.map((o, k) => ({ ...passiveInfo.options[k], ...o, inputLabel: passiveInfo.options[k].label }))}
-                                icon={passiveInfo.icon}
-                                onClick={() => {
-                                  field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
-                                  field.onChange(field.value);
-                                }}
-                                onChange={(e, k) => {
-                                  const maxStack = passiveInfo.options[k].maxStack;
-                                  const value = inputNumberWithSpace(e.target.value);
-                                  field.value.options[k].stack = value > maxStack ? maxStack : value;
-                                  field.onChange(field.value);
-                                }}
-                              />
-                            </FormControl>
-                          </div>
+                        <FormItem className="w-full mt-3 flex flex-col">
+                          <FormControl>
+                            <CharacterOptionControlCircle
+                              name={passiveInfo.name}
+                              description={passiveInfo.description}
+                              unlocked={field.value.unlocked}
+                              options={field.value.options.map((o, k) => ({ ...passiveInfo.options[k], ...o, inputLabel: passiveInfo.options[k].label }))}
+                              icon={passiveInfo.icon}
+                              onClick={() => {
+                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.onChange(field.value);
+                              }}
+                              onChange={(e, k) => {
+                                const maxStack = passiveInfo.options[k].maxStack;
+                                const value = inputNumberWithSpace(e.target.value);
+                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                                field.onChange(field.value);
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -111,8 +109,8 @@ const CharacterSettingCard = ({
               </div>
 
               {/* 액티브 스킬 */}
-              <div className="w-[22%] flex flex-col mt-auto mr-0.5">
-                {item.activeSkill.map((active, j) => {
+              <div className="w-[18%] h-full flex flex-col justify-end mr-0.5">
+                {item.activeSkill.map((_active, j) => {
                   const activeInfo = item.raw.activeSkill[j];
 
                   return (
@@ -121,34 +119,32 @@ const CharacterSettingCard = ({
                       control={form.control}
                       name={`data.${index}.activeSkill.${j}`}
                       render={({ field }) => (
-                        <FormItem className="w-fit mt-3">
-                          <div className="flex">
-                            <FormControl className="w-fit h-fit flex flex-col">
-                              <CharacterOptionControlCircle
-                                name={activeInfo.name}
-                                description={activeInfo.description}
-                                unlocked
-                                options={field.value.options.map((o, k) => ({ ...activeInfo.options[k], ...o, inputLabel: activeInfo.options[k].label }))}
-                                icon={activeInfo.icon}
-                                useLevel
-                                level={field.value.level}
-                                onClick={() => {
-                                  field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
-                                  field.onChange(field.value);
-                                }}
-                                onChange={(e, k) => {
-                                  const maxStack = activeInfo.options[k].maxStack;
-                                  const value = inputNumberWithSpace(e.target.value);
-                                  field.value.options[k].stack = value > maxStack ? maxStack : value;
-                                  field.onChange(field.value);
-                                }}
-                                onLevelChange={(level) => {
-                                  field.value.level = level;
-                                  field.onChange(field.value);
-                                }}
-                              />
-                            </FormControl>
-                          </div>
+                        <FormItem className="w-full h-fit mt-3 flex flex-col">
+                          <FormControl>
+                            <CharacterOptionControlCircle
+                              name={activeInfo.name}
+                              description={activeInfo.description}
+                              unlocked
+                              options={field.value.options.map((o, k) => ({ ...activeInfo.options[k], ...o, inputLabel: activeInfo.options[k].label }))}
+                              icon={activeInfo.icon}
+                              useLevel
+                              level={field.value.level}
+                              onClick={() => {
+                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.onChange(field.value);
+                              }}
+                              onChange={(e, k) => {
+                                const maxStack = activeInfo.options[k].maxStack;
+                                const value = inputNumberWithSpace(e.target.value);
+                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                                field.onChange(field.value);
+                              }}
+                              onLevelChange={(level) => {
+                                field.value.level = level;
+                                field.onChange(field.value);
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -158,7 +154,7 @@ const CharacterSettingCard = ({
               </div>
 
               {/* 운명의 자리 */}
-              <div className="w-[22%] h-full flex flex-col mt-auto">
+              <div className="w-[18%] h-full flex flex-col mt-auto">
                 {item.constellations.map((constellation, j) => {
                   const constellationInfo = item.raw.constellations[j];
 
@@ -168,28 +164,26 @@ const CharacterSettingCard = ({
                       control={form.control}
                       name={`data.${index}.constellations.${j}`}
                       render={({ field }) => (
-                        <FormItem className="w-fit mt-3 justify-start">
-                          <div className="flex">
-                            <FormControl className="w-fit h-fit flex flex-col">
-                              <CharacterOptionControlCircle
-                                name={constellationInfo.name}
-                                description={constellationInfo.description}
-                                unlocked={field.value.unlocked}
-                                options={field.value.options.map((o, k) => ({ ...constellationInfo.options[k], ...o, inputLabel: constellationInfo.options[k].label }))}
-                                icon={constellationInfo.icon}
-                                onClick={() => {
-                                  field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
-                                  field.onChange(field.value);
-                                }}
-                                onChange={(e, k) => {
-                                  const maxStack = constellationInfo.options[k].maxStack;
-                                  const value = inputNumberWithSpace(e.target.value);
-                                  field.value.options[k].stack = value > maxStack ? maxStack : value;
-                                  field.onChange(field.value);
-                                }}
-                              />
-                            </FormControl>
-                          </div>
+                        <FormItem className="w-full mt-3 flex flex-col justify-end">
+                          <FormControl>
+                            <CharacterOptionControlCircle
+                              name={constellationInfo.name}
+                              description={constellationInfo.description}
+                              unlocked={field.value.unlocked}
+                              options={field.value.options.map((o, k) => ({ ...constellationInfo.options[k], ...o, inputLabel: constellationInfo.options[k].label }))}
+                              icon={constellationInfo.icon}
+                              onClick={() => {
+                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.onChange(field.value);
+                              }}
+                              onChange={(e, k) => {
+                                const maxStack = constellationInfo.options[k].maxStack;
+                                const value = inputNumberWithSpace(e.target.value);
+                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                                field.onChange(field.value);
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -200,7 +194,7 @@ const CharacterSettingCard = ({
             </div>
           </div>
 
-          <div className="w-3/5 h-auto flex py-3 gap-3 bg-transparent">
+          <div className="w-3/5 h-auto flex py-3 gap-3">
             <div className="flex flex-col gap-2">
               {/* 무기 */}
               <div className="flex justify-start mb-auto">
@@ -211,7 +205,7 @@ const CharacterSettingCard = ({
                     <FormItem className="w-full h-fit mb-auto">
                       <FormControl>
                         <WeaponSettingCard
-                          className={`${elementColors[item.raw.element].shadow}`}
+                          className={`${elementColors[item.raw.element].bg} ${elementColors[item.raw.element].shadow}`}
                           type={item.raw.weaponType}
                           weapon={field.value}
                           onChange={(weapon) => {
@@ -262,7 +256,7 @@ const CharacterSettingCard = ({
                           return (
                             <FormControl key={`${set.name}-${i}`}>
                               <ArtifactSetOptionCard
-                                className={`${elementColors[item.raw.element].shadow}`}
+                                className={`${elementColors[item.raw.element].bg} ${elementColors[item.raw.element].shadow}`}
                                 setInfo={{ ...rawInfo, ...set, options: options, numberOfParts: numberOfParts }}
                                 onChnage={field.value[i].options.map((option, j) => (val) => {
                                   if (typeof val !== "boolean" && Number(val) > options[j].maxStack) val = options[j].maxStack;
@@ -280,17 +274,16 @@ const CharacterSettingCard = ({
                 />
               </div>
             </div>
-            <div className="flex flex-col flex-1">
-              <Button type="submit" className="bg-gray-800 hover:bg-gray-600 mb-auto">
+            <div className="flex flex-col">
+              <Button type="submit" className="h-[8%] bg-gray-800 hover:bg-gray-600 mb-3">
                 Submit
               </Button>
               {/* 성유물 파츠 영역 */}
-              <div className="flex flex-col">
+              <div className="flex flex-col flex-1 gap-1">
                 {item.artifact.parts.map((artifact, i) => {
                   return (
                     <FormField
                       key={`data.${index}.artifact.parts.${i}`}
-                      // className="w-full h-fit mb-auto"
                       control={form.control}
                       name={`data.${index}.artifact.parts.${i}`}
                       render={({ field }) => {
@@ -301,7 +294,7 @@ const CharacterSettingCard = ({
                         });
 
                         return (
-                          <FormItem className="w-full h-fit mb-auto">
+                          <FormItem className="w-full flex-1">
                             <ArtifactPartCard
                               key={`artifact-part-${i}`}
                               className={`${elementColors[item.raw.element].shadow}`}
