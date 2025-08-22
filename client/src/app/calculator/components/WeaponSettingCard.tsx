@@ -85,8 +85,8 @@ const WeaponSettingCard = ({
   return (
     <Card className={`w-full h-full border-0 border-gray-400 p-1 shadow-md bg-transparent ${className}`}>
       <CardContent className="w-full h-full p-1 text-gray-700">
-        <div className="w-full h-fit flex">
-          <div className="w-[7vw] h-[7vw] min-w-[84px] min-h-[84px] flex flex-col mr-2">
+        <div className="w-full flex">
+          <div className="w-[40%] aspect-square mr-2">
             {!imgLoading && !weaponDetail && <DotBounsLoading className="w-fit h-fit m-auto" dotClassName="size-4 stroke-8" />}
             {weaponDetail ? (
               <Tooltip delayDuration={500}>
@@ -109,7 +109,7 @@ const WeaponSettingCard = ({
               <></>
             )}
           </div>
-          <div className="h-[7vw] min-h-[84px] flex flex-col justify-around">
+          <div className="w-[60%] flex flex-col justify-around">
             <div className="w-fit flex m-auto justify-around">
               {weaponDetail ? (
                 Array.from({ length: weaponDetail.rank }).map((_, i) => (
@@ -120,7 +120,7 @@ const WeaponSettingCard = ({
               )}
             </div>
             <Combobox
-              className="w-[200px] h-fit bg-gray-700 text-white font-bold border-2 text-xl text-center"
+              className="w-full h-fit bg-gray-700 text-white font-bold border-2 text-xl text-center"
               optionClassName="bg-gray-700 text-white"
               options={weaponList.map((w) => ({ label: w.name, data: w.id, raw: w }))}
               defaultValue={weapon.id.toString()}
@@ -135,7 +135,9 @@ const WeaponSettingCard = ({
               }}
             />
             {weaponDetail && (
-              <Label className="m-auto font-bold">{weaponDetail.upgrade.prop[1] ? weaponSubOption[weaponDetail.upgrade.prop[1].propType as TWeaponSubOptionKey] : ""}</Label>
+              <Label className="m-auto text-lg font-bold">
+                {weaponDetail.upgrade.prop[1] ? weaponSubOption[weaponDetail.upgrade.prop[1].propType as TWeaponSubOptionKey] : ""}
+              </Label>
             )}
           </div>
         </div>
