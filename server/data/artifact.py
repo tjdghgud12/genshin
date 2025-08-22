@@ -43,7 +43,12 @@ artifactSetOptions = {
     ],
     "숲의 기억": [
         artifactSetDataType(description="풀 원소 피해 증가", requiredParts=2),
-        artifactSetDataType(description="원소 전투 스킬 또는 원소 폭발에 명중된 적은 풀 원소 내성 감소", label="원소 전투 스킬 또는 원소 폭발 명중", requiredParts=4),
+        artifactSetDataType(
+            type=artifactSetOptionType.toggle,
+            description="원소 전투 스킬 또는 원소 폭발에 명중된 적은 풀 원소 내성 감소",
+            label="풀 원소 내성 감소",
+            requiredParts=4,
+        ),
     ],
     "절연의 기치": [
         artifactSetDataType(description="원소 충전 효율 증가", requiredParts=2),
@@ -56,7 +61,7 @@ artifactSetOptions = {
             maxStack=3,
             description="과부하, 연소, 발화 반응 피해 40% 증가 + 융해 반응 보너스 계수 15%증가. 원소 전투 스킬 사용 시 2세트 옵션 50%씩 상승",
             requiredParts=4,
-            label="원소 전투 스킬 사용 횟수",
+            label="원소 전투 스킬 사용",
         ),
     ],
     "황금 극단": [
