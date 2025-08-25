@@ -1,4 +1,5 @@
 "use client";
+import AdditionalFightProp from "@/app/calculator/components/AdditionalFightProp";
 import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCard";
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -159,6 +160,7 @@ const CalculatorPage = (): React.ReactElement => {
     <div>
       <Form {...form}>
         <form id="page form" onSubmit={form.handleSubmit(onSubmit, (err) => toast.error(JSON.stringify(err)))} className="w-full mx-auto">
+          <AdditionalFightProp />
           <Tabs value={selectedCharacter} onValueChange={setSelectedCharacter} className="w-[90%] mx-auto gap-0">
             <TabsList className="w-full h-fit justify-around pt-3 px-3 rounded-2xl mx-auto">
               {fields.map((item, i) => {
