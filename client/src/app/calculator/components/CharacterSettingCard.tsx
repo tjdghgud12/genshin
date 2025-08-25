@@ -41,7 +41,6 @@ const CharacterSettingCard = ({
       <CardContent className={`h-full flex ${elementColors[item.raw.element].bg} rounded-2xl text-gray-700 pl-0 relative`}>
         <div className="w-[70%] h-full absolute z-0">
           <Image src={item.raw.icon.gacha} alt="" fill className={`object-cover object-[100%_center] opacity-90`} />
-          {/* <div className="w-fit h-fit m-auto">{item.raw.name}</div> */}
         </div>
         <div className="w-full flex z-10">
           <div className={`w-[45%] flex flex-col pl-8 py-3 z-10`}>

@@ -60,7 +60,6 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
               <Image className={`${imgLoading ? "" : "hidden"}`} src={setInfo.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
-              {/* <div className={`w-full h-full ${imgLoading ? "" : "hidden"}`}>{setInfo.name.slice(0, 1)}</div> */}
             </TooltipTrigger>
             <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
               {setInfo.affix_list.map((affix, i) => {
@@ -228,6 +227,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): v
                   className="w-full h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-base text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-1 p-0"
                   name={`mainOption.value`}
                   type="number"
+                  step="any"
                   value={main.value}
                   min={0}
                   placeholder={fightPropLabels[main.key]}
@@ -260,6 +260,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): v
                   className="w-full h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-base text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
                   name={`subOption.${i}.value`}
                   type="number"
+                  step="any"
                   value={value}
                   min={0}
                   placeholder={fightPropLabels[key]}

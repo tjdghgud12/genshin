@@ -93,7 +93,6 @@ const WeaponSettingCard = ({
                 <TooltipTrigger asChild>
                   <div className="w-full h-full relative">
                     <Image src={weaponDetail.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
-                    {/* <div>{weapon.name.slice(0, 1)}</div> */}
                   </div>
                 </TooltipTrigger>
                 {weaponDetail.affix ? (
@@ -176,7 +175,7 @@ const WeaponSettingCard = ({
             />
           </div>
         </div>
-        <div className="h-fit">
+        <div>
           {selectedWeapon ? (
             selectedWeapon.options.map((option, i) => {
               const optionValue = weapon.options[i];
