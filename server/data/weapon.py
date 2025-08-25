@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 from enum import Enum
 
 
@@ -8,8 +8,7 @@ class weaponOptionType(Enum):
     stack = "stack"
 
 
-@dataclass
-class weaponDataType:
+class weaponDataType(BaseModel):
     type: weaponOptionType = weaponOptionType.always
     maxStack: int = 1
     description: str = ""

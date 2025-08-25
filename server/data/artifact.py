@@ -1,5 +1,5 @@
 from enum import Enum
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
 class artifactSetOptionType(Enum):
@@ -8,8 +8,7 @@ class artifactSetOptionType(Enum):
     stack = "stack"
 
 
-@dataclass
-class artifactSetDataType:
+class artifactSetDataType(BaseModel):
     type: artifactSetOptionType = artifactSetOptionType.always
     maxStack: int = 1
     description: str = ""

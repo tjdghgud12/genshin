@@ -1,5 +1,5 @@
 from enum import Enum
-from dataclasses import dataclass
+from pydantic import BaseModel
 from typing import TypedDict, cast
 from data.globalVariable import fightPropKeys
 
@@ -119,28 +119,24 @@ class skillConstellationType(Enum):
     none = None
 
 
-@dataclass
-class skillConstellationOptionType:
+class skillConstellationOptionType(BaseModel):
     type: skillConstellationType
     maxStack: int
     label: str
 
 
-@dataclass
-class passiveSkillType:
+class passiveSkillType(BaseModel):
     unlockLevel: int
     description: str
     options: list[skillConstellationOptionType]
 
 
-@dataclass
-class activeSkillType:
+class activeSkillType(BaseModel):
     description: str
     options: list[skillConstellationOptionType]
 
 
-@dataclass
-class contellationType:
+class contellationType(BaseModel):
     name: str
     description: str
     options: list[skillConstellationOptionType]
