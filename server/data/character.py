@@ -2,6 +2,7 @@ from enum import Enum
 from pydantic import BaseModel
 from typing import TypedDict, cast
 from data.globalVariable import fightPropKeys
+from models.character import passiveSkillType, activeSkillType, contellationType, skillConstellationOptionType, skillConstellationType
 
 
 class CharacterFightPropSchema(TypedDict, total=True):
@@ -110,36 +111,6 @@ class CharacterFightPropSchema(TypedDict, total=True):
     FIGHT_PROP_MELT_ADD_HURT: float  # 융해
     FIGHT_PROP_COMBUSTION_ADD_HURT: float  # 연소
     FIGHT_PROP_IGNITION_ADD_HURT: float  # 발화
-
-
-class skillConstellationType(Enum):
-    always = "always"
-    toggle = "toggle"
-    stack = "stack"
-    none = None
-
-
-class skillConstellationOptionType(BaseModel):
-    type: skillConstellationType
-    maxStack: int
-    label: str
-
-
-class passiveSkillType(BaseModel):
-    unlockLevel: int
-    description: str
-    options: list[skillConstellationOptionType]
-
-
-class activeSkillType(BaseModel):
-    description: str
-    options: list[skillConstellationOptionType]
-
-
-class contellationType(BaseModel):
-    name: str
-    description: str
-    options: list[skillConstellationOptionType]
 
 
 ambrCharacterCurve: dict[str, dict] = {}
