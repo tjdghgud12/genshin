@@ -274,7 +274,7 @@ const CharacterSettingCard = ({
               </div>
             </div>
             <div className="flex flex-col flex-1">
-              <Button type="submit" className="h-[8%] bg-gray-800 hover:bg-gray-600 mb-3">
+              <Button type="submit" className="h-[8%] bg-gray-800 hover:bg-gray-600 mb-3" data-index={index}>
                 Submit
               </Button>
               {/* 성유물 파츠 영역 */}

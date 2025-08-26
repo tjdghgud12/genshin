@@ -3,12 +3,14 @@ import AdditionalFightProp from "@/app/calculator/components/AdditionalFightProp
 import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCard";
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import api from "@/lib/axios";
 import { fightPropLabels } from "@/lib/fightProps";
 import { parseCalculatorData } from "@/lib/parseCalculatorData";
+import { deepMergeAddOnly } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -142,8 +144,38 @@ const CalculatorPage = (): React.ReactElement => {
     control: form.control,
   });
 
-  const onSubmit = (value: z.infer<typeof formSchema>): void => {
-    console.log(value);
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (value, e): void => {
+    const index: string | undefined = e ? (e.nativeEvent as SubmitEvent).submitter?.dataset.index : undefined;
+
+    if (index) {
+      const raw = value.data[Number(index)].raw;
+      const additionalFightProp = value.additionalFightProp;
+      const characterInfo = deepMergeAddOnly(value.data[Number(index)], raw);
+
+      characterInfo.artifact.parts = characterInfo.artifact.parts.map((part) => {
+        // 기존 %값을 일반 값으로 변환
+        const key = Object.keys(part.mainStat)[0];
+        return {
+          ...part,
+          mainStat: { [key]: Number(part.mainStat[key]) / 100 },
+          subStat: part.subStat.map((sub) => {
+            const subKey = Object.keys(sub)[0];
+            return { [subKey]: Number(sub[subKey]) / 100 };
+          }),
+        };
+      });
+
+      toast.promise(api.post(`/calculation`, { characterInfo: characterInfo, additionalFightProp }), {
+        loading: "로딩 중",
+        success: (res) => {
+          return "데미지 연산을 완료하였습니다.";
+        },
+        error: (err) => {
+          console.log(err);
+          return "데미지 연산에 실패하였습니다.";
+        },
+      });
+    }
   };
 
   useEffect(() => {
