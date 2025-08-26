@@ -13,3 +13,11 @@ class weaponOptionModel(BaseModel):
     maxStack: int = 1
     description: str = ""
     label: str = ""
+
+
+class weaponDataModel(BaseModel):
+    id: int
+    name: str
+    level: int
+    refinement: int
+    options: list[weaponOptionModel]

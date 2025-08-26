@@ -1,5 +1,11 @@
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from models.fightProp import fightPropModel
+
+
+fightProp = fightPropModel()
+fightPropKeys = fightProp.extractFightPropKeys()
+fightPropTypes = fightProp.extractFightPropTypes()
 
 
 class artifactSetOptionType(Enum):
@@ -14,3 +20,62 @@ class artifactSetOptionModel(BaseModel):
     description: str = ""
     label: str = ""
     requiredParts: int = 0
+
+
+class artifactSetDataModel(BaseModel):
+    name: str
+    options: list[artifactSetOptionModel]
+
+
+class artifactPartsDataModel(BaseModel):
+    name: str
+    setName: str
+    type: str
+    mainStat: dict[str, float]
+    subStat: list[dict[str, float]]
+
+    @field_validator("mainStat")
+    @classmethod
+    def validateMainStat(cls, v: dict[str, float]) -> dict[str, float]:
+        if not v:
+            raise ValueError("mainStat은 비어있을 수 없습니다")
+        if len(v) != 1:
+            raise ValueError("mainStat은 정확히 하나의 키-값 쌍만 가져야 합니다")
+
+        key, value = next(iter(v.items()))
+
+        if key not in fightPropKeys:
+            raise ValueError(f"허용되지 않는 전투 속성: {key}. " f"CharacterFightPropModel에 정의된 필드만 사용 가능합니다. ")
+
+        # 값 타입 검증
+        if not isinstance(value, (int, float)):
+            raise ValueError(f"{key}의 값은 숫자({fightPropTypes[key]})여야 합니다. 받은 타입: {type(value)}")
+        # 값 범위 검증 (선택사항)
+        if value < 0:
+            raise ValueError(f"{key}의 값은 음수일 수 없습니다: {value}")
+
+        return v
+
+    @field_validator("subStat")
+    @classmethod
+    def validate_sub_stats(cls, v: list[dict[str, float]]) -> list[dict[str, float]]:
+        if not isinstance(v, list):
+            raise ValueError("subStat은 리스트여야 합니다")
+
+        for i, stat in enumerate(v):
+            if not isinstance(stat, dict):
+                raise ValueError(f"subStat[{i}]는 딕셔너리여야 합니다")
+            if not stat:
+                raise ValueError(f"subStat[{i}]는 비어있을 수 없습니다")
+            for key, value in stat.items():
+                # 키 검증 (동적)
+                if key not in fightPropKeys:
+                    raise ValueError(f"subStat[{i}]에 허용되지 않는 전투 속성: {key}. " f"CharacterFightPropModel에 정의된 필드만 사용 가능합니다.")
+                # 값 타입 검증
+                if not isinstance(value, (int, float)):
+                    raise ValueError(f"subStat[{i}][{key}]의 값은 숫자({{fightPropTypes[key]}})여야 합니다. 받은 타입: {type(value)}")
+                # 값 범위 검증
+                if value < 0:
+                    raise ValueError(f"subStat[{i}][{key}]의 값은 음수일 수 없습니다: {value}")
+
+        return v
