@@ -8,7 +8,7 @@ class artifactSetOptionType(Enum):
     stack = "stack"
 
 
-class artifactSetDataType(BaseModel):
+class artifactSetOptionModel(BaseModel):
     type: artifactSetOptionType = artifactSetOptionType.always
     maxStack: int = 1
     description: str = ""

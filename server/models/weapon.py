@@ -8,7 +8,7 @@ class weaponOptionType(Enum):
     stack = "stack"
 
 
-class weaponDataType(BaseModel):
+class weaponOptionModel(BaseModel):
     type: weaponOptionType = weaponOptionType.always
     maxStack: int = 1
     description: str = ""
