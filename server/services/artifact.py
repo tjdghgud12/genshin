@@ -1,5 +1,6 @@
 from typing import cast, TypedDict
-from data.character import CharacterFightPropModel, fightPropTemplate
+from data.character import fightPropTemplate
+from models.character import CharacterFightPropModel
 from data.artifact import artifactSetOptions
 from data.globalVariable import fightPropKeys
 from copy import deepcopy

@@ -1,7 +1,8 @@
 from typing import TypedDict
 from ambr import AmbrAPI, WeaponDetail, WeaponPromote
 from services.ambrApi import getAmbrApi
-from data.character import CharacterFightPropModel, fightPropTemplate
+from data.character import fightPropTemplate
+from models.character import CharacterFightPropModel
 from data.globalVariable import fightPropKeys
 import data.weapon as weaponData
 from copy import deepcopy
