@@ -41,3 +41,5 @@ class characterInfoModel(BaseModel):
     passiveSkill: list[passiveSkillModel]
     weapon: weaponDataModel
     artifact: artifactSetOptionModel
+
+    model_config = {"extra": "ignore"}

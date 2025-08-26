@@ -123,3 +123,5 @@ class fightPropModel(BaseModel):
     @classmethod
     def extractFightPropTypes(cls) -> dict[str, type | None]:
         return {name: getattr(field, "annotation", None) for name, field in cls.model_fields.items()}
+
+    model_config = {"extra": "ignore"}
