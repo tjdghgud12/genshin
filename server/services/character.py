@@ -1,11 +1,11 @@
-from typing import cast, List, Protocol, Coroutine, Any
+from typing import Protocol, Coroutine, Any
 from ambr import CharacterDetail, CharacterPromote
 from pydantic import BaseModel
-from data.character import CharacterFightPropModel
+from models.fightProp import fightPropModel
 from data import character as characterData
 from services.weapon import getTotalWeaponFightProp
 from services.artifact import getArtifactFightProp, getArtifactSetData
-from data.globalVariable import fightPropKeys, baseFightProps
+from data.globalVariable import fightPropKeys
 from dataclasses import dataclass
 from copy import deepcopy
 from itertools import chain
@@ -17,14 +17,14 @@ class CharacterInfo(BaseModel):
     level: int | str
     weapon: dict
     artifact: dict[str, list[dict]]
-    passiveSkill: List[dict]
-    activeSkill: List[dict]
-    constellations: List[dict]
+    passiveSkill: list[dict]
+    activeSkill: list[dict]
+    constellations: list[dict]
 
 
 @dataclass
 class CharacterFightPropReturnData:
-    fightProp: CharacterFightPropModel
+    fightProp: fightPropModel
     characterInfo: CharacterInfo
 
 
@@ -33,8 +33,8 @@ class CharacterFightPropGetter(Protocol):
 
 
 # ----------------------------------- Fucntion -----------------------------------
-def genCharacterBaseStat(ambrCharacterDetail: CharacterDetail, level: int) -> CharacterFightPropModel:
-    fightProp = CharacterFightPropModel()
+def genCharacterBaseStat(ambrCharacterDetail: CharacterDetail, level: int) -> fightPropModel:
+    fightProp = fightPropModel(FIGHT_PROP_CRITICAL=0.05, FIGHT_PROP_CRITICAL_HURT=0.5, FIGHT_PROP_CHARGE_EFFICIENCY=1.0)
 
     curveInfo = characterData.ambrCharacterCurve[str(level)]["curveInfos"]
     promoteStat = max(
@@ -60,7 +60,7 @@ def getConstellationData():
     return constellationData
 
 
-async def getWeaponArtifactFightProp(fightProp: CharacterFightPropModel, weapon: dict, artifact: dict):
+async def getWeaponArtifactFightProp(fightProp: fightPropModel, weapon: dict, artifact: dict):
     # ----------------------- Artifact -----------------------
     artifactFightProp = getArtifactFightProp(artifact)
     artifactSetData = getArtifactSetData(artifact["setInfo"], fightProp)
@@ -84,7 +84,7 @@ async def getWeaponArtifactFightProp(fightProp: CharacterFightPropModel, weapon:
     return {"fightProp": fightProp, "weaponAfterProps": weaponData["afterAddProps"], "artifactAfterProps": artifactSetData["afterAddProps"]}
 
 
-async def getAfterWeaponArtifactFightProp(fightProp: CharacterFightPropModel, weapon: dict, artifact: dict, weaponAfterProps: list | None, artifactAfterProps: list | None):
+async def getAfterWeaponArtifactFightProp(fightProp: fightPropModel, weapon: dict, artifact: dict, weaponAfterProps: list | None, artifactAfterProps: list | None):
     getWeaponFightProp = getTotalWeaponFightProp[weapon["name"]]
 
     if weaponAfterProps != None:
@@ -102,7 +102,7 @@ async def getAfterWeaponArtifactFightProp(fightProp: CharacterFightPropModel, we
 
 async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
     # ----------------------- Base Fight Prop -----------------------
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -147,7 +147,7 @@ async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
 
 async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -195,7 +195,7 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
 
 
 async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -239,7 +239,7 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
 
 
 async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -319,7 +319,7 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
 
 
 async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -387,7 +387,7 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
 
 
 async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -459,7 +459,7 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
 
 async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -547,7 +547,7 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
 
 
 async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -627,7 +627,7 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
 
 async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -674,7 +674,7 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
 
 
 async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -729,7 +729,7 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
 
 
 async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -779,7 +779,7 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
 
 
 async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-    newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -832,7 +832,7 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
 
 
 # async def getYelanFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: CharacterInfo) -> CharacterFightPropReturnData:
-#     newFightProp: CharacterFightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+#     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 #     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 

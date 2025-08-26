@@ -1,21 +1,9 @@
-from enum import Enum
-from pydantic import BaseModel
-from typing import TypedDict, cast
-from data.globalVariable import fightPropKeys
-from models.character import passiveSkillModel, activeSkillModel, contellationModel, skillConstellationOptionModel, skillConstellationType, CharacterFightPropModel
+from models.character import passiveSkillModel, activeSkillModel, contellationModel, skillConstellationOptionModel, skillConstellationType
+from models.fightProp import fightPropModel
 
 
 ambrCharacterCurve: dict[str, dict] = {}
-
-characterStats = cast(
-    CharacterFightPropModel,
-    {
-        key: (0.05 if key == fightPropKeys.CRITICAL.value else 0.5 if key == fightPropKeys.CRITICAL_HURT.value else 1.0 if key == fightPropKeys.CHARGE_EFFICIENCY.value else 0.0)
-        for key in list(CharacterFightPropModel.__annotations__.keys())
-    },
-)
-
-fightPropTemplate = CharacterFightPropModel(FIGHT_PROP_CRITICAL=0.0, FIGHT_PROP_CRITICAL_HURT=0.0, FIGHT_PROP_CHARGE_EFFICIENCY=0.0)
+fightPropTemplate = fightPropModel()
 
 
 passiveSkill = {

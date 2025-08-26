@@ -2,18 +2,18 @@ from typing import TypedDict
 from ambr import AmbrAPI, WeaponDetail, WeaponPromote
 from services.ambrApi import getAmbrApi
 from data.character import fightPropTemplate
-from models.character import CharacterFightPropModel
+from models.fightProp import fightPropModel
 from data.globalVariable import fightPropKeys
 import data.weapon as weaponData
 from copy import deepcopy
 
 
 class WeaponDataReturnSchema(TypedDict, total=True):
-    fightProp: CharacterFightPropModel
+    fightProp: fightPropModel
     afterAddProps: list[str] | None
 
 
-async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropModel:
+async def getWeaponBaseFightProp(id: int, level: int) -> fightPropModel:
     ambrApi: AmbrAPI = await getAmbrApi()
     ambrWeaponCurveInfo = weaponData.ambrWeaponCurve[str(level)]["curveInfos"]
     ambrWeaponDetail: WeaponDetail = await ambrApi.fetch_weapon_detail(id)
@@ -35,7 +35,7 @@ async def getWeaponBaseFightProp(id: int, level: int) -> CharacterFightPropModel
     return fightProp
 
 
-async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.12, 0.08], [0.15, 0.10], [0.18, 0.12], [0.21, 0.14], [0.24, 0.16]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -49,7 +49,7 @@ async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dic
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.12, [0.08, 0.16, 0.28]], [0.15, [0.10, 0.20, 0.35]], [0.18, [0.12, 0.24, 0.42]], [0.21, [0.14, 0.28, 0.49]], [0.24, [0.16, 0.32, 0.56]]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -62,7 +62,7 @@ async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int,
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[0.2], [0.24], [0.28], [0.32], [0.36]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -75,7 +75,7 @@ async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: d
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [[32, 0.10], [40, 0.14], [48, 0.18], [56, 0.22], [64, 0.26]]
     refinementValue = optionRefinementMap[refinement - 1]
@@ -92,7 +92,7 @@ async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: i
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.30, [0.28, 0.80]],
@@ -119,7 +119,7 @@ async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, o
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK_PERCENT.value]}
 
 
-async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.20, 0.008, 0.01],
@@ -147,7 +147,7 @@ async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options:
     return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK.value]}
 
 
-async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.08, 0.14],
@@ -167,7 +167,7 @@ async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: 
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getAzurelightFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getAzurelightFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.24, [0.24, 0.40]],
@@ -191,7 +191,7 @@ async def getAzurelightFightProp(id: int, level: int, refinement: int, options: 
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getSymphonistOfScentsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getSymphonistOfScentsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.12, 0.12, 0.32],
@@ -217,7 +217,7 @@ async def getSymphonistOfScentsFightProp(id: int, level: int, refinement: int, o
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getStarcallersWatchFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getStarcallersWatchFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [100, 0.28],
@@ -240,7 +240,7 @@ async def getStarcallersWatchFightProp(id: int, level: int, refinement: int, opt
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getTomeOfTheEternalFlowFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getTomeOfTheEternalFlowFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.16, 0.14],
@@ -262,7 +262,7 @@ async def getTomeOfTheEternalFlowFightProp(id: int, level: int, refinement: int,
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getAThousandBlazingSunsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getAThousandBlazingSunsFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
         [0.20, 0.28],
@@ -286,7 +286,7 @@ async def getAThousandBlazingSunsFightProp(id: int, level: int, refinement: int,
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
-async def getApprenticesNotesFightProp(id: int, level: int, _refinement: int, _options: dict, _characterFightProp: CharacterFightPropModel) -> WeaponDataReturnSchema:
+async def getApprenticesNotesFightProp(id: int, level: int, _refinement: int, _options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
 
     return {"fightProp": fightProp, "afterAddProps": None}
