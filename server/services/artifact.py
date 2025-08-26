@@ -206,7 +206,7 @@ def getArtifactSetData(setInfos: list[dict], characterFightProp: CharacterFightP
         getSetFightProp = getArtifactSetsFightProp[setInfo["name"]]
         setOptionFightProp = getSetFightProp(setInfo["numberOfParts"], setInfo.get("options") or [], characterFightProp)
         afterAddProps = setOptionFightProp["afterAddProps"]
-        for fightPropKey, value in setOptionFightProp["fightProp"].items():
+        for fightPropKey, value in setOptionFightProp["fightProp"].model_dump().items():
             fightProp.add(fightPropKey, value)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=afterAddProps)

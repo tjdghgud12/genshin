@@ -8,6 +8,7 @@ from services.artifact import getArtifactFightProp, getArtifactSetData
 from data.globalVariable import fightPropKeys, baseFightProps
 from dataclasses import dataclass
 from copy import deepcopy
+from itertools import chain
 
 
 # ----------------------------------- Class -----------------------------------
@@ -42,8 +43,14 @@ def genCharacterBaseStat(ambrCharacterDetail: CharacterDetail, level: int) -> Ch
         default=CharacterPromote,
     )
 
-    map(lambda s: fightProp.add(s.prop_type, s.init_value * curveInfo[s.growth_type]), ambrCharacterDetail.upgrade.base_stats)
-    map(lambda s: fightProp.add(s.id, s.value), promoteStat.add_stats or [])
+    # itertools.chain으로 모든 스탯을 하나의 스트림으로 통합
+    allStats = chain(
+        ((s.prop_type, s.init_value * curveInfo[s.growth_type]) for s in ambrCharacterDetail.upgrade.base_stats), ((s.id, s.value) for s in (promoteStat.add_stats or []))
+    )
+
+    # 메모리 효율적인 적용
+    for propType, value in allStats:
+        fightProp.add(propType, value)
 
     return fightProp
 
@@ -68,11 +75,11 @@ async def getWeaponArtifactFightProp(fightProp: CharacterFightPropModel, weapon:
     weaponFightProp = weaponData["fightProp"]
     if weaponData["afterAddProps"] != None:
         for key in weaponData["afterAddProps"]:
-            weaponFightProp[key] = 0.0
+            setattr(weaponFightProp, key, 0.0)
 
     # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
     for fightPropKey, value in artifactFightProp.model_dump().items():
-        fightProp.add(fightPropKey, value + getattr(artifactSetFightProp, fightPropKey) + weaponFightProp[fightPropKey])
+        fightProp.add(fightPropKey, value + getattr(artifactSetFightProp, fightPropKey) + getattr(weaponFightProp, fightPropKey))
 
     return {"fightProp": fightProp, "weaponAfterProps": weaponData["afterAddProps"], "artifactAfterProps": artifactSetData["afterAddProps"]}
 
@@ -83,7 +90,7 @@ async def getAfterWeaponArtifactFightProp(fightProp: CharacterFightPropModel, we
     if weaponAfterProps != None:
         finallyWeaponData = await getWeaponFightProp(weapon["id"], weapon["level"], weapon["refinement"], weapon["options"], fightProp)
         for key in finallyWeaponData["afterAddProps"]:
-            fightProp.add(key, finallyWeaponData["fightProp"][key])
+            fightProp.add(key, getattr(finallyWeaponData["fightProp"], key))
 
     if artifactAfterProps != None:
         finallyArtifactSetData = getArtifactSetData(artifact["setInfo"], fightProp)
