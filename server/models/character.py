@@ -124,24 +124,24 @@ class skillConstellationType(Enum):
     none = None
 
 
-class skillConstellationOptionType(BaseModel):
+class skillConstellationOptionModel(BaseModel):
     type: skillConstellationType
     maxStack: int
     label: str
 
 
-class passiveSkillType(BaseModel):
+class passiveSkillModel(BaseModel):
     unlockLevel: int
     description: str
-    options: list[skillConstellationOptionType]
+    options: list[skillConstellationOptionModel]
 
 
-class activeSkillType(BaseModel):
+class activeSkillModel(BaseModel):
     description: str
-    options: list[skillConstellationOptionType]
+    options: list[skillConstellationOptionModel]
 
 
-class contellationType(BaseModel):
+class contellationModel(BaseModel):
     name: str
     description: str
-    options: list[skillConstellationOptionType]
+    options: list[skillConstellationOptionModel]
