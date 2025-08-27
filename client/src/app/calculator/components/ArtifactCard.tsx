@@ -234,9 +234,6 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): v
                   onChange={(e) => {
                     onMainChange({ [main.key]: inputNumberWithSpace(e.target.value, fightPropLabels[main.key].includes("%"), 2) });
                   }}
-                  onBlur={(e) => {
-                    onMainChange({ [main.key]: inputNumberWithSpace(Number(e.target.value).toFixed(2), fightPropLabels[main.key].includes("%"), 2) });
-                  }}
                 />
               </div>
             )}
