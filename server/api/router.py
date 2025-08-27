@@ -87,6 +87,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
             # Draw를 위한 데이터 제작
             characterInfo = {
+                "id": avatar.id,
                 "name": avatar.name,
                 "element": avatar.element.value,
                 "level": avatar.level,

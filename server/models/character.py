@@ -55,6 +55,8 @@ class requestCharacterInfoModel(BaseModel):
         unlocked: bool
         options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
 
+    name: str
+    id: int
     level: int
     passiveSkill: list[requestPassiveSkillModel]
     activeSkill: list[requestActiveSkillModel]
