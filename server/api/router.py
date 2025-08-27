@@ -1,20 +1,27 @@
 from fastapi import APIRouter, HTTPException, Depends
-from ambr import CharacterDetail, WeaponDetail, AmbrAPI, Talent, Constellation
+from ambr import CharacterDetail, AmbrAPI, Talent, Constellation
 import enka
-from data.character import passiveSkill, activeSkill, constellation, passiveSkillType, activeSkillType, skillConstellationOptionType, skillConstellationType
+from data.character import passiveSkill, activeSkill, constellation, passiveSkillModel, activeSkillModel, skillConstellationOptionModel, skillConstellationType
 import data.weapon as weaponData
 import data.artifact as artifactData
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
 from services.artifact import getArtifactSetInfo
-import time
+from services.calculator import damageCalculation
+from models.character import requestCharacterInfoModel
+from models.fightProp import fightPropModel
+from pydantic import BaseModel
 
 router = APIRouter()
+
 
 # 2025-07-23 기준(genshin impact 5.7)
 # ambrCharacters = await ambrApi.fetch_characters() # 여행자 빼고 100개, 각 속성별 여행자 포함 시 106개
 # ambrWeapons = await ambrApi.fetch_weapons() # 4성 이상은 186개, 1성 이상은 220개
 # ambrArtifacts = await ambrApi.fetch_artifact_sets() # 55개
+class calculationBody(BaseModel):
+    additionalFightProp: fightPropModel
+    characterInfo: requestCharacterInfoModel
 
 
 @router.get("/weapons/{id}")
@@ -107,8 +114,8 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             passive = list(filter(lambda talent: talent.type.name == "ULTIMATE" and characterPassive.get(talent.name), ambrCharacterDetail.talents))
             for i, skill in enumerate(passive):
                 unlocked = avatar.ascension >= (1 if i == 0 else 4)
-                skillOption = characterPassive.get(skill.name) or passiveSkillType(
-                    unlockLevel=1, description="", options=[skillConstellationOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+                skillOption = characterPassive.get(skill.name) or passiveSkillModel(
+                    unlockLevel=1, description="", options=[skillConstellationOptionModel(type=skillConstellationType.always, maxStack=1, label="")]
                 )
                 characterInfo["passiveSkill"].append(
                     {
@@ -116,6 +123,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                         "icon": skill.icon,
                         "description": skill.description,
                         "unlocked": unlocked,
+                        "unlockLevel": skillOption.unlockLevel,
                         "options": [
                             {
                                 **vars(option),
@@ -127,8 +135,8 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                     }
                 )
             for i, skill in enumerate(avatar.talents):
-                skillOption = characterActive.get(skill.name) or activeSkillType(
-                    description="", options=[skillConstellationOptionType(type=skillConstellationType.always, maxStack=1, label="")]
+                skillOption = characterActive.get(skill.name) or activeSkillModel(
+                    description="", options=[skillConstellationOptionModel(type=skillConstellationType.always, maxStack=1, label="")]
                 )
                 skillDetail = next((t for t in ambrCharacterDetail.talents if t.name == skill.name), Talent)
                 characterInfo["activeSkill"].append(
@@ -218,6 +226,13 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
             parsedCharacters.append({"info": characterInfo, "result": {}})
         return {"characters": parsedCharacters}
+
+
+@router.post("/calculation")
+def calculation(data: calculationBody, ambrApi: AmbrAPI = Depends(getAmbrApi)):
+    if ambrApi is None:
+        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+    return {}
 
 
 @router.get("/")

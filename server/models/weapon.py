@@ -8,6 +8,11 @@ class weaponOptionType(Enum):
     stack = "stack"
 
 
+class StatusMixin(BaseModel):
+    active: bool
+    stack: int
+
+
 class weaponOptionModel(BaseModel):
     type: weaponOptionType = weaponOptionType.always
     maxStack: int = 1
@@ -16,8 +21,11 @@ class weaponOptionModel(BaseModel):
 
 
 class weaponDataModel(BaseModel):
+    class extendedWeaponOptionModel(weaponOptionModel, StatusMixin):
+        pass
+
     id: int
     name: str
     level: int
     refinement: int
-    options: list[weaponOptionModel]
+    options: list[extendedWeaponOptionModel]

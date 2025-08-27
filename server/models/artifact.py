@@ -14,6 +14,11 @@ class artifactSetOptionType(Enum):
     stack = "stack"
 
 
+class StatusMixin(BaseModel):
+    active: bool = False
+    stack: int = 0
+
+
 class artifactSetOptionModel(BaseModel):
     type: artifactSetOptionType = artifactSetOptionType.always
     maxStack: int = 1
@@ -23,8 +28,12 @@ class artifactSetOptionModel(BaseModel):
 
 
 class artifactSetDataModel(BaseModel):
+    class extendedArtifactSetOptionModel(artifactSetOptionModel, StatusMixin):
+        pass
+
     name: str
-    options: list[artifactSetOptionModel]
+    numberOfParts: int
+    options: list[extendedArtifactSetOptionModel]
 
 
 class artifactPartsDataModel(BaseModel):
@@ -79,3 +88,8 @@ class artifactPartsDataModel(BaseModel):
                     raise ValueError(f"subStat[{i}][{key}]의 값은 음수일 수 없습니다: {value}")
 
         return v
+
+
+class artifactDataModel(BaseModel):
+    parts: list[artifactPartsDataModel]
+    setInfo: list[artifactSetDataModel]

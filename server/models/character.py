@@ -1,7 +1,7 @@
 from enum import Enum
 from pydantic import BaseModel
 from models.weapon import weaponDataModel
-from models.artifact import artifactSetOptionModel
+from models.artifact import artifactDataModel
 
 
 class skillConstellationType(Enum):
@@ -9,6 +9,11 @@ class skillConstellationType(Enum):
     toggle = "toggle"
     stack = "stack"
     none = None
+
+
+class StatusMixin(BaseModel):
+    active: bool
+    stack: int
 
 
 class skillConstellationOptionModel(BaseModel):
@@ -34,12 +39,12 @@ class contellationModel(BaseModel):
     options: list[skillConstellationOptionModel]
 
 
-class characterInfoModel(BaseModel):
+class requestCharacterInfoModel(BaseModel):
     level: int
     constellations: list[contellationModel]
     activeSkill: list[activeSkillModel]
     passiveSkill: list[passiveSkillModel]
     weapon: weaponDataModel
-    artifact: artifactSetOptionModel
+    artifact: artifactDataModel
 
     model_config = {"extra": "ignore"}
