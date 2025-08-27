@@ -3,7 +3,7 @@ from ambr import AmbrAPI, WeaponDetail, WeaponPromote
 from services.ambrApi import getAmbrApi
 from data.character import fightPropTemplate
 from models.fightProp import fightPropModel
-from data.globalVariable import fightPropKeys
+from data.globalVariable import fightPropMpa
 import data.weapon as weaponData
 from copy import deepcopy
 
@@ -43,8 +43,8 @@ async def getAmosBowFightProp(id: int, level: int, refinement: int, options: dic
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i] if i == 0 else refinementValue[i] * option["stack"]
-            fightProp.add(fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value, value)
-            fightProp.add(fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -57,7 +57,7 @@ async def getMistsplitterReforgedFightProp(id: int, level: int, refinement: int,
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i] if i == 0 else refinementValue[i][int(option["stack"]) - 1]
-            fightProp.add(fightPropKeys.ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -70,7 +70,7 @@ async def getLionsRoarFightProp(id: int, level: int, refinement: int, options: d
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            fightProp.add(fightPropKeys.ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -86,7 +86,7 @@ async def getAThousandFloatingDreamsFightProp(id: int, level: int, refinement: i
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            key = fightPropKeys.ELEMENT_MASTERY.value if i == 0 else fightPropKeys.ATTACK_ADD_HURT.value
+            key = fightPropMpa.ELEMENT_MASTERY.value if i == 0 else fightPropMpa.ATTACK_ADD_HURT.value
             fightProp.add(key, value * option["stack"])
 
     return {"fightProp": fightProp, "afterAddProps": None}
@@ -106,9 +106,9 @@ async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, o
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            key = fightPropKeys.CHARGE_EFFICIENCY.value if i == 0 else fightPropKeys.ATTACK_PERCENT.value
+            key = fightPropMpa.CHARGE_EFFICIENCY.value if i == 0 else fightPropMpa.ATTACK_PERCENT.value
             if i == 1:
-                chargeEfficiency = getattr(characterFightProp, fightPropKeys.CHARGE_EFFICIENCY.value)
+                chargeEfficiency = getattr(characterFightProp, fightPropMpa.CHARGE_EFFICIENCY.value)
                 addAttackPercent = value[0] * (chargeEfficiency - 1)
                 if value[1] < addAttackPercent:
                     addAttackPercent = value[1]
@@ -116,7 +116,7 @@ async def getEngulfingLightningFightProp(id: int, level: int, refinement: int, o
             else:
                 fightProp.add(key, value)
 
-    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK_PERCENT.value]}
+    return {"fightProp": fightProp, "afterAddProps": [fightPropMpa.ATTACK_PERCENT.value]}
 
 
 async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options: dict, characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
@@ -133,18 +133,18 @@ async def getStaffOfHomaFightProp(id: int, level: int, refinement: int, options:
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            key = fightPropKeys.HP_PERCENT.value if i == 0 else fightPropKeys.ATTACK.value
+            key = fightPropMpa.HP_PERCENT.value if i == 0 else fightPropMpa.ATTACK.value
             if i != 0:
-                baseHp = getattr(characterFightProp, fightPropKeys.BASE_HP.value)
-                hpPercent = getattr(characterFightProp, fightPropKeys.HP_PERCENT.value)
-                hp = getattr(characterFightProp, fightPropKeys.HP.value)
+                baseHp = getattr(characterFightProp, fightPropMpa.BASE_HP.value)
+                hpPercent = getattr(characterFightProp, fightPropMpa.HP_PERCENT.value)
+                hp = getattr(characterFightProp, fightPropMpa.HP.value)
                 totalHp = baseHp * (hpPercent + 1) + hp
                 addAttack = totalHp * value
                 fightProp.add(key, addAttack)
             else:
                 fightProp.add(key, value)
 
-    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ATTACK.value]}
+    return {"fightProp": fightProp, "afterAddProps": [fightPropMpa.ATTACK.value]}
 
 
 async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: int, options: dict, _characterFightProp: fightPropModel) -> WeaponDataReturnSchema:
@@ -161,7 +161,7 @@ async def getSplendorOfTranquilWatersFightProp(id: int, level: int, refinement: 
     for i, option in enumerate(options):
         if option["active"]:
             value = refinementValue[i]
-            key = fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value if i == 0 else fightPropKeys.HP_PERCENT.value
+            key = fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value if i == 0 else fightPropMpa.HP_PERCENT.value
             fightProp.add(key, value * option["stack"])
 
     return {"fightProp": fightProp, "afterAddProps": None}
@@ -183,10 +183,10 @@ async def getAzurelightFightProp(id: int, level: int, refinement: int, options: 
             value = refinementValue[i]
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.ATTACK_PERCENT.value, value)
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, value)
                 case 1:
-                    fightProp.add(fightPropKeys.ATTACK_PERCENT.value, value[0])
-                    fightProp.add(fightPropKeys.CRITICAL_HURT.value, value[1])
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, value[0])
+                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, value[1])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -206,13 +206,13 @@ async def getSymphonistOfScentsFightProp(id: int, level: int, refinement: int, o
         value = refinementValue[i]
         match i:
             case 0:
-                fightProp.add(fightPropKeys.ATTACK_PERCENT.value, value)
+                fightProp.add(fightPropMpa.ATTACK_PERCENT.value, value)
             case 1:
                 if option["active"]:
-                    fightProp.add(fightPropKeys.ATTACK_PERCENT.value, value)
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, value)
             case 2:
                 if option["active"]:
-                    fightProp.add(fightPropKeys.ATTACK_PERCENT.value, value)
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -232,10 +232,10 @@ async def getStarcallersWatchFightProp(id: int, level: int, refinement: int, opt
         value = refinementValue[i]
         match i:
             case 0:
-                fightProp.add(fightPropKeys.ELEMENT_MASTERY.value, value)
+                fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, value)
             case 1:
                 if option["active"]:
-                    fightProp.add(fightPropKeys.ATTACK_ADD_HURT.value, value)
+                    fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -255,9 +255,9 @@ async def getTomeOfTheEternalFlowFightProp(id: int, level: int, refinement: int,
         value = refinementValue[i]
         match i:
             case 0:
-                fightProp.add(fightPropKeys.ELEMENT_MASTERY.value, value)
+                fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, value)
             case 1:
-                fightProp.add(fightPropKeys.ATTACK_ADD_HURT.value, value * option["stack"])
+                fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, value * option["stack"])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -277,11 +277,11 @@ async def getAThousandBlazingSunsFightProp(id: int, level: int, refinement: int,
         if option["active"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.CRITICAL_HURT.value, refinementValue[0])
-                    fightProp.add(fightPropKeys.ATTACK_PERCENT.value, refinementValue[1])
+                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1])
                 case 1:
-                    fightProp.add(fightPropKeys.CRITICAL_HURT.value, refinementValue[0] * 0.75)
-                    fightProp.add(fightPropKeys.ATTACK_PERCENT.value, refinementValue[1] * 0.75)
+                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, refinementValue[0] * 0.75)
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1] * 0.75)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 

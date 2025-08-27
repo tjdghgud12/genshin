@@ -1,7 +1,8 @@
 from enum import Enum
+from models.fightProp import fightPropModel
 
 
-class fightPropKeys(str, Enum):
+class fightPropMpa(str, Enum):
     BASE_HP = "FIGHT_PROP_BASE_HP"
     HP = "FIGHT_PROP_HP"
     HP_PERCENT = "FIGHT_PROP_HP_PERCENT"
@@ -151,16 +152,7 @@ fightPropMap = {
     "2003": "FIGHT_PROP_CUR_SPEED",
 }
 
-baseFightProps = [
-    fightPropKeys.BASE_HP.value,
-    fightPropKeys.HP.value,
-    fightPropKeys.HP_PERCENT.value,
-    fightPropKeys.BASE_ATTACK.value,
-    fightPropKeys.ATTACK.value,
-    fightPropKeys.ATTACK_PERCENT.value,
-    fightPropKeys.BASE_DEFENSE.value,
-    fightPropKeys.DEFENSE.value,
-    fightPropKeys.DEFENSE_PERCENT.value,
-    fightPropKeys.ELEMENT_MASTERY.value,
-    fightPropKeys.CHARGE_EFFICIENCY.value,
-]
+
+fightProp = fightPropModel()
+fightPropKeys = fightProp.extractFightPropKeys()
+fightPropTypes = fightProp.extractFightPropTypes()

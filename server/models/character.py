@@ -45,13 +45,17 @@ class requestCharacterInfoModel(BaseModel):
         pass
 
     class requestPassiveSkillModel(passiveSkillModel):
+        name: str
+        unlocked: bool
         options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
 
     class requestActiveSkillModel(activeSkillModel):
+        name: str
         level: int
         options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
 
     class requestContellationModel(contellationModel):
+        name: str
         unlocked: bool
         options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
 

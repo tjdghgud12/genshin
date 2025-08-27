@@ -1,11 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel, field_validator
-from models.fightProp import fightPropModel
-
-
-fightProp = fightPropModel()
-fightPropKeys = fightProp.extractFightPropKeys()
-fightPropTypes = fightProp.extractFightPropTypes()
+from data.globalVariable import fightPropKeys, fightPropTypes
 
 
 class artifactSetOptionType(Enum):

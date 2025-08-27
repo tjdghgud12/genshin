@@ -5,7 +5,7 @@ from data.character import passiveSkill, activeSkill, constellation, passiveSkil
 import data.weapon as weaponData
 import data.artifact as artifactData
 from services.ambrApi import getAmbrApi
-from services.character import getFightProp, CharacterInfo
+from services.character import getFightProp, requestCharacterInfoModel
 from services.artifact import getArtifactSetInfo
 from services.calculation import damageCalculation
 from models.character import requestCharacterInfoModel
@@ -217,9 +217,9 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             getTotalFightProp = getFightProp.get(avatar.name)
             avatarRawData = rawRes["avatarInfoList"][i]
             if getTotalFightProp is not None:
-                newFightProp = await getTotalFightProp(ambrCharacterDetail, CharacterInfo(**characterInfo))
+                newFightProp = await getTotalFightProp(ambrCharacterDetail, requestCharacterInfoModel(**characterInfo))
                 characterInfo["totalStat"] = newFightProp.fightProp
-                characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i]["level"]} for i, active in enumerate(characterInfo["activeSkill"])]
+                characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i].level} for i, active in enumerate(characterInfo["activeSkill"])]
 
             # 3. 최종 캐릭터 스텟 및 데미지 계산
 

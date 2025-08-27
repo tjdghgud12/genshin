@@ -1,8 +1,9 @@
 from typing import cast, TypedDict
 from data.character import fightPropTemplate
 from models.fightProp import fightPropModel
+from models.artifact import artifactDataModel, artifactSetDataModel
 from data.artifact import artifactSetOptions
-from data.globalVariable import fightPropKeys
+from data.globalVariable import fightPropMpa, fightPropKeys
 from copy import deepcopy
 
 
@@ -19,10 +20,10 @@ def getMarechausseeHunterSetOption(numberOfParts: int, optionInfo: list[dict], _
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value, 0.15)
-                    fightProp.add(fightPropKeys.CHARGED_ATTACK_ATTACK_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, 0.15)
                 case 1:
-                    fightProp.add(fightPropKeys.CRITICAL.value, 0.12 * info["stack"])
+                    fightProp.add(fightPropMpa.CRITICAL.value, 0.12 * info["stack"])
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -34,13 +35,13 @@ def getBlizzardStrayerSetOption(numberOfParts: int, optionInfo: list[dict], _cha
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.ICE_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.ICE_ADD_HURT.value, 0.15)
                 case 1:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.CRITICAL.value, 0.2)
+                        fightProp.add(fightPropMpa.CRITICAL.value, 0.2)
                 case 2:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.CRITICAL.value, 0.2)
+                        fightProp.add(fightPropMpa.CRITICAL.value, 0.2)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -51,13 +52,13 @@ def getThunderingFurySetOption(numberOfParts: int, optionInfo: list[dict], _char
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.ELEC_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, 0.15)
                 case 1:
-                    fightProp.add(fightPropKeys.OVERLOADED_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropKeys.ELECTRICSHOCK_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropKeys.SUPERCONDUCT_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropKeys.HYPERBLOOM_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropKeys.AGGRAVATE_ADD_HURT.value, 0.2)
+                    fightProp.add(fightPropMpa.OVERLOADED_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.ELECTRICSHOCK_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.SUPERCONDUCT_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.HYPERBLOOM_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.AGGRAVATE_ADD_HURT.value, 0.2)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -68,9 +69,9 @@ def getDeepwoodMemoriesSetOption(numberOfParts: int, optionInfo: list[dict], _ch
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.GRASS_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, 0.15)
                 case 1:
-                    fightProp.add(fightPropKeys.GRASS_RES_MINUS.value, 0.3)
+                    fightProp.add(fightPropMpa.GRASS_RES_MINUS.value, 0.3)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -81,11 +82,11 @@ def getEmblemOfSeveredFateSetOption(numberOfParts: int, optionInfo: list[dict], 
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.CHARGE_EFFICIENCY.value, 0.2)
+                    fightProp.add(fightPropMpa.CHARGE_EFFICIENCY.value, 0.2)
                 case 1:
-                    fightProp.add(fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value, getattr(characterFightProp, fightPropKeys.CHARGE_EFFICIENCY.value) * 0.25)
+                    fightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, getattr(characterFightProp, fightPropMpa.CHARGE_EFFICIENCY.value) * 0.25)
 
-    return {"fightProp": fightProp, "afterAddProps": [fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
+    return {"fightProp": fightProp, "afterAddProps": [fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value]}
 
 
 def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict], _characterFightProp: fightPropModel) -> ArtifactDataReturnSchema:
@@ -94,14 +95,14 @@ def getCrimsonWitchOfFlamesSetOption(numberOfParts: int, optionInfo: list[dict],
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.FIRE_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.15)
                 case 1:
-                    fightProp.add(fightPropKeys.OVERLOADED_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropKeys.IGNITION_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropKeys.COMBUSTION_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropKeys.EVAPORATION_ADD_HURT.value, 0.15)
-                    fightProp.add(fightPropKeys.MELT_ADD_HURT.value, 0.15)
-                    fightProp.add(fightPropKeys.FIRE_ADD_HURT.value, 0.075 * info["stack"])
+                    fightProp.add(fightPropMpa.OVERLOADED_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.IGNITION_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.COMBUSTION_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.EVAPORATION_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.MELT_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.075 * info["stack"])
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -112,12 +113,12 @@ def getGoldenTroupeSetOption(numberOfParts: int, optionInfo: list[dict], _charac
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value, 0.20)
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, 0.20)
                 case 1:
-                    fightProp.add(fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value, 0.25)
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, 0.25)
                 case 2:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.ELEMENT_SKILL_ATTACK_ADD_HURT.value, 0.25)
+                        fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, 0.25)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -128,11 +129,11 @@ def getFinaleOfTheDeepGalleriesSetOption(numberOfParts: int, optionInfo: list[di
         if numberOfParts >= info["requiredParts"]:
             match i:
                 case 0:
-                    fightProp.add(fightPropKeys.ICE_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.ICE_ADD_HURT.value, 0.15)
                 case 1:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.NOMAL_ATTACK_ATTACK_ADD_HURT.value, 0.60)
-                        fightProp.add(fightPropKeys.ELEMENT_BURST_ATTACK_ADD_HURT.value, 0.60)
+                        fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_HURT.value, 0.60)
+                        fightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, 0.60)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -144,10 +145,10 @@ def getScrollOfTheHeroOfCinderCitySetOption(numberOfParts: int, optionInfo: list
             match i:
                 case 1:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.ATTACK_ADD_HURT.value, 0.12)
+                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.12)
                 case 2:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.ATTACK_ADD_HURT.value, 0.28)
+                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.28)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -159,10 +160,10 @@ def getObsidianCodexSetOption(numberOfParts: int, optionInfo: list[dict], _chara
             match i:
                 case 0:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.ATTACK_ADD_HURT.value, 0.15)
+                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.15)
                 case 1:
                     if info["active"]:
-                        fightProp.add(fightPropKeys.CRITICAL.value, 0.40)
+                        fightProp.add(fightPropMpa.CRITICAL.value, 0.40)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -181,30 +182,31 @@ getArtifactSetsFightProp = {
 }
 
 
-def getArtifactFightProp(artifactInfo: dict) -> fightPropModel:
+def getArtifactFightProp(artifactInfo: artifactDataModel) -> fightPropModel:
     fightProp = deepcopy(fightPropTemplate)
-    artifacts: list[dict] = artifactInfo["parts"]
+    artifacts = artifactInfo.parts
 
     # 성유물 부위별 옵션 연산
     for artifact in artifacts:
-        mainFightPropKey, mainValue = next(iter(artifact["mainStat"].items()))
-        if not mainFightPropKey in fightProp:
+        mainFightPropKey, mainValue = next(iter(artifact.mainStat.items()))
+        #
+        if not mainFightPropKey in fightPropKeys:
             setattr(fightProp, mainFightPropKey, 0.0)
         fightProp.add(mainFightPropKey, mainValue)
-        for subStat in artifact["subStat"]:
+        for subStat in artifact.subStat:
             subFightPropKey, subValue = next(iter(subStat.items()))
-            if not subFightPropKey in fightProp:
+            if not subFightPropKey in fightPropKeys:
                 setattr(fightProp, subFightPropKey, 0)
             fightProp.add(subFightPropKey, subValue)
 
     return fightProp
 
 
-def getArtifactSetData(setInfos: list[dict], characterFightProp: fightPropModel) -> ArtifactDataReturnSchema:
+def getArtifactSetData(setInfos: list[artifactSetDataModel], characterFightProp: fightPropModel) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for setInfo in setInfos:
-        getSetFightProp = getArtifactSetsFightProp[setInfo["name"]]
-        setOptionFightProp = getSetFightProp(setInfo["numberOfParts"], setInfo.get("options") or [], characterFightProp)
+        getSetFightProp = getArtifactSetsFightProp[setInfo.name]
+        setOptionFightProp = getSetFightProp(setInfo.numberOfParts, setInfo.options, characterFightProp)
         afterAddProps = setOptionFightProp["afterAddProps"]
         for fightPropKey, value in setOptionFightProp["fightProp"].model_dump().items():
             fightProp.add(fightPropKey, value)
