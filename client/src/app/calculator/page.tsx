@@ -149,7 +149,9 @@ const CalculatorPage = (): React.ReactElement => {
 
     if (index) {
       const raw = value.data[Number(index)].raw;
-      const additionalFightProp = value.additionalFightProp;
+      const additionalFightProp = Object.fromEntries(
+        Object.entries(value.additionalFightProp).map(([key, value]) => [key, fightPropLabels[key].includes("%") ? Number(value) / 100 : value]),
+      );
       const characterInfo = deepMergeAddOnly(value.data[Number(index)], raw);
 
       characterInfo.artifact.parts = characterInfo.artifact.parts.map((part) => {
