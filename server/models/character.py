@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 from pydantic import BaseModel
 from models.weapon import weaponDataModel
@@ -40,10 +41,24 @@ class contellationModel(BaseModel):
 
 
 class requestCharacterInfoModel(BaseModel):
+    class requestSkillConstellationOptionModel(skillConstellationOptionModel, StatusMixin):
+        pass
+
+    class requestPassiveSkillModel(passiveSkillModel):
+        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
+
+    class requestActiveSkillModel(activeSkillModel):
+        level: int
+        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
+
+    class requestContellationModel(contellationModel):
+        unlocked: bool
+        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
+
     level: int
-    constellations: list[contellationModel]
-    activeSkill: list[activeSkillModel]
-    passiveSkill: list[passiveSkillModel]
+    passiveSkill: list[requestPassiveSkillModel]
+    activeSkill: list[requestActiveSkillModel]
+    constellations: list[requestContellationModel]
     weapon: weaponDataModel
     artifact: artifactDataModel
 

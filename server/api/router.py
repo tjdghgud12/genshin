@@ -7,7 +7,7 @@ import data.artifact as artifactData
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp, CharacterInfo
 from services.artifact import getArtifactSetInfo
-from services.calculator import damageCalculation
+from services.calculation import damageCalculation
 from models.character import requestCharacterInfoModel
 from models.fightProp import fightPropModel
 from pydantic import BaseModel
@@ -69,8 +69,6 @@ async def genArtifactSetList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
 async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
-
-    test = await genWeaponList(ambrApi)
 
     async with enka.GenshinClient(lang="ko") as client:
         rawRes = await client.fetch_showcase(uid, raw=True)
@@ -229,9 +227,10 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
 
 @router.post("/calculation")
-def calculation(data: calculationBody, ambrApi: AmbrAPI = Depends(getAmbrApi)):
+async def calculation(characterInfo: requestCharacterInfoModel, additionalFightProp: fightPropModel, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
+    result = await damageCalculation(characterInfo=characterInfo, additionalFightProp=additionalFightProp)
     return {}
 
 
