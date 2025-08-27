@@ -1,15 +1,15 @@
-from fastapi import APIRouter, HTTPException, Depends
-from ambr import CharacterDetail, AmbrAPI, Talent, Constellation
-import enka
+import data.artifact as artifactData
 from data.character import passiveSkill, activeSkill, constellation, passiveSkillModel, activeSkillModel, skillConstellationOptionModel, skillConstellationType
 import data.weapon as weaponData
-import data.artifact as artifactData
-from services.ambrApi import getAmbrApi
-from services.character import getFightProp, requestCharacterInfoModel
 from services.artifact import getArtifactSetInfo
+from services.ambrApi import getAmbrApi
 from services.calculation import damageCalculation
+from services.character import getFightProp, requestCharacterInfoModel
 from models.character import requestCharacterInfoModel
 from models.fightProp import fightPropModel
+from ambr import CharacterDetail, AmbrAPI, Talent, Constellation
+import enka
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
 router = APIRouter()

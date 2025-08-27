@@ -1,8 +1,8 @@
 from __future__ import annotations
+from models.artifact import artifactDataModel
+from models.weapon import weaponDataModel
 from enum import Enum
 from pydantic import BaseModel
-from models.weapon import weaponDataModel
-from models.artifact import artifactDataModel
 
 
 class skillConstellationType(Enum):

@@ -1,5 +1,5 @@
-from enum import Enum
 from models.fightProp import fightPropModel
+from enum import Enum
 
 
 class fightPropMpa(str, Enum):

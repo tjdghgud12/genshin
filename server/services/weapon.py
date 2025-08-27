@@ -1,12 +1,12 @@
-from typing import TypedDict
-from ambr import AmbrAPI, WeaponDetail, WeaponPromote
-from services.ambrApi import getAmbrApi
 from data.character import fightPropTemplate
-from models.fightProp import fightPropModel
 from data.globalVariable import fightPropMpa
 import data.weapon as weaponData
-from copy import deepcopy
+from services.ambrApi import getAmbrApi
+from models.fightProp import fightPropModel
 from models.weapon import weaponDataModel
+from ambr import AmbrAPI, WeaponDetail, WeaponPromote
+from copy import deepcopy
+from typing import TypedDict
 
 
 class WeaponDataReturnSchema(TypedDict, total=True):

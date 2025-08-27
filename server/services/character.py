@@ -1,17 +1,16 @@
-from typing import Protocol, Coroutine, Any
-from ambr import CharacterDetail, CharacterPromote
-from pydantic import BaseModel
-from models.fightProp import fightPropModel
 from data import character as characterData
-from services.weapon import getTotalWeaponFightProp
-from services.artifact import getArtifactFightProp, getArtifactSetData
 from data.globalVariable import fightPropMpa
-from dataclasses import dataclass
-from copy import deepcopy
-from itertools import chain
-from models.character import requestCharacterInfoModel
+from services.artifact import getArtifactFightProp, getArtifactSetData
+from services.weapon import getTotalWeaponFightProp
 from models.artifact import artifactDataModel
+from models.character import requestCharacterInfoModel
+from models.fightProp import fightPropModel
 from models.weapon import weaponDataModel
+from ambr import CharacterDetail, CharacterPromote
+from copy import deepcopy
+from dataclasses import dataclass
+from itertools import chain
+from typing import Protocol, Coroutine, Any
 
 
 # ----------------------------------- Class -----------------------------------

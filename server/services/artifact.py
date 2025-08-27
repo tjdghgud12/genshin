@@ -1,9 +1,9 @@
-from typing import cast, TypedDict
-from data.character import fightPropTemplate
-from models.fightProp import fightPropModel
-from models.artifact import artifactDataModel, artifactSetDataModel
 from data.artifact import artifactSetOptions
+from data.character import fightPropTemplate
 from data.globalVariable import fightPropMpa, fightPropKeys
+from models.artifact import artifactDataModel, artifactSetDataModel
+from models.fightProp import fightPropModel
+from typing import cast, TypedDict
 from copy import deepcopy
 
 
