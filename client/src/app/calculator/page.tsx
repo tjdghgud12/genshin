@@ -153,16 +153,15 @@ const CalculatorPage = (): React.ReactElement => {
       const characterInfo = deepMergeAddOnly(value.data[Number(index)], raw);
 
       characterInfo.artifact.parts = characterInfo.artifact.parts.map((part) => {
-        // 기존 %값을 일반 값으로 변환
-        const key = Object.keys(part.mainStat)[0];
-        return {
-          ...part,
-          mainStat: { [key]: Number(part.mainStat[key]) / 100 },
-          subStat: part.subStat.map((sub) => {
-            const subKey = Object.keys(sub)[0];
-            return { [subKey]: Number(sub[subKey]) / 100 };
-          }),
-        };
+        const [mainKey, mainValue] = Object.entries(part.mainStat)[0];
+        const mainStatValue = fightPropLabels[mainKey].includes("%") ? Number(mainValue) / 100 : mainValue;
+
+        const subStats = part.subStat.map((sub) => {
+          const [subKey, subValue] = Object.entries(sub)[0];
+          return { [subKey]: fightPropLabels[subKey].includes("%") ? Number(subValue) / 100 : subValue };
+        });
+
+        return { ...part, mainStat: { [mainKey]: mainStatValue }, subStat: subStats };
       });
 
       toast.promise(api.post(`/calculation`, { characterInfo: characterInfo, additionalFightProp }), {
