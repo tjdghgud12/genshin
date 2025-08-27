@@ -21,7 +21,9 @@ class CharacterFightPropReturnData:
 
 
 class CharacterFightPropGetter(Protocol):
-    def __call__(self, ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> Coroutine[Any, Any, CharacterFightPropReturnData]: ...
+    def __call__(
+        self, ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False
+    ) -> Coroutine[Any, Any, CharacterFightPropReturnData]: ...
 
 
 # ----------------------------------- Fucntion -----------------------------------
@@ -94,7 +96,7 @@ async def getAfterWeaponArtifactFightProp(
     return fightProp
 
 
-async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     # ----------------------- Base Fight Prop -----------------------
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
@@ -114,9 +116,9 @@ async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, constellation.options[0].stack * 0.05)
                 case "구름 여행":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "잡초 근절":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     # active: 감우의 active에는 버프 효과 존재 X
@@ -140,7 +142,7 @@ async def getGanyuFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -161,9 +163,9 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, 2.98)
                 case "흩날리는 카미후부키":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "화운종월경":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     # active: 아야카의 active에는 버프 효과 존재 X
@@ -188,7 +190,7 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -208,9 +210,9 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                 case "염정":
                     newFightProp.add(fightPropMpa.ELEC_ADD_HURT.value, constellation.options[0].stack * 0.06)
                 case "등루":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "이등":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     # active: 각청의 active에는 버프 효과 존재 X
@@ -232,7 +234,7 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -253,9 +255,9 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, constellation.options[0].stack * 20 + 80)
                 case "감화된 성취의 싹":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "깨달음을 주는 잎":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
@@ -284,7 +286,7 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                 option = active.options[0]  #  0번지가 불
                 if option.active:
                     addElementalBurstLevel = next((constellation for constellation in characterInfo.constellations if constellation.name == "깨달음을 주는 잎"))
-                    seedsOfWisdom = next((constellation for constellation in characterInfo.constellations if constellation.name == "지혜를  머금은 씨앗"))
+                    seedsOfWisdom = next((constellation for constellation in characterInfo.constellations if constellation.name == "지혜를 머금은 씨앗"))
                     addLevel = 3 if addElementalBurstLevel.unlocked else 0
                     skillValue = activeSkillLevelMap[active.name][active.level + addLevel - 1]
                     stack = min(option.stack + (1 if seedsOfWisdom.unlocked else 0), 2)
@@ -312,7 +314,7 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -327,10 +329,10 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
                 case "강철 절단":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.DEFENSE_IGNORE.value, 0.6)
-                case "진영의 과거":
-                    characterInfo.activeSkill[2].level -= 3
-                case "쇼군의 현형":
-                    characterInfo.activeSkill[1].level -= 3
+                # case "진영의 과거":
+                #     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                # case "쇼군의 현형":
+                #     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
@@ -380,7 +382,7 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -396,9 +398,9 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.CRITICAL.value, 1.00)
                 case "적색 피의 의식":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "꽃잎 향초의 기도":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- passive -----------------------
     # 모습을 감춘 나비는 호두의 fightProp에 영향X
@@ -452,7 +454,7 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -469,9 +471,9 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                         # 평타 계수 추가이기 때문에 2025-08-05기준 미개발 상태
                         description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
                 case "「내 이름은 그 누구도 모르리라」":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "「난 알았노라, 그대의 이름은…!」":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
@@ -534,7 +536,7 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -553,9 +555,9 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                 case "근원":  # 스킬 계수 추가
                     description = "흡수한 허계 균열 수 당 극악기 · 참 스택 획득. 극악기 · 참 스택 마다 원소 폭발 발동 시 공격력의 750%에 해당하는 얼음 원소 피해 추가. 일곱빛 섬광 모드에서는 일반공격 또는 피격 시 협동 공격"
                 case "악연":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "소망":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
@@ -614,7 +616,7 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -634,9 +636,9 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
                 case "무지갯빛 티타임":  # 스킬 계수 추가
                     description = "현재 필드 위에 있는 파티 내 자신의 캐릭터의 일반공격, 강공격, 낙하공격이 명중 시 에스코피에의 공격력의 500%에 해당하는 얼음 원소 추가 피해"
                 case "캐러멜화의 마법":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "다채로운 소스의 교향곡":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     # active: 에스코피에의 active에는 버프 효과 존재 X
@@ -661,7 +663,7 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -687,9 +689,9 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                     newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, 0.015 * constellation.options[0].stack)
                     newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.025 * constellation.options[0].stack)
                 case "구름뱀의 깃털 왕관":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "불길한 닷새의 저주":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
     # ----------------------- active -----------------------
     # active: 시틀라리의 active에는 버프 효과 존재 X
 
@@ -716,7 +718,7 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -731,9 +733,9 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
                 case "분노의 보상":  # 스킬 계수 추가
                     description = "강공격 명중 시 hp최대치의 10% 물 원소 피해를 주는 격류 2개 소환"
                 case "고대의 의제":
-                    characterInfo.activeSkill[0].level -= 3
+                    characterInfo.activeSkill[0].level -= 3 if enkaDataFlag else 0
                 case "정의의 판결":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     # active: 느비예트의 active에는 버프 효과 존재 X
@@ -766,7 +768,7 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 
     # -----------------------weapon & Artifact -----------------------
@@ -788,9 +790,9 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                         newFightProp.add(fightPropMpa.DEFENSE_MINUS.value, 0.2)
                     description = "불볕 고리: 공격 적중 시 공격력의 200%에 해당하는 밤혼 성질의 불 원소 피해 추가. 바이크 : 주변 적 방어력 20% 감소 및 3초마다 공격력의 500%에 해당하는 밤혼 성질의 불 원소 피해 추가"
                 case "타오르는 태양":
-                    characterInfo.activeSkill[2].level -= 3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "진정한 의미":
-                    characterInfo.activeSkill[1].level -= 3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
 
     # ----------------------- active -----------------------
     # active: 마비카의 active에는 버프 효과 존재 X
@@ -819,7 +821,7 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-# async def getYelanFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel) -> CharacterFightPropReturnData:
+# async def getYelanFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoModel, enkaDataFlag:bool = False) -> CharacterFightPropReturnData:
 #     newFightProp: fightPropModel = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
 #     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 

@@ -217,7 +217,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             getTotalFightProp = getFightProp.get(avatar.name)
             avatarRawData = rawRes["avatarInfoList"][i]
             if getTotalFightProp is not None:
-                newFightProp = await getTotalFightProp(ambrCharacterDetail, requestCharacterInfoModel(**characterInfo))
+                newFightProp = await getTotalFightProp(ambrCharacterDetail, requestCharacterInfoModel(**characterInfo), enkaDataFlag=True)
                 characterInfo["totalStat"] = newFightProp.fightProp
                 characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i].level} for i, active in enumerate(characterInfo["activeSkill"])]
 
