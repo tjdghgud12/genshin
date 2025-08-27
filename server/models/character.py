@@ -1,6 +1,5 @@
 from __future__ import annotations
-from models.artifact import artifactDataModel
-from models.weapon import weaponDataModel
+
 from enum import Enum
 from pydantic import BaseModel
 
@@ -10,11 +9,6 @@ class skillConstellationType(Enum):
     toggle = "toggle"
     stack = "stack"
     none = None
-
-
-class StatusMixin(BaseModel):
-    active: bool
-    stack: int
 
 
 class skillConstellationOptionModel(BaseModel):
@@ -38,34 +32,3 @@ class contellationModel(BaseModel):
     name: str
     description: str
     options: list[skillConstellationOptionModel]
-
-
-class requestCharacterInfoModel(BaseModel):
-    class requestSkillConstellationOptionModel(skillConstellationOptionModel, StatusMixin):
-        pass
-
-    class requestPassiveSkillModel(passiveSkillModel):
-        name: str
-        unlocked: bool
-        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
-
-    class requestActiveSkillModel(activeSkillModel):
-        name: str
-        level: int
-        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
-
-    class requestContellationModel(contellationModel):
-        name: str
-        unlocked: bool
-        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
-
-    name: str
-    id: int
-    level: int
-    passiveSkill: list[requestPassiveSkillModel]
-    activeSkill: list[requestActiveSkillModel]
-    constellations: list[requestContellationModel]
-    weapon: weaponDataModel
-    artifact: artifactDataModel
-
-    model_config = {"extra": "ignore"}

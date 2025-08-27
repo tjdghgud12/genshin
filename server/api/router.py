@@ -5,7 +5,7 @@ from services.artifact import getArtifactSetInfo
 from services.ambrApi import getAmbrApi
 from services.calculation import damageCalculation
 from services.character import getFightProp, requestCharacterInfoModel
-from models.character import requestCharacterInfoModel
+from models.calculation import requestCharacterInfoModel
 from models.fightProp import fightPropModel
 from ambr import CharacterDetail, AmbrAPI, Talent, Constellation
 import enka

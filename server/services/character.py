@@ -3,7 +3,7 @@ from data.globalVariable import fightPropMpa
 from services.artifact import getArtifactFightProp, getArtifactSetData
 from services.weapon import getTotalWeaponFightProp
 from models.artifact import artifactDataModel
-from models.character import requestCharacterInfoModel
+from models.calculation import requestCharacterInfoModel
 from models.fightProp import fightPropModel
 from models.weapon import weaponDataModel
 from ambr import CharacterDetail, CharacterPromote
