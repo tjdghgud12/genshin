@@ -1,4 +1,12 @@
-from models.character import passiveSkillModel, activeSkillModel, contellationModel, skillConstellationOptionModel, skillConstellationType
+from models.character import (
+    passiveSkillModel,
+    activeSkillModel,
+    contellationModel,
+    skillConstellationOptionModel,
+    skillConstellationType,
+    skillBaseFightPropModel,
+    damageBaseFightPropModel,
+)
 from models.fightProp import fightPropModel
 
 
@@ -156,10 +164,37 @@ passiveSkill = {
 }
 
 activeSkill = {
-    "감우": {},
-    "카미사토 아야카": {},
-    "각청": {},
+    "감우": {
+        "유천 사격술": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "산과 강의 기린 흔적": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1))),
+        "쏟아지는 천화": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
+    },
+    "카미사토 아야카": {
+        "카미사토류·경(傾)": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "카미사토류·얼음꽃": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1))),
+        "카미사토류·멸망의 서리": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
+    },
+    "각청": {
+        "운래 검법": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "성신 회귀": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1))),
+        "천가 순유": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
+    },
     "나히다": {
+        "마음에 비친 형상": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "너른 헤아림": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(
+                elementalSkill=damageBaseFightPropModel(ATTACK=1),
+                customs=[skillBaseFightPropModel.customDict(name="삼업의 정화", fightProp=damageBaseFightPropModel(ATTACK=0.333, ELEMENTAL_MASTARY=0.666))],
+            )
+        ),
         "마음이 그리는 환상": activeSkillModel(
             description="파티 내 불, 번개, 물 원소 타입 캐릭터가 있으면 각각 상응하는 효과가 발생",
             options=[
@@ -167,29 +202,84 @@ activeSkill = {
                 skillConstellationOptionModel(type=skillConstellationType.stack, maxStack=2, label="물"),
                 skillConstellationOptionModel(type=skillConstellationType.stack, maxStack=2, label="번개"),
             ],
-        )
+        ),
     },
     "라이덴 쇼군": {
+        "원류": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
         "초월·악요개안": activeSkillModel(
-            description="원소 폭발의 원소 에너지 당 원소 폭발 피해 증가", options=[skillConstellationOptionModel(type=skillConstellationType.toggle, maxStack=1, label="")]
-        )
+            description="원소 폭발의 원소 에너지 당 원소 폭발 피해 증가",
+            options=[skillConstellationOptionModel(type=skillConstellationType.toggle, maxStack=1, label="")],
+            baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1)),
+        ),
+        "오의·몽상진설": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
     },
     "호두": {
+        "왕생 비법 창술": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
         "나비의 서": activeSkillModel(
-            description="현재 hp의 30%를 소비하여 hp 최대치 기반 공격력 증가", options=[skillConstellationOptionModel(type=skillConstellationType.toggle, maxStack=1, label="")]
-        )
+            description="현재 hp의 30%를 소비하여 hp 최대치 기반 공격력 증가",
+            options=[skillConstellationOptionModel(type=skillConstellationType.toggle, maxStack=1, label="")],
+            baseFightProp=skillBaseFightPropModel(customs=[skillBaseFightPropModel.customDict(name="혈매향", fightProp=damageBaseFightPropModel(ATTACK=1))]),
+        ),
+        "평안의 서": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
     },
-    "야란": {},
+    "야란": {
+        "빛을 감춘 활": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(
+                nomal=damageBaseFightPropModel(ATTACK=1),
+                charge=damageBaseFightPropModel(ATTACK=1),
+                falling=damageBaseFightPropModel(ATTACK=1),
+                customs=[skillBaseFightPropModel.customDict(name="타파의 화살", fightProp=damageBaseFightPropModel(HP=1))],
+            ),
+        ),  # 6돌파 효과로 평타가 타파의 화살로 전환되는 것은 여기서 커버 못침
+        "뒤얽힌 생명줄": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(HP=1))),
+        "심오하고 영롱한 주사위": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(HP=1))),
+    },
     "푸리나": {
+        "독무자의 초대": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "고고한 살롱": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(HP=1))),
         "성대한 카니발": activeSkillModel(
             description="무대 열기 당 피해 증가 및 치유 보너스 증가", options=[skillConstellationOptionModel(type=skillConstellationType.stack, maxStack=300, label="무대 열기")]
-        )
+        ),
     },
-    "시틀라리": {},
-    "느비예트": {},
-    "마비카": {},
-    "에스코피에": {},
+    "시틀라리": {
+        "영혼 포착": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "검은 서리별": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1))),
+        "반짝이는 칙령": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
+    },
+    "느비예트": {
+        "공평한 물처럼": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(HP=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "눈물이여, 반드시 갚으리라": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(HP=1))),
+        "밀물이여, 내가 돌아왔노라": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(HP=1))),
+    },
+    "마비카": {
+        "불로 엮는 삶": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "해방의 순간": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1))),
+        "불타는 하늘": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
+    },
+    "에스코피에": {
+        "셰프의 비결": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "저온 조리법": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1))),
+        "현란한 칼솜씨": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1))),
+    },
     "스커크": {
+        "극악기·단": activeSkillModel(
+            baseFightProp=skillBaseFightPropModel(nomal=damageBaseFightPropModel(ATTACK=1), charge=damageBaseFightPropModel(ATTACK=1), falling=damageBaseFightPropModel(ATTACK=1))
+        ),
+        "극악기·섬": activeSkillModel(baseFightProp=skillBaseFightPropModel(elementalSkill=damageBaseFightPropModel(ATTACK=1))),
         "극악기·멸": activeSkillModel(
             description="일곱빛 섬광 모드에서 발동 가능. 주변 일정 범위 내의 허계 균열을 흡수하며, 흡수한 허계 균열 개수 당 일반 공격 피해 증가",
             options=[
@@ -199,7 +289,8 @@ activeSkill = {
                     label="허계 균열 흡수",
                 )
             ],
-        )
+            baseFightProp=skillBaseFightPropModel(elementalBurst=damageBaseFightPropModel(ATTACK=1)),
+        ),
     },
 }
 
@@ -622,3 +713,10 @@ constellation = {
         ),
     ],
 }
+
+
+# 여기에 추가적인 데이터를 정의해두기!
+# 각 캐릭터 별로 데미지 관련 기반 스텟도 여기서 정리가 필요.
+# 대충 이런 느낌으로
+# 기존 항목에다가 딕셔너리나 클래스 형태로 넣으면?
+#
