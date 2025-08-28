@@ -153,6 +153,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                             }
                             for option in skillOption.options
                         ],
+                        "baseFightProp": skillOption.baseFightProp,
                     }
                 )
 
