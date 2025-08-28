@@ -23,7 +23,7 @@ class requestCharacterInfoModel(BaseModel):
     class requestActiveSkillModel(activeSkillModel):
         name: str
         level: int
-        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel]
+        options: list[requestCharacterInfoModel.requestSkillConstellationOptionModel] = []
 
     class requestContellationModel(contellationModel):
         name: str
