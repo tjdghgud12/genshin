@@ -64,25 +64,35 @@ class responseDamageResult(BaseModel):
     # 일반 공격
     nomal: damageResultSchema = damageResultSchema()
     nomalCritical: damageResultSchema = damageResultSchema()
+    nomalNonCritical: damageResultSchema = damageResultSchema()
     # 강 공격
     charge: damageResultSchema = damageResultSchema()
     chargeCritical: damageResultSchema = damageResultSchema()
+    chargeNonCritical: damageResultSchema = damageResultSchema()
     # 낙하 공격
     falling: damageResultSchema = damageResultSchema()
     fallingCritical: damageResultSchema = damageResultSchema()
+    fallingNonCritical: damageResultSchema = damageResultSchema()
     # 원소 전투 스킬
     elementalSkill: damageResultSchema = damageResultSchema()
     elementalSkillCritical: damageResultSchema = damageResultSchema()
+    elementalSkillNonCritical: damageResultSchema = damageResultSchema()
     # 원소 폭발
     elementalBurst: damageResultSchema = damageResultSchema()
     elementalBurstCritical: damageResultSchema = damageResultSchema()
+    elementalBurstNonCritical: damageResultSchema = damageResultSchema()
     # 커스텀
     custom: list[damageResultSchema] = []
     customCritical: list[damageResultSchema] = []
+    customNonCritical: damageResultSchema = damageResultSchema()
 
     # 격화
-    aggravateDamage: float | None = 0.0  # 촉진
-    spreadDamage: float | None = 0.0  # 발산
+    aggravateDamage: float | None = 0.0  # 촉진 기대값
+    aggravateDamageCritical: float | None = 0.0  # 촉진 치명타
+    aggravateDamageNonCritical: float | None = 0.0  # 촉진 논치명타
+    spreadDamage: float | None = 0.0  # 발산 기대값
+    spreadDamageCritical: float | None = 0.0  # 발산 치명타
+    spreadDamageNonCritical: float | None = 0.0  # 발산 논치명타
 
     # 격변
     overloadedDamage: float | None = 0.0  # 과부하
@@ -93,7 +103,10 @@ class responseDamageResult(BaseModel):
     hyperBloomDamage: float | None = 0.0  # 만개
     ignitionDamage: float | None = 0.0  # 발화
     combusionDamage: float | None = 0.0  # 연소
-    moonElectricShockDamage: float | None = 0.0  # 달감전
+
+    moonElectricShockDamage: float | None = 0.0  # 달감전 기대값
+    moonElectricShockDamageCritical: float | None = 0.0  # 달감전 치명타
+    moonElectricShockDamageNonCritical: float | None = 0.0  # 달감전 논치명타
 
     # 확산
     swirlDamage: float | None = 0.0
