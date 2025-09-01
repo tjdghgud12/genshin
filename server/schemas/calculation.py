@@ -104,9 +104,9 @@ class responseDamageResult(BaseModel):
     burgeonDamage: float | None = 0.0  # 발화
     burningDamage: float | None = 0.0  # 연소
 
-    moonElectroChargedDamage: float | None = 0.0  # 달감전 기대값
-    moonElectroChargedDamageCritical: float | None = 0.0  # 달감전 치명타
-    moonElectroChargedDamageNonCritical: float | None = 0.0  # 달감전 논치명타
+    lunarChargedDamage: float | None = 0.0  # 달감전 기대값
+    lunarChargedDamageCritical: float | None = 0.0  # 달감전 치명타
+    lunarChargedDamageNonCritical: float | None = 0.0  # 달감전 논치명타
 
     # 확산
     swirlDamage: float | None = 0.0
