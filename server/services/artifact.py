@@ -61,7 +61,7 @@ def getThunderingFurySetOption(
                     fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, 0.15)
                 case 1:
                     fightProp.add(fightPropMpa.OVERLOADED_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropMpa.ELECTRICSHOCK_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.ELECTROCHARGED_ADD_HURT.value, 0.4)
                     fightProp.add(fightPropMpa.SUPERCONDUCT_ADD_HURT.value, 0.4)
                     fightProp.add(fightPropMpa.HYPERBLOOM_ADD_HURT.value, 0.4)
                     fightProp.add(fightPropMpa.AGGRAVATE_ADD_HURT.value, 0.2)
@@ -110,9 +110,9 @@ def getCrimsonWitchOfFlamesSetOption(
                     fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.15)
                 case 1:
                     fightProp.add(fightPropMpa.OVERLOADED_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropMpa.IGNITION_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.BURGEON_ADD_HURT.value, 0.4)
                     fightProp.add(fightPropMpa.COMBUSTION_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropMpa.EVAPORATION_ADD_HURT.value, 0.15)
+                    fightProp.add(fightPropMpa.VAPORIZE_ADD_HURT.value, 0.15)
                     fightProp.add(fightPropMpa.MELT_ADD_HURT.value, 0.15)
                     fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.075 * info.stack)
 

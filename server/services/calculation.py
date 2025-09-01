@@ -166,17 +166,17 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                         targetExpected.meltDamage = forward.expectedDamage
                         targetExpected.reverseMeltDamage = reverse.expectedDamage
                     case "증발":
-                        amplication = amplificationReaction(targetNonCritical.elementalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_EVAPORATION_ADD_HURT)
-                        targetNonCritical.evaporationDamage = amplication.forward
-                        targetNonCritical.reverseEvaporationDamage = amplication.reverse
+                        amplication = amplificationReaction(targetNonCritical.elementalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_VAPORIZE_ADD_HURT)
+                        targetNonCritical.vaporizeDamage = amplication.forward
+                        targetNonCritical.reversevaporizeDamage = amplication.reverse
                         forward = getCriticalDamageInfo(damage=amplication.forward, critical=critical, criticalHurt=criticalHurt)
                         reverse = getCriticalDamageInfo(damage=amplication.reverse, critical=critical, criticalHurt=criticalHurt)
-                        targetNonCritical.evaporationDamage = forward.nonCriticalDamage
-                        targetNonCritical.reverseEvaporationDamage = reverse.nonCriticalDamage
-                        targetCritical.evaporationDamage = forward.criticalDamage
-                        targetCritical.reverseEvaporationDamage = reverse.criticalDamage
-                        targetExpected.evaporationDamage = forward.expectedDamage
-                        targetExpected.reverseEvaporationDamage = reverse.expectedDamage
+                        targetNonCritical.vaporizeDamage = forward.nonCriticalDamage
+                        targetNonCritical.reversevaporizeDamage = reverse.nonCriticalDamage
+                        targetCritical.vaporizeDamage = forward.criticalDamage
+                        targetCritical.reversevaporizeDamage = reverse.criticalDamage
+                        targetExpected.vaporizeDamage = forward.expectedDamage
+                        targetExpected.reversevaporizeDamage = reverse.expectedDamage
                     case "촉진":
                         aggravate = getCriticalDamageInfo(
                             damage=catalyzeReaction(

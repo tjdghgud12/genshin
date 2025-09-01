@@ -56,8 +56,8 @@ class damageResultSchema(BaseModel):
     # 증폭
     meltDamage: float | None = 0.0  # 융해
     reverseMeltDamage: float | None = 0.0  # 역융해
-    evaporationDamage: float | None = 0.0  # 증발
-    reverseEvaporationDamage: float | None = 0.0  # 증발
+    vaporizeDamage: float | None = 0.0  # 증발
+    reversevaporizeDamage: float | None = 0.0  # 증발
 
 
 class responseDamageResult(BaseModel):
@@ -96,17 +96,17 @@ class responseDamageResult(BaseModel):
 
     # 격변
     overloadedDamage: float | None = 0.0  # 과부하
-    electricShockDamage: float | None = 0.0  # 감전
+    electroChargedDamage: float | None = 0.0  # 감전
     superconductDamage: float | None = 0.0  # 초전도
     shatterDamage: float | None = 0.0  # 쇄빙
     bloomDamage: float | None = 0.0  # 개화
     hyperBloomDamage: float | None = 0.0  # 만개
-    ignitionDamage: float | None = 0.0  # 발화
-    combusionDamage: float | None = 0.0  # 연소
+    burgeonDamage: float | None = 0.0  # 발화
+    burningDamage: float | None = 0.0  # 연소
 
-    moonElectricShockDamage: float | None = 0.0  # 달감전 기대값
-    moonElectricShockDamageCritical: float | None = 0.0  # 달감전 치명타
-    moonElectricShockDamageNonCritical: float | None = 0.0  # 달감전 논치명타
+    moonElectroChargedDamage: float | None = 0.0  # 달감전 기대값
+    moonElectroChargedDamageCritical: float | None = 0.0  # 달감전 치명타
+    moonElectroChargedDamageNonCritical: float | None = 0.0  # 달감전 논치명타
 
     # 확산
     swirlDamage: float | None = 0.0
