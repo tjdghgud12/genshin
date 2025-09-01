@@ -14,7 +14,7 @@ class StatusMixin(BaseModel):
     stack: int = 0
 
 
-class artifactSetOptionModel(BaseModel):
+class artifactSetOptionSchema(BaseModel):
     type: artifactSetOptionType = artifactSetOptionType.always
     maxStack: int = 1
     description: str = ""
@@ -22,16 +22,16 @@ class artifactSetOptionModel(BaseModel):
     requiredParts: int = 0
 
 
-class artifactSetDataModel(BaseModel):
-    class extendedArtifactSetOptionModel(artifactSetOptionModel, StatusMixin):
+class artifactSetDataSchema(BaseModel):
+    class extendedArtifactSetOptionSchema(artifactSetOptionSchema, StatusMixin):
         pass
 
     name: str
     numberOfParts: int
-    options: list[extendedArtifactSetOptionModel]
+    options: list[extendedArtifactSetOptionSchema]
 
 
-class artifactPartsDataModel(BaseModel):
+class artifactPartsDataSchema(BaseModel):
     name: str
     setName: str
     type: str
@@ -49,7 +49,7 @@ class artifactPartsDataModel(BaseModel):
         key, value = next(iter(v.items()))
 
         if key not in fightPropKeys:
-            raise ValueError(f"허용되지 않는 전투 속성: {key}. " f"CharacterFightPropModel에 정의된 필드만 사용 가능합니다. ")
+            raise ValueError(f"허용되지 않는 전투 속성: {key}. " f"CharacterFightPropSchema에 정의된 필드만 사용 가능합니다. ")
 
         # 값 타입 검증
         if not isinstance(value, (int, float)):
@@ -74,7 +74,7 @@ class artifactPartsDataModel(BaseModel):
             for key, value in stat.items():
                 # 키 검증 (동적)
                 if key not in fightPropKeys:
-                    raise ValueError(f"subStat[{i}]에 허용되지 않는 전투 속성: {key}. " f"CharacterFightPropModel에 정의된 필드만 사용 가능합니다.")
+                    raise ValueError(f"subStat[{i}]에 허용되지 않는 전투 속성: {key}. " f"CharacterFightPropSchema에 정의된 필드만 사용 가능합니다.")
                 # 값 타입 검증
                 if not isinstance(value, (int, float)):
                     raise ValueError(f"subStat[{i}][{key}]의 값은 숫자({{fightPropTypes[key]}})여야 합니다. 받은 타입: {type(value)}")
@@ -85,6 +85,6 @@ class artifactPartsDataModel(BaseModel):
         return v
 
 
-class artifactDataModel(BaseModel):
-    parts: list[artifactPartsDataModel]
-    setInfo: list[artifactSetDataModel]
+class artifactDataSchema(BaseModel):
+    parts: list[artifactPartsDataSchema]
+    setInfo: list[artifactSetDataSchema]

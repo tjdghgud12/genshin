@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class fightPropModel(BaseModel):
+class fightPropSchema(BaseModel):
     # 공통
     FIGHT_PROP_BASE_HP: float = 0.0
     FIGHT_PROP_HP: float = 0.0

@@ -1,20 +1,20 @@
 from data.artifact import artifactSetOptions
 from data.character import fightPropTemplate
 from data.globalVariable import fightPropMpa, fightPropKeys
-from models.artifact import artifactDataModel, artifactSetDataModel
-from models.fightProp import fightPropModel
+from schemas.artifact import artifactDataSchema, artifactSetDataSchema
+from schemas.fightProp import fightPropSchema
 from typing import cast, TypedDict
 from copy import deepcopy
 
 
-# characterFightProp: fightPropModel
+# characterFightProp: fightPropSchema
 class ArtifactDataReturnSchema(TypedDict, total=True):
-    fightProp: fightPropModel
+    fightProp: fightPropSchema
     afterAddProps: list[str] | None
 
 
 def getMarechausseeHunterSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
 
@@ -31,7 +31,7 @@ def getMarechausseeHunterSetOption(
 
 
 def getBlizzardStrayerSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
 
@@ -51,7 +51,7 @@ def getBlizzardStrayerSetOption(
 
 
 def getThunderingFurySetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -70,7 +70,7 @@ def getThunderingFurySetOption(
 
 
 def getDeepwoodMemoriesSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -85,7 +85,7 @@ def getDeepwoodMemoriesSetOption(
 
 
 def getEmblemOfSeveredFateSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -100,7 +100,7 @@ def getEmblemOfSeveredFateSetOption(
 
 
 def getCrimsonWitchOfFlamesSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -120,7 +120,7 @@ def getCrimsonWitchOfFlamesSetOption(
 
 
 def getGoldenTroupeSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -138,7 +138,7 @@ def getGoldenTroupeSetOption(
 
 
 def getFinaleOfTheDeepGalleriesSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -155,7 +155,7 @@ def getFinaleOfTheDeepGalleriesSetOption(
 
 
 def getScrollOfTheHeroOfCinderCitySetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -172,7 +172,7 @@ def getScrollOfTheHeroOfCinderCitySetOption(
 
 
 def getObsidianCodexSetOption(
-    numberOfParts: int, optionInfo: list[artifactSetDataModel.extendedArtifactSetOptionModel], _characterFightProp: fightPropModel
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
 ) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
@@ -202,7 +202,7 @@ getArtifactSetsFightProp = {
 }
 
 
-def getArtifactFightProp(artifactInfo: artifactDataModel) -> fightPropModel:
+def getArtifactFightProp(artifactInfo: artifactDataSchema) -> fightPropSchema:
     fightProp = deepcopy(fightPropTemplate)
     artifacts = artifactInfo.parts
 
@@ -222,7 +222,7 @@ def getArtifactFightProp(artifactInfo: artifactDataModel) -> fightPropModel:
     return fightProp
 
 
-def getArtifactSetData(setInfos: list[artifactSetDataModel], characterFightProp: fightPropModel) -> ArtifactDataReturnSchema:
+def getArtifactSetData(setInfos: list[artifactSetDataSchema], characterFightProp: fightPropSchema) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for setInfo in setInfos:
         getSetFightProp = getArtifactSetsFightProp[setInfo.name]

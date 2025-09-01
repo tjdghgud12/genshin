@@ -13,19 +13,19 @@ class StatusMixin(BaseModel):
     stack: int
 
 
-class weaponOptionModel(BaseModel):
+class weaponOptionSchema(BaseModel):
     type: weaponOptionType = weaponOptionType.always
     maxStack: int = 1
     description: str = ""
     label: str = ""
 
 
-class weaponDataModel(BaseModel):
-    class extendedWeaponOptionModel(weaponOptionModel, StatusMixin):
+class weaponDataSchema(BaseModel):
+    class extendedWeaponOptionSchema(weaponOptionSchema, StatusMixin):
         pass
 
     id: int
     name: str
     level: int
     refinement: int
-    options: list[extendedWeaponOptionModel]
+    options: list[extendedWeaponOptionSchema]

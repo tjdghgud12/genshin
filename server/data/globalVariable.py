@@ -1,4 +1,4 @@
-from models.fightProp import fightPropModel
+from schemas.fightProp import fightPropSchema
 from enum import Enum
 
 
@@ -153,6 +153,6 @@ fightPropMap = {
 }
 
 
-fightProp = fightPropModel()
+fightProp = fightPropSchema()
 fightPropKeys = fightProp.extractFightPropKeys()
 fightPropTypes = fightProp.extractFightPropTypes()
