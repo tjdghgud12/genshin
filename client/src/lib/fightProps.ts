@@ -97,14 +97,18 @@ const fightPropsSchema = z.object({
 
   // 원소 반응 관련
   FIGHT_PROP_OVERLOADED_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 과부하
-  FIGHT_PROP_ELECTRICSHOCK_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 감전
+  FIGHT_PROP_ELECTROCHARGED_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 감전
   FIGHT_PROP_SUPERCONDUCT_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 초전도
+  FIGHT_PROP_SHATTER_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 쇄빙
   FIGHT_PROP_HYPERBLOOM_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 만개
+  FIGHT_PROP_BLOOM_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 개화
   FIGHT_PROP_AGGRAVATE_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 촉진
-  FIGHT_PROP_EVAPORATION_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 증발
+  FIGHT_PROP_SPREAD_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 발산
+  FIGHT_PROP_VAPORIZE_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 증발
   FIGHT_PROP_MELT_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 융해
-  FIGHT_PROP_COMBUSTION_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 연소
+  FIGHT_PROP_BURNING_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 연소
   FIGHT_PROP_IGNITION_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 발화
+  FIGHT_PROP_LUNARCHARGED_ADD_HURT: z.number({ error: "입력한 값을 확인해주세요." }).default(0), // 달감전
 });
 
 const fightPropLabels: Record<string, string> = {
@@ -203,14 +207,18 @@ const fightPropLabels: Record<string, string> = {
 
   // 원소 반응 관련
   FIGHT_PROP_OVERLOADED_ADD_HURT: `과부하 피해 증가(%)`, // 과부하
-  FIGHT_PROP_ELECTRICSHOCK_ADD_HURT: `감전 피해 증가(%)`, // 감전
+  FIGHT_PROP_ELECTROCHARGED_ADD_HURT: `감전 피해 증가(%)`, // 감전
   FIGHT_PROP_SUPERCONDUCT_ADD_HURT: `초전도 피해 증가(%)`, // 초전도
+  FIGHT_PROP_SHATTER_ADD_HURT: `쇄빙 피해 증가(%)`, // 쇄빙
+  FIGHT_PROP_BLOOM_ADD_HURT: `만개 피해 증가(%)`, // 개화
   FIGHT_PROP_HYPERBLOOM_ADD_HURT: `만개 피해 증가(%)`, // 만개
   FIGHT_PROP_AGGRAVATE_ADD_HURT: `촉진 피해 증가(%)`, // 촉진
-  FIGHT_PROP_EVAPORATION_ADD_HURT: `증발 피해 증가(%)`, // 증발
+  FIGHT_PROP_SPREAD_ADD_HURT: `발산 피해 증가(%)`, // 발산
+  FIGHT_PROP_VAPORIZE_ADD_HURT: `증발 피해 증가(%)`, // 증발
   FIGHT_PROP_MELT_ADD_HURT: `융해 피해 증가(%)`, // 융해
-  FIGHT_PROP_COMBUSTION_ADD_HURT: `연소 피해 증가(%)`, // 연소
-  FIGHT_PROP_IGNITION_ADD_HURT: `발화 피해 증가(%)`, // 발화
+  FIGHT_PROP_BURNING_ADD_HURT: `연소 피해 증가(%)`, // 연소
+  FIGHT_PROP_BURGEON_ADD_HURT: `발화 피해 증가(%)`, // 발화
+  FIGHT_PROP_LUNARCHARGED_ADD_HURT: `달감전 피해 증가(%)`, // 달감전
 };
 
 export { fightPropLabels, fightPropsSchema };
