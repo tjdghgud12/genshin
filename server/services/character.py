@@ -810,8 +810,8 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                         fourthConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "「지도자」의 각오"))
                         if fourthConstellation.unlocked:
                             option.stack = option.maxStack
-                            newFightProp.add(fightPropMpa.AGGRAVATE_ADD_HURT.value, 0.1)
-                        newFightProp.add(fightPropMpa.AGGRAVATE_ADD_HURT.value, 0.002 * option.stack)
+                            newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.1)
+                        newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.002 * option.stack)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
