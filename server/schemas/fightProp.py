@@ -101,13 +101,16 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_OVERLOADED_ADD_HURT: float = 0.0  # 과부하
     FIGHT_PROP_ELECTROCHARGED_ADD_HURT: float = 0.0  # 감전
     FIGHT_PROP_SUPERCONDUCT_ADD_HURT: float = 0.0  # 초전도
+    FIGHT_PROP_SHATTER_ADD_HURT: float = 0.0  # 쇄빙
     FIGHT_PROP_BLOOM_ADD_HURT: float = 0.0  # 개화
     FIGHT_PROP_HYPERBLOOM_ADD_HURT: float = 0.0  # 만개
     FIGHT_PROP_AGGRAVATE_ADD_HURT: float = 0.0  # 촉진
+    FIGHT_PROP_SPREAD_ADD_HURT: float = 0.0  # 발산
     FIGHT_PROP_VAPORIZE_ADD_HURT: float = 0.0  # 증발
     FIGHT_PROP_MELT_ADD_HURT: float = 0.0  # 융해
     FIGHT_PROP_COMBUSTION_ADD_HURT: float = 0.0  # 연소
     FIGHT_PROP_BURGEON_ADD_HURT: float = 0.0  # 발화
+    FIGHT_PROP_LUNARCHARGED_ADD_HURT: float = 0.0  # 달감전
 
     def add(self, field_name: str, value: float):
         if not hasattr(self, field_name):
