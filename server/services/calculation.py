@@ -3,6 +3,7 @@ from services.character import getFightProp
 from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema
 from schemas.character import damageBaseFightPropSchema
 from schemas.fightProp import fightPropSchema
+from data.globalVariable import levelCoefficient
 from ambr import AmbrAPI
 from typing import Literal
 from pydantic import BaseModel
@@ -43,6 +44,12 @@ def amplificationReaction(attackPoint: float, elementalMastery: float, amplicati
     reversAmplication = 2 * (1 + masteryBonus + amplicationBonus) * attackPoint
 
     return amplicationDamage(forward=amplication, reverse=reversAmplication)
+
+
+def catalyzeReaction(level: int, elementalMastery: float, catalyzeBonus: float, totalAddHurt: float, coefficient: float):
+    # EM = 5 * 원마/(원마+1200)
+    masteryBonus = 5 * elementalMastery / (elementalMastery + 1200)
+    return levelCoefficient[level] * coefficient * (1 + masteryBonus + catalyzeBonus) * totalAddHurt
 
 
 def getFinalProp(fightProp: responseFightPropSchema, target: Literal["HP", "ATTACK", "DEFENSE"]):
@@ -128,16 +135,22 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
             targetNonCritical = getattr(damageResult, f"{attackType}NonCritical")
             targetCritical = getattr(damageResult, f"{attackType}Critical")
             targetExpected = getattr(damageResult, attackType)
+
             key = attackTypeKey[attackType]
+
             critical = fightProp.FIGHT_PROP_CRITICAL + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL")
             criticalHurt = fightProp.FIGHT_PROP_CRITICAL_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL_HURT")
+
             addHurt = fightProp.FIGHT_PROP_ATTACK_ADD_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_ATTACK_ADD_HURT")
             elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{elementKey[element]}_ADD_HURT") + getattr(fightProp, f"FIGHT_PROP_{elementKey[element]}_ADD_HURT")
             physicalAddHurt = fightProp.FIGHT_PROP_PHYSICAL_ADD_HURT
+
+            totalElementalAddHurt = (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient
+
             finalFightProp = sum(getattr(fightProp, f"FIGHT_PROP_{key}_FINAL") * value for key, value in baseFightProp.items() if value is not None)
 
             targetNonCritical.physicalDamage = finalFightProp * (1 + physicalAddHurt + addHurt) * physicalToleranceCoefficient * defensCoefficient
-            targetNonCritical.elementalDamage = finalFightProp * (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient
+            targetNonCritical.elementalDamage = finalFightProp * totalElementalAddHurt
 
             for reaction in enableReaction:
                 # 원소 반응 연산
@@ -165,9 +178,27 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                         targetExpected.evaporationDamage = forward.expectedDamage
                         targetExpected.reverseEvaporationDamage = reverse.expectedDamage
                     case "촉진":
-                        a = 0
+                        aggravate = getCriticalDamageInfo(
+                            damage=catalyzeReaction(
+                                characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_AGGRAVATE_ADD_HURT, totalElementalAddHurt, 1.15
+                            ),
+                            critical=critical,
+                            criticalHurt=criticalHurt,
+                        )
+                        damageResult.aggravateDamageNonCritical = aggravate.nonCriticalDamage
+                        damageResult.aggravateDamageCritical = aggravate.criticalDamage
+                        damageResult.aggravateDamage = aggravate.expectedDamage
                     case "발산":
-                        a = 0
+                        aggravate = getCriticalDamageInfo(
+                            damage=catalyzeReaction(
+                                characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_AGGRAVATE_ADD_HURT, totalElementalAddHurt, 1.25
+                            ),
+                            critical=critical,
+                            criticalHurt=criticalHurt,
+                        )
+                        damageResult.aggravateDamageNonCritical = aggravate.nonCriticalDamage
+                        damageResult.aggravateDamageCritical = aggravate.criticalDamage
+                        damageResult.aggravateDamage = aggravate.expectedDamage
                     case "감전":
                         a = 0
                     case "달감전":
