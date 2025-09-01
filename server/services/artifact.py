@@ -111,7 +111,7 @@ def getCrimsonWitchOfFlamesSetOption(
                 case 1:
                     fightProp.add(fightPropMpa.OVERLOADED_ADD_HURT.value, 0.4)
                     fightProp.add(fightPropMpa.BURGEON_ADD_HURT.value, 0.4)
-                    fightProp.add(fightPropMpa.COMBUSTION_ADD_HURT.value, 0.4)
+                    fightProp.add(fightPropMpa.BURNING_ADD_HURT.value, 0.4)
                     fightProp.add(fightPropMpa.VAPORIZE_ADD_HURT.value, 0.15)
                     fightProp.add(fightPropMpa.MELT_ADD_HURT.value, 0.15)
                     fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.075 * info.stack)

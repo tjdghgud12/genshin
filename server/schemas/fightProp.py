@@ -108,7 +108,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_SPREAD_ADD_HURT: float = 0.0  # 발산
     FIGHT_PROP_VAPORIZE_ADD_HURT: float = 0.0  # 증발
     FIGHT_PROP_MELT_ADD_HURT: float = 0.0  # 융해
-    FIGHT_PROP_COMBUSTION_ADD_HURT: float = 0.0  # 연소
+    FIGHT_PROP_BURNING_ADD_HURT: float = 0.0  # 연소
     FIGHT_PROP_BURGEON_ADD_HURT: float = 0.0  # 발화
     FIGHT_PROP_LUNARCHARGED_ADD_HURT: float = 0.0  # 달감전
 
