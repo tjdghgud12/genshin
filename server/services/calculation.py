@@ -17,7 +17,6 @@ import time
 #       - 증폭:         2.78 * 원마/(원마+1400)
 #       - 격변,확산:    16 * 원마/(원마+2000)
 #       - 격화:         5 * 원마/(원마+1200)
-#       - 결정화:       4.44 * 원마/(원마+1400)
 # RB: 반응 피해 증가 보너스
 # PB: 피해 증가
 # DEF: 방어력 계수
@@ -29,27 +28,6 @@ import time
 #   DMG(T)=RM×LM×(1+EM+RB)
 #   DMG(Tr)=DMG(T)*RES  -> 격변 반응은 내성이 존재. 각 원소 내성깍에 따라 연산 필요.
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 매우 중요 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-def amplificationReaction(attackPoint: float, elementalMastery: float, amplicationBonus: float):
-    # 증폭: 2.78 * 원마/(원마+1400)
-    # AM=RM×(1+EM+RB)
-
-    class amplicationDamage(BaseModel):
-        forward: float
-        reverse: float
-
-    masteryBonus = 2.78 * elementalMastery / (elementalMastery + 1400)
-    amplication = 1.5 * (1 + masteryBonus + amplicationBonus) * attackPoint
-    reversAmplication = 2 * (1 + masteryBonus + amplicationBonus) * attackPoint
-
-    return amplicationDamage(forward=amplication, reverse=reversAmplication)
-
-
-def catalyzeReaction(level: int, elementalMastery: float, catalyzeBonus: float, totalAddHurt: float, coefficient: float):
-    # EM = 5 * 원마/(원마+1200)
-    masteryBonus = 5 * elementalMastery / (elementalMastery + 1200)
-    return levelCoefficient[level] * coefficient * (1 + masteryBonus + catalyzeBonus) * totalAddHurt
 
 
 def getFinalProp(fightProp: responseFightPropSchema, target: Literal["HP", "ATTACK", "DEFENSE"]):
@@ -81,6 +59,33 @@ def getCriticalDamageInfo(damage: float, critical: float, criticalHurt: float):
     expectedDamage = (damage * (1 + criticalHurt) * critical) + (damage * (1 - critical))
 
     return criticalDamageSchema(criticalDamage=criticalDamage, nonCriticalDamage=damage, expectedDamage=expectedDamage)
+
+
+def amplificationReaction(attackPoint: float, elementalMastery: float, amplicationBonus: float):
+    # 증폭: 2.78 * 원마/(원마+1400)
+    # AM=RM×(1+EM+RB)
+
+    class amplicationDamage(BaseModel):
+        forward: float
+        reverse: float
+
+    masteryBonus = 2.78 * elementalMastery / (elementalMastery + 1400)
+    amplication = 1.5 * (1 + masteryBonus + amplicationBonus) * attackPoint
+    reversAmplication = 2 * (1 + masteryBonus + amplicationBonus) * attackPoint
+
+    return amplicationDamage(forward=amplication, reverse=reversAmplication)
+
+
+def catalyzeReaction(level: int, elementalMastery: float, catalyzeBonus: float, totalAddHurt: float, coefficient: float):
+    # EM = 5 * 원마/(원마+1200)
+    masteryBonus = 5 * elementalMastery / (elementalMastery + 1200)
+    return levelCoefficient[level] * coefficient * (1 + masteryBonus + catalyzeBonus) * totalAddHurt
+
+
+def transformativeReaction(level: int, elementalMastery: float, transformativeBonus: float, toleranceCoefficient: float, coefficient: float):
+    # EM = 16 * 원마/(원마+2000)
+    masteryBonus = 16 * elementalMastery / (elementalMastery + 2000)
+    return levelCoefficient[level] * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient
 
 
 async def damageCalculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema):
@@ -200,46 +205,67 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                         damageResult.aggravateDamageCritical = aggravate.criticalDamage
                         damageResult.aggravateDamage = aggravate.expectedDamage
                     case "감전":
-                        a = 0
+                        damageResult.electroChargedDamage = transformativeReaction(
+                            characterInfo.level,
+                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            fightProp.FIGHT_PROP_ELECTROCHARGED_ADD_HURT,
+                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_ELEC_RES_MINUS),
+                            1.2,
+                        )
                     case "달감전":
+                        # 달감전에 대해 좀 더 조사 필요
                         a = 0
                     case "과부하":
-                        a = 0
+                        damageResult.overloadedDamage = transformativeReaction(
+                            characterInfo.level,
+                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            fightProp.FIGHT_PROP_OVERLOADED_ADD_HURT,
+                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_FIRE_RES_MINUS),
+                            2.0,
+                        )
                     case "초전도":
-                        a = 0
+                        damageResult.superconductDamage = transformativeReaction(
+                            characterInfo.level,
+                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            fightProp.FIGHT_PROP_SUPERCONDUCT_ADD_HURT,
+                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_ICE_RES_MINUS),
+                            0.5,
+                        )
                     case "확산":
+                        # 확산 개발 필요.
+                        # 기존 격변반응으로는 내성감소 적용이 불가능.
                         a = 0
                     case "개화":
-                        a = 0
+                        damageResult.bloomDamage = transformativeReaction(
+                            characterInfo.level,
+                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            fightProp.FIGHT_PROP_BLOOM_ADD_HURT,
+                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_GRASS_RES_MINUS),
+                            2.0,
+                        )
                     case "만개":
-                        a = 0
+                        damageResult.hyperBloomDamage = transformativeReaction(
+                            characterInfo.level,
+                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            fightProp.FIGHT_PROP_HYPERBLOOM_ADD_HURT,
+                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_GRASS_RES_MINUS),
+                            3.0,
+                        )
                     case "연소":
-                        a = 0
+                        damageResult.burningDamage = transformativeReaction(
+                            characterInfo.level,
+                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            fightProp.FIGHT_PROP_BURGEON_ADD_HURT,
+                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_FIRE_RES_MINUS),
+                            0.25,
+                        )
                     case "발화":
-                        a = 0
-
-    # 저렇게 하기보단, 좀 다르게 정리하는게 나중에 쓰기 편할꺼같은데,
-    # class로 정리하긴 애매하고, 걍 딕셔너리로???
-    # 이제 리턴할 데미지 관련 class도 하나 정의해야할듯한디
-    # fightProp은 그대로 있는 상태에서, 최종 스텟들 추가해서 넘기고, FINAL HP, DEF, ATTACK 라던가
-    # 나머지는 그대로 들어가되, 역증발 역융해, 정증발, 정융해는 또 별도로 해야함.
-
-    # 각각 치명 데미지 노치명데미지를 다 줘야해.
-    # 치명타가 발생 가능한 항목은 전부
-
-    # 연산 필요 항목
-    # 1. base있는 항목의 최종 값.
-    # 2. 치명타 시 데미지, 노 치명타 시 데미지
-    # 3. 원소 반응에 따른 데미지
-    #   3-1. 증폭 반응: 융해, 증발 => 최종 곱연산
-    #   3-2. 격화 반응: 촉진 발산 => 스킬계수에 추가(신학 깃털)
-    #   3-3. 격변 반응: 개화(풀) 발화(불) 만개(풀) 연소(불) 과부하(불) 감전(번개) 달감전(번개) 초전도(얼음) 쇄빙(물리) 확산(반응한 원소) => 추가타격
-    #   3-4. 확산 반응: 확산 => 추가 타격
-    # 해당 반응들 전부 필요.
-    # 연산 순서
-    #   1. 원소 반응에 따른 보너스 데미지 연산
-    #   2. 피해증가 및 치명타 곱연산 적용
-    #   3. 무반응 시 데미지 연산.
-    # 데미지 출력은 하되, 가능한 반응에 대해서만 정리 해야겠네
+                        damageResult.burgeonDamage = transformativeReaction(
+                            characterInfo.level,
+                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            fightProp.FIGHT_PROP_BURGEON_ADD_HURT,
+                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_FIRE_RES_MINUS),
+                            3.0,
+                        )
 
     return {"damage": {}, "totalFightProps": {}}
