@@ -101,7 +101,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_OVERLOADED_ADD_HURT: float = 0.0  # 과부하
     FIGHT_PROP_ELECTROCHARGED_ADD_HURT: float = 0.0  # 감전
     FIGHT_PROP_SUPERCONDUCT_ADD_HURT: float = 0.0  # 초전도
-    FIGHT_PROP_BLOOM_ADD_HURT: float = 0.0  # 만개
+    FIGHT_PROP_BLOOM_ADD_HURT: float = 0.0  # 개화
     FIGHT_PROP_HYPERBLOOM_ADD_HURT: float = 0.0  # 만개
     FIGHT_PROP_AGGRAVATE_ADD_HURT: float = 0.0  # 촉진
     FIGHT_PROP_VAPORIZE_ADD_HURT: float = 0.0  # 증발
