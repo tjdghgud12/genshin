@@ -29,4 +29,4 @@ COPY . /app
 
 # 8. uvicorn으로 FastAPI 앱 실행
 # main.py가 루트 디렉토리에 있으므로 main:app 기준
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT}"]
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT}"]
