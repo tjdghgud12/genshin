@@ -18,16 +18,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml poetry.lock /app/
 
 # 6. Poetry 설치 및 패키지 설치
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir poetry \
+RUN python -m pip install --upgrade pip \
+    && python -m pip install --no-cache-dir poetry \
     && poetry config virtualenvs.create false \
-    && poetry install --no-root --no-dev --no-interaction --no-ansi
+    && poetry install --no-root --no-dev --no-interaction --no-ansi\
 
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir poetry \
-    && poetry config virtualenvs.create false \
-    && poetry install --no-root --no-dev --no-interaction --no-ansi
-
+    
 # 7. 앱 소스 전체 복사
 COPY . /app
 
