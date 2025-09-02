@@ -218,6 +218,7 @@ const fightPropLabels: Record<string, string> = {
   FIGHT_PROP_MELT_ADD_HURT: `융해 피해 증가(%)`, // 융해
   FIGHT_PROP_BURNING_ADD_HURT: `연소 피해 증가(%)`, // 연소
   FIGHT_PROP_BURGEON_ADD_HURT: `발화 피해 증가(%)`, // 발화
+  FIGHT_PROP_SWIRL_ADD_HURT: `확산 피해 증가(%)`, // 확산
   FIGHT_PROP_LUNARCHARGED_ADD_HURT: `달감전 피해 증가(%)`, // 달감전
 };
 
