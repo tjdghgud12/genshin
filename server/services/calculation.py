@@ -98,8 +98,8 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     elementKey = {"Fire": "FIRE", "Elec": "ELEC", "Water": "WATER", "Grass": "GRASS", "Wind": "WIND", "Rock": "ROCK", "Ice": "ICE"}
     reactions = {
         "Fire": ["융해", "증발", "연소", "발화", "과부하"],
-        "Elec": ["촉진", "만개", "과부하", "감전", "초전도", "달감전"],
-        "Water": ["증발", "개화", "감전", "달감전"],
+        "Elec": ["촉진", "만개", "과부하", "감전", "초전도"],
+        "Water": ["증발", "개화", "감전"],
         "Grass": ["발산", "개화", "연소"],
         "Wind": ["확산"],
         "Rock": ["결정화"],
@@ -133,7 +133,9 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     physicalToleranceCoefficient = getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_PHYSICAL_RES_MINUS)
 
     enableReaction = reactions[element]
-    reactionResult = []
+    if characterInfo.name == "이네파":
+        enableReaction.append("달감전")
+
     for skill in characterInfo.activeSkill:
         for attackType, baseFightProp in {k: v for k, v in skill.baseFightProp.model_dump().items() if v is not None}.items():
             # 차스카의 경우 별도로 처리 필요!
@@ -195,16 +197,16 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                         damageResult.aggravateDamageCritical = aggravate.criticalDamage
                         damageResult.aggravateDamage = aggravate.expectedDamage
                     case "발산":
-                        aggravate = getCriticalDamageInfo(
+                        spread = getCriticalDamageInfo(
                             damage=catalyzeReaction(
                                 characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_AGGRAVATE_ADD_HURT, totalElementalAddHurt, 1.25
                             ),
                             critical=critical,
                             criticalHurt=criticalHurt,
                         )
-                        damageResult.aggravateDamageNonCritical = aggravate.nonCriticalDamage
-                        damageResult.aggravateDamageCritical = aggravate.criticalDamage
-                        damageResult.aggravateDamage = aggravate.expectedDamage
+                        damageResult.spreadDamageNonCritical = spread.nonCriticalDamage
+                        damageResult.spreadDamageCritical = spread.criticalDamage
+                        damageResult.spreadDamage = spread.expectedDamage
                     case "감전":
                         damageResult.electroChargedDamage = transformativeReaction(
                             characterInfo.level,
@@ -214,8 +216,22 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                             1.2,
                         )
                     case "달감전":
-                        # 달감전에 대해 좀 더 조사 필요
-                        a = 0
+                        # 이네파의 최종 곱연산이 필요함.
+                        lunarCharged = getCriticalDamageInfo(
+                            transformativeReaction(
+                                characterInfo.level,
+                                fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                                fightProp.FIGHT_PROP_LUNARCHARGED_ADD_HURT,
+                                getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_ELEC_RES_MINUS),
+                                1.8,
+                            ),
+                            critical=critical,
+                            criticalHurt=criticalHurt,
+                        )
+                        damageResult.lunarChargedDamageNonCritical = lunarCharged.nonCriticalDamage
+                        damageResult.lunarChargedDamageCritical = lunarCharged.criticalDamage
+                        damageResult.lunarChargedDamage = lunarCharged.expectedDamage
+
                     case "과부하":
                         damageResult.overloadedDamage = transformativeReaction(
                             characterInfo.level,
