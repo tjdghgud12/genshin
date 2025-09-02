@@ -43,17 +43,16 @@ const Home = (): React.ReactElement => {
   const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
     setWaitUserInfoFlag(true);
     toast.promise(api.get(`/user/${valus.uid}`), {
-      loading: "캐릭터 진열장의 정보를 읽어오는 중 입니다.",
       success: (res) => {
         setCalculatorData(res.data.characters);
         window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
         const searchParams = new URLSearchParams({ uid: valus.uid });
         router.push(`/calculator?${searchParams.toString()}`);
-        // setWaitUserInfoFlag(false);
+        setWaitUserInfoFlag(false);
         return "캐릭터 진열장의 정보를 읽어왔습니다.";
       },
       error: (err) => {
-        // setWaitUserInfoFlag(false);
+        setWaitUserInfoFlag(false);
         console.log(err);
         return "캐릭터 진열장의 정보를 읽어오는데 실패했습니다.";
       },
@@ -62,6 +61,7 @@ const Home = (): React.ReactElement => {
 
   return (
     <main className="w-full h-full flex flex-col">
+      <Toaster richColors />
       {waitUserInfoFlag ? (
         <div className="m-auto">
           <DotBounsLoading />
@@ -71,7 +71,6 @@ const Home = (): React.ReactElement => {
           <div className="h-1/2 flex">
             <h1 className="text-8xl font-bold text-violet-800 mt-auto mb-4 mx-auto">Calculator</h1>
           </div>
-          <Toaster richColors />
           <div />
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex mx-auto">
