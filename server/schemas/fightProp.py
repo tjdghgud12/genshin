@@ -110,6 +110,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_MELT_ADD_HURT: float = 0.0  # 융해
     FIGHT_PROP_BURNING_ADD_HURT: float = 0.0  # 연소
     FIGHT_PROP_BURGEON_ADD_HURT: float = 0.0  # 발화
+    FIGHT_PROP_SWIRL_ADD_HURT: float = 0.0  # 확산
     FIGHT_PROP_LUNARCHARGED_ADD_HURT: float = 0.0  # 달감전
 
     def add(self, field_name: str, value: float):
