@@ -18,13 +18,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml poetry.lock /app/
 
 # 6. Poetry 설치 및 패키지 설치
-RUN pip install --no-cache-dir poetry \
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir poetry \
     && poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi
+    && poetry install --no-root --no-dev --no-interaction --no-ansi
+
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir poetry \
+    && poetry config virtualenvs.create false \
+    && poetry install --no-root --no-dev --no-interaction --no-ansi
 
 # 7. 앱 소스 전체 복사
 COPY . /app
 
 # 8. uvicorn으로 FastAPI 앱 실행
 # main.py가 루트 디렉토리에 있으므로 main:app 기준
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT}", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT}"]
