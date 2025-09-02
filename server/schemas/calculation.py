@@ -109,7 +109,10 @@ class responseDamageResult(BaseModel):
     lunarChargedDamageNonCritical: float | None = 0.0  # 달감전 논치명타
 
     # 확산
-    swirlDamage: float | None = 0.0
+    fireSwirlDamage: float | None = 0.0
+    waterSwirlDamage: float | None = 0.0
+    iceSwirlDamage: float | None = 0.0
+    elecSwirlDamage: float | None = 0.0
 
     def add(self, field_name: str, value: float):
         if not hasattr(self, field_name):

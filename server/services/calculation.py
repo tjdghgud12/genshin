@@ -137,6 +137,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     for skill in characterInfo.activeSkill:
         for attackType, baseFightProp in {k: v for k, v in skill.baseFightProp.model_dump().items() if v is not None}.items():
             # 차스카의 경우 별도로 처리 필요!
+            # 커스텀 영역에 대해서 처리 필요!
             targetNonCritical = getattr(damageResult, f"{attackType}NonCritical")
             targetCritical = getattr(damageResult, f"{attackType}Critical")
             targetExpected = getattr(damageResult, attackType)
@@ -232,9 +233,19 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                             0.5,
                         )
                     case "확산":
-                        # 확산 개발 필요.
-                        # 기존 격변반응으로는 내성감소 적용이 불가능.
-                        a = 0
+                        swirlList = ["fire", "water", "ice", "elec"]
+                        for swirl in swirlList:
+                            setattr(
+                                damageResult,
+                                f"{swirl}SwirlDamage",
+                                transformativeReaction(
+                                    characterInfo.level,
+                                    fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                                    fightProp.FIGHT_PROP_SWIRL_ADD_HURT,
+                                    getToleranceCoefficient(decrease=getattr(fightProp, f"FIGHT_PROP_{swirl.upper()}_RES_MINUS")),
+                                    0.5,
+                                ),
+                            )
                     case "개화":
                         damageResult.bloomDamage = transformativeReaction(
                             characterInfo.level,
