@@ -35,6 +35,7 @@ const eslintConfig = [
       "tailwind.config.js",
       "*.config.js",
       "*.config.mjs",
+      "src/components/ui/",
     ],
     languageOptions: {
       parser: (await import("@typescript-eslint/parser")).default,

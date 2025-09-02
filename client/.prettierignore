@@ -1,0 +1,12 @@
+node_modules/
+.next/
+dist/
+build/
+.yarn/
+
+*.d.ts
+
+**/temp/**
+**/cache/**
+
+src/components/ui/
