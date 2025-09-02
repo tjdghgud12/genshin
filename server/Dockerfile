@@ -21,7 +21,7 @@ COPY pyproject.toml poetry.lock /app/
 RUN python -m pip install --upgrade pip \
     && python -m pip install --no-cache-dir poetry \
     && poetry config virtualenvs.create false \
-    && poetry install --no-root --no-dev --no-interaction --no-ansi
+    && poetry install --no-root --without dev --no-interaction --no-ansi
 
 
 # 7. 앱 소스 전체 복사
