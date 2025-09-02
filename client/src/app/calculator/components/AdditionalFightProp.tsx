@@ -1,10 +1,10 @@
 "use client";
 
-import { formSchema } from "@/app/calculator/page";
 import FloatingButton from "@/app/globalComponents/FloatingButton";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { calculatorFormSchema as formSchema } from "@/lib/calculatorSchema";
 import { fightPropLabels } from "@/lib/fightProps";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
