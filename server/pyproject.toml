@@ -7,9 +7,9 @@ black = "^25.1.0"
 pytest = "^8.4.1"
 
 [project]
-name = "server"
+name = "genshin_setting_calculator"
 version = "0.1.0"
-description = ""
+description = "Genshin Impact character setting calculator Created by JjoriButler"
 authors = [
     {name = "성호형",email = "tjdghgud12@naver.com"}
 ]
