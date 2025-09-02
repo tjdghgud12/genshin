@@ -11,11 +11,11 @@ from copy import deepcopy
 from dataclasses import dataclass
 from itertools import chain
 from typing import Protocol, Coroutine, Any
+from pydantic import BaseModel
 
 
 # ----------------------------------- Class -----------------------------------
-@dataclass
-class CharacterFightPropReturnData:
+class CharacterFightPropReturnData(BaseModel):
     fightProp: fightPropSchema
     characterInfo: requestCharacterInfoSchema
 
