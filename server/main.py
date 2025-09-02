@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api import router
@@ -18,7 +19,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = ["*"]
+origins = [
+    url
+    for url in [
+        os.getenv("DEV_FRONTEND_URL"),
+        os.getenv("FRONTEND_URL"),
+    ]
+    if url is not None
+]
 
 app.add_middleware(
     CORSMiddleware,
