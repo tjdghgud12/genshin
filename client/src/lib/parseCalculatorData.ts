@@ -1,8 +1,8 @@
-import { calculatorFormSchema } from "@/app/calculator/page";
+import { calculatorCharacterInfoSchema } from "@/lib/calculatorSchema";
 import { z } from "zod";
 import { fightPropLabels } from "./fightProps";
 
-type TCalculatorData = z.infer<typeof calculatorFormSchema>;
+type TCalculatorData = z.infer<typeof calculatorCharacterInfoSchema>;
 
 interface IuserSelectoptions {
   level?: number;

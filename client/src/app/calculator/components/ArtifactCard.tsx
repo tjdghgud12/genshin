@@ -1,6 +1,5 @@
 "use client";
 
-import { calculatorFormSchema } from "@/app/calculator/page";
 import { Combobox } from "@/app/globalComponents/ComboBox";
 import { DotBounsLoading } from "@/app/loading";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import api from "@/lib/axios";
+import { calculatorCharacterInfoSchema } from "@/lib/calculatorSchema";
 import { fightPropLabels } from "@/lib/fightProps";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
@@ -19,8 +19,8 @@ import Image from "next/image";
 import { Fragment, ReactElement, useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
-type TArtifactSetInfo = z.infer<typeof calculatorFormSchema>["artifact"]["setInfo"][number];
-type TArtifactPartInfo = z.infer<typeof calculatorFormSchema>["artifact"]["parts"][number];
+type TArtifactSetInfo = z.infer<typeof calculatorCharacterInfoSchema>["artifact"]["setInfo"][number];
+type TArtifactPartInfo = z.infer<typeof calculatorCharacterInfoSchema>["artifact"]["parts"][number];
 
 interface IArtifactSetOptionCard {
   className: string;

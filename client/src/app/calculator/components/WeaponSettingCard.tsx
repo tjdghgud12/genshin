@@ -1,6 +1,6 @@
 "use client";
 
-import { calculatorFormSchema } from "@/app/calculator/page";
+import { calculatorCharacterInfoSchema } from "@/lib/calculatorSchema";
 import { Combobox } from "@/app/globalComponents/ComboBox";
 import GradientStar from "@/app/globalComponents/GradientStar";
 import { DotBounsLoading } from "@/app/loading";
@@ -28,7 +28,7 @@ const weaponSubOption = {
   FIGHT_PROP_PHYSICAL_ADD_HURT: "물리 피해 보너스(%)",
 };
 
-type TWeaponData = z.infer<typeof calculatorFormSchema>["weapon"];
+type TWeaponData = z.infer<typeof calculatorCharacterInfoSchema>["weapon"];
 type TWeaponSubOptionKey = keyof typeof weaponSubOption;
 
 interface IWeaponDetail {

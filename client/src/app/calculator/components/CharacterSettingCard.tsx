@@ -3,11 +3,11 @@
 import { ArtifactPartCard, ArtifactSetOptionCard } from "@/app/calculator/components/ArtifactCard";
 import CharacterOptionControlCircle from "@/app/calculator/components/CharacterOptionControlCircle";
 import WeaponSettingCard from "@/app/calculator/components/WeaponSettingCard";
-import { calculatorFormSchema, formSchema } from "@/app/calculator/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculatorSchema";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { IArtifactOptionInfo } from "@/types/artifactType";
@@ -22,7 +22,7 @@ const CharacterSettingCard = ({
   index,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
-  item: z.infer<typeof calculatorFormSchema>;
+  item: z.infer<typeof calculatorCharacterInfoSchema>;
   index: number;
 }): React.ReactElement => {
   const artifactSets = useCalculatorStore((store) => store.artifactSets);
