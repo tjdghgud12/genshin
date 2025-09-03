@@ -95,10 +95,20 @@ class responseDamageResult(BaseModel):
     electroChargedDamage: float | None = None  # 감전
     superconductDamage: float | None = None  # 초전도
     shatterDamage: float | None = None  # 쇄빙
-    bloomDamage: float | None = None  # 개화
-    hyperBloomDamage: float | None = None  # 만개
-    burgeonDamage: float | None = None  # 발화
-    burningDamage: float | None = None  # 연소
+
+    # 개별 치명타 옵션 보유 반응
+    bloomDamage: float | None = None  # 개화 기대값
+    bloomDamageCritical: float | None = None  # 개화 치명타
+    bloomDamageNonCritical: float | None = None  # 개화 논치명타
+    hyperBloomDamage: float | None = None  # 만개 기대값
+    hyperBloomDamageCritical: float | None = None  # 만개 치명타
+    hyperBloomDamageNonCritical: float | None = None  # 만개 논치명타
+    burgeonDamage: float | None = None  # 발화 기대값
+    burgeonDamageCritical: float | None = None  # 발화 치명타
+    burgeonDamageNonCritical: float | None = None  # 발화 논치명타
+    burningDamage: float | None = None  # 연소 기대값
+    burningDamageCritical: float | None = None  # 연소 치명타
+    burningDamageNonCritical: float | None = None  # 연소 논치명타
 
     # 달반응
     lunarChargedDamage: float | None = None  # 달감전 기대값

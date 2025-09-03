@@ -247,10 +247,19 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
         if constellation.unlocked:
             match constellation.name:
                 case "올곧은 선견의 뿌리":
-                    # 연소, 개화, 만개, 발화의 치명타 효과는 일단 무시
+                    # 연소, 개화, 만개, 발화의 치명타 발생
                     # 활성, 촉진, 발산 반응 시 방어력 감소만 적용
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.DEFENSE_MINUS.value, 0.3)
+                        newFightProp.add(fightPropMpa.BLOOM_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMpa.BLOOM_CRITICAL_HURT.value, 1.0)
+                        newFightProp.add(fightPropMpa.HYPERBLOOM_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMpa.HYPERBLOOM_CRITICAL_HURT.value, 1.0)
+                        newFightProp.add(fightPropMpa.BURGEON_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMpa.BURGEON_CRITICAL_HURT.value, 1.0)
+                        newFightProp.add(fightPropMpa.BURNING_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMpa.BURNING_CRITICAL_HURT.value, 1.0)
+
                 case "추론으로 드러난 줄기":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, constellation.options[0].stack * 20 + 80)
