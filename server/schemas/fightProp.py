@@ -1,6 +1,18 @@
 from pydantic import BaseModel
 
 
+class finalAddHurtSchema(BaseModel):
+    FIGHT_PROP_LUNARCHARGED_ADD_HURT: float = 0.0
+    FIGHT_PROP_NOMAL_ATTACK_ATTACK_ADD_HURT: float = 0.0
+    FIGHT_PROP_CHARGED_ATTACK_ATTACK_ADD_HURT: float = 0.0
+    FIGHT_PROP_ELEMENT_BURST_ATTACK_ADD_HURT: float = 0.0
+
+    def add(self, field_name: str, value: float):
+        if not hasattr(self, field_name):
+            raise KeyError(f"{field_name} is not a valid field")
+        setattr(self, field_name, getattr(self, field_name) + value)
+
+
 class fightPropSchema(BaseModel):
     # 공통
     FIGHT_PROP_BASE_HP: float = 0.0
@@ -112,6 +124,9 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_BURGEON_ADD_HURT: float = 0.0  # 발화
     FIGHT_PROP_SWIRL_ADD_HURT: float = 0.0  # 확산
     FIGHT_PROP_LUNARCHARGED_ADD_HURT: float = 0.0  # 달감전
+
+    # 추가적인 최종데미지 곱연산 항목이 들어가야해
+    FIGHT_PROP_FINAL: finalAddHurtSchema = finalAddHurtSchema()
 
     def add(self, field_name: str, value: float):
         if not hasattr(self, field_name):

@@ -155,7 +155,7 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
         if constellation.unlocked:
             match constellation.name:
                 case "삼중 서리 관문":  # 최종 데미지 기준 추가 피해
-                    description = "원소 폭발 발동 시 기존 공격력의 20%의 피해를 주는 소형 서리 관문 2개 추가"
+                    newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, 1.4)
                 case "영고성쇠":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.DEFENSE_MINUS.value, 0.3)
@@ -599,10 +599,12 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         if passive.unlocked:
             match passive.name:
                 case "흐름의 적멸":
-                    # "description": "파티 내 주변에 있는 물 원소 또는 얼음 원소 캐릭터가 각각 물 원소 또는 얼음 원소 공격으로 적 명중 시 최종 데미지 증가(마지막 곱연산)",
-                    # 원소 전투 스킬 110%/120%/170% / 원소 폭발 105%/115%/160%
-                    # 최종 데미지 곱연산 미개발 상태
                     if passive.options[0].active:
+                        normal = [0, 1.1, 1.2, 1.7]
+                        burst = [0, 1.05, 1.15, 1.6]
+                        newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack])
+                        newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, burst[passive.options[0].stack])
+
                         fourthConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "멸류"))
                         if fourthConstellation.unlocked:
                             addAttackPercent = [0, 0.1, 0.2, 0.4]
@@ -747,14 +749,15 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
                 case "생존한 고대바다의 계승자":
                     option = passive.options[0]
                     if option.active:
+                        finalCharged = [0, 0.10, 1.25, 1.60]  # 최종 데미지 곱연산(강공격)
+                        newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_CHARGED_ATTACK_ATTACK_ADD_HURT.value, finalCharged[option.stack])
+
                         firstConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "위대한 제정"))
                         secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "법의 계율"))
                         if firstConstellation.unlocked:
                             option.stack = min(option.stack + 1, 3)
                         if secondConstellation.unlocked:
                             newFightProp.add(fightPropMpa.CHARGED_ATTACK_CRITICAL_HURT.value, 0.14 * option.stack)
-                        # finallyAddHurt = [0, 0.10, 1.25, 1.60]   # 최종 데미지 곱연산
-                        # finallyAddHurt[passive.stack]
                 case "드높은 중재의 규율":
                     option = passive.options[0]
                     if option.active:
