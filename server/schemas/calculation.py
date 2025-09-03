@@ -54,14 +54,14 @@ class damageResultSchema(BaseModel):
     elementalDamage: float = 0.0
 
     # 증폭
-    meltDamage: float | None = 0.0  # 융해
-    reverseMeltDamage: float | None = 0.0  # 역융해
-    vaporizeDamage: float | None = 0.0  # 증발
-    reversevaporizeDamage: float | None = 0.0  # 역증발
+    meltDamage: float | None = None  # 융해
+    reverseMeltDamage: float | None = None  # 역융해
+    vaporizeDamage: float | None = None  # 증발
+    reversevaporizeDamage: float | None = None  # 역증발
 
     # 격화
-    aggravateDamage: float | None = 0.0  # 촉진
-    spreadDamage: float | None = 0.0  # 발산
+    aggravateDamage: float | None = None  # 촉진
+    spreadDamage: float | None = None  # 발산
 
 
 class responseDamageResult(BaseModel):
@@ -91,27 +91,22 @@ class responseDamageResult(BaseModel):
     customNonCritical: list[damageResultSchema] = []
 
     # 격변
-    overloadedDamage: float | None = 0.0  # 과부하
-    electroChargedDamage: float | None = 0.0  # 감전
-    superconductDamage: float | None = 0.0  # 초전도
-    shatterDamage: float | None = 0.0  # 쇄빙
-    bloomDamage: float | None = 0.0  # 개화
-    hyperBloomDamage: float | None = 0.0  # 만개
-    burgeonDamage: float | None = 0.0  # 발화
-    burningDamage: float | None = 0.0  # 연소
+    overloadedDamage: float | None = None  # 과부하
+    electroChargedDamage: float | None = None  # 감전
+    superconductDamage: float | None = None  # 초전도
+    shatterDamage: float | None = None  # 쇄빙
+    bloomDamage: float | None = None  # 개화
+    hyperBloomDamage: float | None = None  # 만개
+    burgeonDamage: float | None = None  # 발화
+    burningDamage: float | None = None  # 연소
 
     # 달반응
-    lunarChargedDamage: float | None = 0.0  # 달감전 기대값
-    lunarChargedDamageCritical: float | None = 0.0  # 달감전 치명타
-    lunarChargedDamageNonCritical: float | None = 0.0  # 달감전 논치명타
+    lunarChargedDamage: float | None = None  # 달감전 기대값
+    lunarChargedDamageCritical: float | None = None  # 달감전 치명타
+    lunarChargedDamageNonCritical: float | None = None  # 달감전 논치명타
 
     # 확산
-    fireSwirlDamage: float | None = 0.0
-    waterSwirlDamage: float | None = 0.0
-    iceSwirlDamage: float | None = 0.0
-    elecSwirlDamage: float | None = 0.0
-
-    def add(self, field_name: str, value: float):
-        if not hasattr(self, field_name):
-            raise KeyError(f"{field_name} is not a valid field")
-        setattr(self, field_name, getattr(self, field_name) + value)
+    fireSwirlDamage: float | None = None
+    waterSwirlDamage: float | None = None
+    iceSwirlDamage: float | None = None
+    elecSwirlDamage: float | None = None
