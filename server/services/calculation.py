@@ -1,12 +1,12 @@
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp
-from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema
-from schemas.character import damageBaseFightPropSchema
+from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema, damageResultSchema
 from schemas.fightProp import fightPropSchema
-from data.globalVariable import levelCoefficient
+from data.globalVariable import levelCoefficientMap
 from ambr import AmbrAPI
 from typing import Literal
 from pydantic import BaseModel
+from functools import partial
 import time
 
 
@@ -61,31 +61,24 @@ def getCriticalDamageInfo(damage: float, critical: float, criticalHurt: float):
     return criticalDamageSchema(criticalDamage=criticalDamage, nonCriticalDamage=damage, expectedDamage=expectedDamage)
 
 
-def amplificationReaction(attackPoint: float, elementalMastery: float, amplicationBonus: float):
+def amplificationReaction(attackPoint: float, elementalMastery: float, amplicationBonus: float, coefficient: float):
     # 증폭: 2.78 * 원마/(원마+1400)
     # AM=RM×(1+EM+RB)
-
-    class amplicationDamage(BaseModel):
-        forward: float
-        reverse: float
-
     masteryBonus = 2.78 * elementalMastery / (elementalMastery + 1400)
-    amplication = 1.5 * (1 + masteryBonus + amplicationBonus) * attackPoint
-    reversAmplication = 2 * (1 + masteryBonus + amplicationBonus) * attackPoint
-
-    return amplicationDamage(forward=amplication, reverse=reversAmplication)
+    return attackPoint * coefficient * (1 + masteryBonus + amplicationBonus)
 
 
-def catalyzeReaction(level: int, elementalMastery: float, catalyzeBonus: float, totalAddHurt: float, coefficient: float):
+def catalyzeReaction(attackPoint: float, elementalMastery: float, catalyzeBonus: float, coefficient: float):
     # EM = 5 * 원마/(원마+1200)
     masteryBonus = 5 * elementalMastery / (elementalMastery + 1200)
-    return levelCoefficient[level] * coefficient * (1 + masteryBonus + catalyzeBonus) * totalAddHurt
+    return attackPoint * coefficient * (1 + masteryBonus + catalyzeBonus)
 
 
-def transformativeReaction(level: int, elementalMastery: float, transformativeBonus: float, toleranceCoefficient: float, coefficient: float, finalAddHurt: float = 0.0):
+def transformativeReaction(level: int, elementalMastery: float, transformativeBonus: float, resMinus: float, coefficient: float, finalAddHurt: float = 0.0):
     # EM = 16 * 원마/(원마+2000)
     masteryBonus = 16 * elementalMastery / (elementalMastery + 2000)
-    return levelCoefficient[level] * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient * (1 + finalAddHurt)
+    toleranceCoefficient = getToleranceCoefficient(decrease=resMinus)
+    return levelCoefficientMap[level] * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient * (1 + finalAddHurt)
 
 
 async def damageCalculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema):
@@ -95,14 +88,13 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     getTotalFightProp = getFightProp.get(characterInfo.name)
     damageResult = responseDamageResult()
     element = ambrCharacterDetail.element
-    elementKey = {"Fire": "FIRE", "Elec": "ELEC", "Water": "WATER", "Grass": "GRASS", "Wind": "WIND", "Rock": "ROCK", "Ice": "ICE"}
     reactions = {
-        "Fire": ["융해", "증발", "연소", "발화", "과부하"],
+        "Fire": ["역융해", "증발", "연소", "발화", "과부하"],
         "Elec": ["촉진", "만개", "과부하", "감전", "초전도"],
-        "Water": ["증발", "개화", "감전"],
+        "Water": ["역증발", "개화", "감전"],
         "Grass": ["발산", "개화", "연소"],
         "Wind": ["확산"],
-        "Rock": ["결정화"],
+        "Rock": [],
         "Ice": ["융해", "초전도"],
     }
     attackTypeKey = {
@@ -119,6 +111,63 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
         for key, value in additionalFightProp.model_dump().items():
             fightProp.add(key, value)
 
+    roopReactionHandlerMap = {
+        "융해": (partial(amplificationReaction, amplicationBonus=fightProp.FIGHT_PROP_MELT_ADD_HURT, coefficient=1.5), "meltDamage"),
+        "역융해": (partial(amplificationReaction, amplicationBonus=fightProp.FIGHT_PROP_MELT_ADD_HURT, coefficient=2.0), "reverseMeltDamage"),
+        "증발": (partial(amplificationReaction, amplicationBonus=fightProp.FIGHT_PROP_VAPORIZE_ADD_HURT, coefficient=1.5), "vaporizeDamage"),
+        "역증발": (partial(amplificationReaction, amplicationBonus=fightProp.FIGHT_PROP_VAPORIZE_ADD_HURT, coefficient=2.0), "reverseVaporizeDamage"),
+        "촉진": (partial(catalyzeReaction, catalyzeBonus=fightProp.FIGHT_PROP_MELT_ADD_HURT, coefficient=1.15), "aggravateDamage"),
+        "발산": (partial(catalyzeReaction, catalyzeBonus=fightProp.FIGHT_PROP_MELT_ADD_HURT, coefficient=1.25), "spreadDamage"),
+    }
+
+    transformativeReactionHandlerMap = {
+        "감전": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_ELECTROCHARGED_ADD_HURT, resMinus=fightProp.FIGHT_PROP_ELEC_RES_MINUS, coefficient=1.2),
+            "electroChargedDamage",
+        ),
+        "과부하": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_OVERLOADED_ADD_HURT, resMinus=fightProp.FIGHT_PROP_FIRE_RES_MINUS, coefficient=2.0),
+            "overloadedDamage",
+        ),
+        "초전도": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_SUPERCONDUCT_ADD_HURT, resMinus=fightProp.FIGHT_PROP_ICE_RES_MINUS, coefficient=0.5),
+            "superconductDamage",
+        ),
+        "쇄빙": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_SHATTER_ADD_HURT, resMinus=fightProp.FIGHT_PROP_PHYSICAL_RES_MINUS, coefficient=1.5),
+            "shatterDamage",
+        ),
+        "개화": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_BLOOM_ADD_HURT, resMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS, coefficient=2.0),
+            "bloomDamage",
+        ),
+        "만개": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_HYPERBLOOM_ADD_HURT, resMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS, coefficient=3.0),
+            "hyperBloomDamage",
+        ),
+        "발화": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_BURGEON_ADD_HURT, resMinus=fightProp.FIGHT_PROP_FIRE_RES_MINUS, coefficient=3.0),
+            "burgeonDamage",
+        ),
+        "연소": (
+            partial(transformativeReaction, transformativeBonus=fightProp.FIGHT_PROP_BURNING_ADD_HURT, resMinus=fightProp.FIGHT_PROP_FIRE_RES_MINUS, coefficient=0.25),
+            "burningDamage",
+        ),
+    }
+
+    lunarReactionHandlerMap = {
+        "달감전": (
+            partial(
+                transformativeReaction,
+                transformativeBonus=fightProp.FIGHT_PROP_LUNARCHARGED_ADD_HURT,
+                resMinus=fightProp.FIGHT_PROP_ELEC_RES_MINUS,
+                coefficient=1.8,
+                finalAddHurt=fightProp.FIGHT_PROP_FINAL_LUNARCHARGED_ADD_HURT,
+            ),
+            "lunarChargedDamage",
+        )
+    }
+
     # 최종 기반스텟 연산
     setattr(fightProp, "FIGHT_PROP_HP_FINAL", getFinalProp(fightProp, "HP"))
     setattr(fightProp, "FIGHT_PROP_ATTACK_FINAL", getFinalProp(fightProp, "ATTACK"))
@@ -129,7 +178,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     defensCoefficient = (characterInfo.level + 100) / (
         ((monsterLevel + 100) * (1 - fightProp.FIGHT_PROP_DEFENSE_MINUS) * (1 - fightProp.FIGHT_PROP_DEFENSE_IGNORE)) + (characterInfo.level + 100)
     )
-    elementToleranceCoefficient = getToleranceCoefficient(decrease=getattr(fightProp, f"FIGHT_PROP_{elementKey[element]}_RES_MINUS"))
+    elementToleranceCoefficient = getToleranceCoefficient(decrease=getattr(fightProp, f"FIGHT_PROP_{element.upper()}_RES_MINUS"))
     physicalToleranceCoefficient = getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_PHYSICAL_RES_MINUS)
 
     enableReaction = reactions[element]
@@ -140,159 +189,68 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
         for attackType, baseFightProp in {k: v for k, v in skill.baseFightProp.model_dump().items() if v is not None}.items():
             # 차스카의 경우 별도로 처리 필요!
             # 커스텀 영역에 대해서 처리 필요!
+            key = attackTypeKey[attackType]
             targetNonCritical = getattr(damageResult, f"{attackType}NonCritical")
             targetCritical = getattr(damageResult, f"{attackType}Critical")
             targetExpected = getattr(damageResult, attackType)
-
-            key = attackTypeKey[attackType]
-
+            finalAttackPoint = sum(getattr(fightProp, f"FIGHT_PROP_{key}_FINAL") * value for key, value in baseFightProp.items() if value is not None)
             critical = fightProp.FIGHT_PROP_CRITICAL + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL")
             criticalHurt = fightProp.FIGHT_PROP_CRITICAL_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL_HURT")
 
             addHurt = fightProp.FIGHT_PROP_ATTACK_ADD_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_ATTACK_ADD_HURT")
-            elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{elementKey[element]}_ADD_HURT") + getattr(fightProp, f"FIGHT_PROP_{elementKey[element]}_ADD_HURT")
+            elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{element.upper()}_ADD_HURT") + getattr(fightProp, f"FIGHT_PROP_{element.upper()}_ADD_HURT")
             physicalAddHurt = fightProp.FIGHT_PROP_PHYSICAL_ADD_HURT
 
-            totalElementalAddHurt = (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient
+            finalElementalAddHurt = (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient
 
-            finalFightProp = sum(getattr(fightProp, f"FIGHT_PROP_{key}_FINAL") * value for key, value in baseFightProp.items() if value is not None)
+            targetNonCritical.physicalDamage = finalAttackPoint * (1 + physicalAddHurt + addHurt) * physicalToleranceCoefficient * defensCoefficient
+            elementalDamage = finalAttackPoint * finalElementalAddHurt
 
-            targetNonCritical.physicalDamage = finalFightProp * (1 + physicalAddHurt + addHurt) * physicalToleranceCoefficient * defensCoefficient
-            targetNonCritical.elementalDamage = finalFightProp * totalElementalAddHurt
+            for reaction in enableReaction:  # 증폭 격변 반응 연산
+                attackPoints = getCriticalDamageInfo(
+                    damage=levelCoefficientMap[characterInfo.level] * finalElementalAddHurt if reaction == "촉진" or reaction == "발산" else elementalDamage,
+                    critical=critical,
+                    criticalHurt=criticalHurt,
+                )
+                if reaction in roopReactionHandlerMap:
+                    reactionHandler, attr = roopReactionHandlerMap[reaction]
+                    setattr(targetNonCritical, attr, reactionHandler(attackPoints.nonCriticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                    setattr(targetCritical, attr, reactionHandler(attackPoints.criticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                    setattr(targetExpected, attr, reactionHandler(attackPoints.expectedDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
 
-            for reaction in enableReaction:
-                # 원소 반응 연산
-                match (reaction):
-                    case "융해":
-                        amplication = amplificationReaction(targetNonCritical.elementalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_MELT_ADD_HURT)
-                        forward = getCriticalDamageInfo(damage=amplication.forward, critical=critical, criticalHurt=criticalHurt)
-                        reverse = getCriticalDamageInfo(damage=amplication.reverse, critical=critical, criticalHurt=criticalHurt)
-                        targetNonCritical.meltDamage = forward.nonCriticalDamage
-                        targetNonCritical.reverseMeltDamage = reverse.nonCriticalDamage
-                        targetCritical.meltDamage = forward.criticalDamage
-                        targetCritical.reverseMeltDamage = reverse.criticalDamage
-                        targetExpected.meltDamage = forward.expectedDamage
-                        targetExpected.reverseMeltDamage = reverse.expectedDamage
-                    case "증발":
-                        amplication = amplificationReaction(targetNonCritical.elementalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_VAPORIZE_ADD_HURT)
-                        targetNonCritical.vaporizeDamage = amplication.forward
-                        targetNonCritical.reversevaporizeDamage = amplication.reverse
-                        forward = getCriticalDamageInfo(damage=amplication.forward, critical=critical, criticalHurt=criticalHurt)
-                        reverse = getCriticalDamageInfo(damage=amplication.reverse, critical=critical, criticalHurt=criticalHurt)
-                        targetNonCritical.vaporizeDamage = forward.nonCriticalDamage
-                        targetNonCritical.reversevaporizeDamage = reverse.nonCriticalDamage
-                        targetCritical.vaporizeDamage = forward.criticalDamage
-                        targetCritical.reversevaporizeDamage = reverse.criticalDamage
-                        targetExpected.vaporizeDamage = forward.expectedDamage
-                        targetExpected.reversevaporizeDamage = reverse.expectedDamage
-                    case "촉진":
-                        aggravate = getCriticalDamageInfo(
-                            damage=catalyzeReaction(
-                                characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_AGGRAVATE_ADD_HURT, totalElementalAddHurt, 1.15
-                            ),
-                            critical=critical,
-                            criticalHurt=criticalHurt,
-                        )
-                        damageResult.aggravateDamageNonCritical = aggravate.nonCriticalDamage
-                        damageResult.aggravateDamageCritical = aggravate.criticalDamage
-                        damageResult.aggravateDamage = aggravate.expectedDamage
-                    case "발산":
-                        spread = getCriticalDamageInfo(
-                            damage=catalyzeReaction(
-                                characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY, fightProp.FIGHT_PROP_AGGRAVATE_ADD_HURT, totalElementalAddHurt, 1.25
-                            ),
-                            critical=critical,
-                            criticalHurt=criticalHurt,
-                        )
-                        damageResult.spreadDamageNonCritical = spread.nonCriticalDamage
-                        damageResult.spreadDamageCritical = spread.criticalDamage
-                        damageResult.spreadDamage = spread.expectedDamage
-                    case "감전":
-                        damageResult.electroChargedDamage = transformativeReaction(
-                            characterInfo.level,
-                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            fightProp.FIGHT_PROP_ELECTROCHARGED_ADD_HURT,
-                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_ELEC_RES_MINUS),
-                            1.2,
-                        )
-                    case "달감전":
-                        lunarCharged = getCriticalDamageInfo(
-                            transformativeReaction(
-                                characterInfo.level,
-                                fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                                fightProp.FIGHT_PROP_LUNARCHARGED_ADD_HURT,
-                                getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_ELEC_RES_MINUS),
-                                1.8,
-                                finalAddHurt=fightProp.FIGHT_PROP_FINAL_LUNARCHARGED_ADD_HURT,
-                            ),
-                            critical=critical,
-                            criticalHurt=criticalHurt,
-                        )
-                        damageResult.lunarChargedDamageNonCritical = lunarCharged.nonCriticalDamage
-                        damageResult.lunarChargedDamageCritical = lunarCharged.criticalDamage
-                        damageResult.lunarChargedDamage = lunarCharged.expectedDamage
+    # 격변 반응 별도 처리 진행
+    for reaction in enableReaction:
+        if reaction in transformativeReactionHandlerMap:
+            reactionHandler, attr = transformativeReactionHandlerMap[reaction]
+            setattr(damageResult, attr, reactionHandler(characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
 
-                    case "과부하":
-                        damageResult.overloadedDamage = transformativeReaction(
-                            characterInfo.level,
-                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            fightProp.FIGHT_PROP_OVERLOADED_ADD_HURT,
-                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_FIRE_RES_MINUS),
-                            2.0,
-                        )
-                    case "초전도":
-                        damageResult.superconductDamage = transformativeReaction(
-                            characterInfo.level,
-                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            fightProp.FIGHT_PROP_SUPERCONDUCT_ADD_HURT,
-                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_ICE_RES_MINUS),
-                            0.5,
-                        )
-                    case "확산":
-                        swirlList = ["fire", "water", "ice", "elec"]
-                        for swirl in swirlList:
-                            setattr(
-                                damageResult,
-                                f"{swirl}SwirlDamage",
-                                transformativeReaction(
-                                    characterInfo.level,
-                                    fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                                    fightProp.FIGHT_PROP_SWIRL_ADD_HURT,
-                                    getToleranceCoefficient(decrease=getattr(fightProp, f"FIGHT_PROP_{swirl.upper()}_RES_MINUS")),
-                                    0.5,
-                                ),
-                            )
-                    case "개화":
-                        damageResult.bloomDamage = transformativeReaction(
-                            characterInfo.level,
-                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            fightProp.FIGHT_PROP_BLOOM_ADD_HURT,
-                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_GRASS_RES_MINUS),
-                            2.0,
-                        )
-                    case "만개":
-                        damageResult.hyperBloomDamage = transformativeReaction(
-                            characterInfo.level,
-                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            fightProp.FIGHT_PROP_HYPERBLOOM_ADD_HURT,
-                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_GRASS_RES_MINUS),
-                            3.0,
-                        )
-                    case "연소":
-                        damageResult.burningDamage = transformativeReaction(
-                            characterInfo.level,
-                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            fightProp.FIGHT_PROP_BURGEON_ADD_HURT,
-                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_FIRE_RES_MINUS),
-                            0.25,
-                        )
-                    case "발화":
-                        damageResult.burgeonDamage = transformativeReaction(
-                            characterInfo.level,
-                            fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            fightProp.FIGHT_PROP_BURGEON_ADD_HURT,
-                            getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_FIRE_RES_MINUS),
-                            3.0,
-                        )
+    # 달반응 별도 처리 진행
+    for reaction in enableReaction:
+        if reaction in lunarReactionHandlerMap:
+            reactionHandler, attr = lunarReactionHandlerMap[reaction]
+            lunarDamage = getCriticalDamageInfo(
+                damage=reactionHandler(characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY),
+                critical=critical,
+                criticalHurt=criticalHurt,
+            )
+            setattr(damageResult, f"{attr}NonCritical", lunarDamage.nonCriticalDamage)
+            setattr(damageResult, f"{attr}Critical", lunarDamage.criticalDamage)
+            setattr(damageResult, attr, lunarDamage.expectedDamage)
+
+    # 확산
+    if "확산" in enableReaction:
+        swirlList = ["fire", "water", "ice", "elec"]
+        for swirl in swirlList:
+            setattr(
+                damageResult,
+                f"{swirl}SwirlDamage",
+                transformativeReaction(
+                    characterInfo.level,
+                    fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                    fightProp.FIGHT_PROP_SWIRL_ADD_HURT,
+                    getToleranceCoefficient(decrease=getattr(fightProp, f"FIGHT_PROP_{swirl.upper()}_RES_MINUS")),
+                    0.5,
+                ),
+            )
 
     return {"damage": {}, "totalFightProps": {}}

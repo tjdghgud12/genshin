@@ -159,7 +159,7 @@ fightPropMap = {
 }
 
 
-levelCoefficient = [
+levelCoefficientMap = [
     0.0,
     17.165605,
     18.535048,

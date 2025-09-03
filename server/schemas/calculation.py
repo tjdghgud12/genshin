@@ -57,7 +57,11 @@ class damageResultSchema(BaseModel):
     meltDamage: float | None = 0.0  # 융해
     reverseMeltDamage: float | None = 0.0  # 역융해
     vaporizeDamage: float | None = 0.0  # 증발
-    reversevaporizeDamage: float | None = 0.0  # 증발
+    reversevaporizeDamage: float | None = 0.0  # 역증발
+
+    # 격화
+    aggravateDamage: float | None = 0.0  # 촉진
+    spreadDamage: float | None = 0.0  # 발산
 
 
 class responseDamageResult(BaseModel):
@@ -86,14 +90,6 @@ class responseDamageResult(BaseModel):
     customCritical: list[damageResultSchema] = []
     customNonCritical: list[damageResultSchema] = []
 
-    # 격화
-    aggravateDamage: float | None = 0.0  # 촉진 기대값
-    aggravateDamageCritical: float | None = 0.0  # 촉진 치명타
-    aggravateDamageNonCritical: float | None = 0.0  # 촉진 논치명타
-    spreadDamage: float | None = 0.0  # 발산 기대값
-    spreadDamageCritical: float | None = 0.0  # 발산 치명타
-    spreadDamageNonCritical: float | None = 0.0  # 발산 논치명타
-
     # 격변
     overloadedDamage: float | None = 0.0  # 과부하
     electroChargedDamage: float | None = 0.0  # 감전
@@ -104,6 +100,7 @@ class responseDamageResult(BaseModel):
     burgeonDamage: float | None = 0.0  # 발화
     burningDamage: float | None = 0.0  # 연소
 
+    # 달반응
     lunarChargedDamage: float | None = 0.0  # 달감전 기대값
     lunarChargedDamageCritical: float | None = 0.0  # 달감전 치명타
     lunarChargedDamageNonCritical: float | None = 0.0  # 달감전 논치명타
