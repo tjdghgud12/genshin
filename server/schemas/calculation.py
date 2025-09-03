@@ -84,7 +84,7 @@ class responseDamageResult(BaseModel):
     # 커스텀
     custom: list[damageResultSchema] = []
     customCritical: list[damageResultSchema] = []
-    customNonCritical: damageResultSchema = damageResultSchema()
+    customNonCritical: list[damageResultSchema] = []
 
     # 격화
     aggravateDamage: float | None = 0.0  # 촉진 기대값
