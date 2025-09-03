@@ -48,7 +48,6 @@ const Home = (): React.ReactElement => {
         window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
         const searchParams = new URLSearchParams({ uid: valus.uid });
         router.push(`/calculator?${searchParams.toString()}`);
-        setWaitUserInfoFlag(false);
         return "캐릭터 진열장의 정보를 읽어왔습니다.";
       },
       error: (err) => {
