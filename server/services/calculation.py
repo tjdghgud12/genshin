@@ -74,11 +74,11 @@ def catalyzeReaction(attackPoint: float, elementalMastery: float, catalyzeBonus:
     return attackPoint * coefficient * (1 + masteryBonus + catalyzeBonus)
 
 
-def transformativeReaction(level: int, elementalMastery: float, transformativeBonus: float, resMinus: float, coefficient: float, finalAddHurt: float = 0.0):
+def transformativeReaction(attackPoint: float, elementalMastery: float, transformativeBonus: float, resMinus: float, coefficient: float, finalAddHurt: float = 0.0):
     # EM = 16 * 원마/(원마+2000)
     masteryBonus = 16 * elementalMastery / (elementalMastery + 2000)
     toleranceCoefficient = getToleranceCoefficient(decrease=resMinus)
-    return levelCoefficientMap[level] * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient * (1 + finalAddHurt)
+    return attackPoint * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient * (1 + finalAddHurt)
 
 
 async def damageCalculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema):
@@ -222,14 +222,14 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     for reaction in enableReaction:
         if reaction in transformativeReactionHandlerMap:
             reactionHandler, attr = transformativeReactionHandlerMap[reaction]
-            setattr(damageResult, attr, reactionHandler(characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+            setattr(damageResult, attr, reactionHandler(levelCoefficientMap[characterInfo.level], fightProp.FIGHT_PROP_ELEMENT_MASTERY))
 
     # 달반응 별도 처리 진행
     for reaction in enableReaction:
         if reaction in lunarReactionHandlerMap:
             reactionHandler, attr = lunarReactionHandlerMap[reaction]
             lunarDamage = getCriticalDamageInfo(
-                damage=reactionHandler(characterInfo.level, fightProp.FIGHT_PROP_ELEMENT_MASTERY),
+                damage=reactionHandler(levelCoefficientMap[characterInfo.level], fightProp.FIGHT_PROP_ELEMENT_MASTERY),
                 critical=critical,
                 criticalHurt=criticalHurt,
             )
@@ -245,7 +245,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 damageResult,
                 f"{swirl}SwirlDamage",
                 transformativeReaction(
-                    characterInfo.level,
+                    levelCoefficientMap[characterInfo.level],
                     fightProp.FIGHT_PROP_ELEMENT_MASTERY,
                     fightProp.FIGHT_PROP_SWIRL_ADD_HURT,
                     getToleranceCoefficient(decrease=getattr(fightProp, f"FIGHT_PROP_{swirl.upper()}_RES_MINUS")),
