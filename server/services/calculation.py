@@ -82,10 +82,10 @@ def catalyzeReaction(level: int, elementalMastery: float, catalyzeBonus: float, 
     return levelCoefficient[level] * coefficient * (1 + masteryBonus + catalyzeBonus) * totalAddHurt
 
 
-def transformativeReaction(level: int, elementalMastery: float, transformativeBonus: float, toleranceCoefficient: float, coefficient: float):
+def transformativeReaction(level: int, elementalMastery: float, transformativeBonus: float, toleranceCoefficient: float, coefficient: float, finalAddHurt: float = 0.0):
     # EM = 16 * 원마/(원마+2000)
     masteryBonus = 16 * elementalMastery / (elementalMastery + 2000)
-    return levelCoefficient[level] * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient
+    return levelCoefficient[level] * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient * (1 + finalAddHurt)
 
 
 async def damageCalculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema):
@@ -216,7 +216,6 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                             1.2,
                         )
                     case "달감전":
-                        # 이네파의 최종 곱연산이 필요함.
                         lunarCharged = getCriticalDamageInfo(
                             transformativeReaction(
                                 characterInfo.level,
@@ -224,6 +223,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                                 fightProp.FIGHT_PROP_LUNARCHARGED_ADD_HURT,
                                 getToleranceCoefficient(decrease=fightProp.FIGHT_PROP_ELEC_RES_MINUS),
                                 1.8,
+                                finalAddHurt=fightProp.FIGHT_PROP_FINAL_LUNARCHARGED_ADD_HURT,
                             ),
                             critical=critical,
                             criticalHurt=criticalHurt,

@@ -155,7 +155,7 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
         if constellation.unlocked:
             match constellation.name:
                 case "삼중 서리 관문":  # 최종 데미지 기준 추가 피해
-                    newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, 1.4)
+                    newFightProp.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, 1.4)
                 case "영고성쇠":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.DEFENSE_MINUS.value, 0.3)
@@ -602,8 +602,8 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     if passive.options[0].active:
                         normal = [0, 1.1, 1.2, 1.7]
                         burst = [0, 1.05, 1.15, 1.6]
-                        newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack])
-                        newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, burst[passive.options[0].stack])
+                        newFightProp.add(fightPropMpa.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack])
+                        newFightProp.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, burst[passive.options[0].stack])
 
                         fourthConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "멸류"))
                         if fourthConstellation.unlocked:
@@ -750,7 +750,7 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
                     option = passive.options[0]
                     if option.active:
                         finalCharged = [0, 0.10, 1.25, 1.60]  # 최종 데미지 곱연산(강공격)
-                        newFightProp.FIGHT_PROP_FINAL.add(fightPropMpa.FINAL_CHARGED_ATTACK_ATTACK_ADD_HURT.value, finalCharged[option.stack])
+                        newFightProp.add(fightPropMpa.FINAL_CHARGED_ATTACK_ATTACK_ADD_HURT.value, finalCharged[option.stack])
 
                         firstConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "위대한 제정"))
                         secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "법의 계율"))
