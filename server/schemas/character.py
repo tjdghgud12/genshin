@@ -22,7 +22,7 @@ class damageBaseFightPropSchema(BaseModel):
 class additionalAttackSchema(BaseModel):
     name: str
     type: Literal["nomal", "charge", "falling", "elementalSkill", "elementalBurst", "fire", "water", "glass", "elec", "rock", "wind", "ice"] | None
-    fightProp: damageBaseFightPropSchema
+    baseFightProp: damageBaseFightPropSchema
 
 
 class skillBaseFightPropSchema(BaseModel):
@@ -42,19 +42,19 @@ class skillConstellationOptionSchema(BaseModel):
 class passiveSkillSchema(BaseModel):
     unlockLevel: int
     description: str
-    additionalAttack: list[additionalAttackSchema] = []
+    additionalAttack: list[additionalAttackSchema] | None = None
     options: list[skillConstellationOptionSchema]
 
 
 class activeSkillSchema(BaseModel):
     description: str = ""
     baseFightProp: skillBaseFightPropSchema = skillBaseFightPropSchema()
-    additionalAttack: list[additionalAttackSchema] = []
+    additionalAttack: list[additionalAttackSchema] | None = None
     options: list[skillConstellationOptionSchema] = []
 
 
 class contellationSchema(BaseModel):
     name: str
     description: str
-    additionalAttack: list[additionalAttackSchema] = []
+    additionalAttack: list[additionalAttackSchema] | None = None
     options: list[skillConstellationOptionSchema]

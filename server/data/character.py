@@ -202,7 +202,7 @@ activeSkill = {
             baseFightProp=skillBaseFightPropSchema(
                 elementalSkill=damageBaseFightPropSchema(ATTACK=1),
             ),
-            additionalAttack=[additionalAttackSchema(name="삼업의 정화", type="elementalSkill", fightProp=damageBaseFightPropSchema(ATTACK=0.33, ELEMENTAL_MASTARY=0.67))],
+            additionalAttack=[additionalAttackSchema(name="삼업의 정화", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=0.33, ELEMENTAL_MASTARY=0.67))],
         ),
         "마음이 그리는 환상": activeSkillSchema(
             description="파티 내 불, 번개, 물 원소 타입 캐릭터가 있으면 각각 상응하는 효과가 발생",
@@ -236,7 +236,7 @@ activeSkill = {
             description="현재 hp의 30%를 소비하여 hp 최대치 기반 공격력 증가",
             options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
             baseFightProp=skillBaseFightPropSchema(),
-            additionalAttack=[additionalAttackSchema(name="혈매향", type="elementalSkill", fightProp=damageBaseFightPropSchema(ATTACK=1))],
+            additionalAttack=[additionalAttackSchema(name="혈매향", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=1))],
         ),
         "평안의 서": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1))),
     },
@@ -247,7 +247,7 @@ activeSkill = {
                 charge=damageBaseFightPropSchema(ATTACK=1),
                 falling=damageBaseFightPropSchema(ATTACK=1),
             ),
-            additionalAttack=[additionalAttackSchema(name="타파의 화살", type="charge", fightProp=damageBaseFightPropSchema(HP=1))],
+            additionalAttack=[additionalAttackSchema(name="타파의 화살", type="charge", baseFightProp=damageBaseFightPropSchema(HP=1))],
         ),  # 6돌파 효과로 평타가 타파의 화살로 전환되는 것은 여기서 커버 못침
         "뒤얽힌 생명줄": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(HP=1))),
         "심오하고 영롱한 주사위": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(HP=1))),
@@ -389,7 +389,7 @@ constellation = {
             name="계뢰",
             description="뇌설이 존재하는 동안 다시 원소 전투 스킬 발동 시 공격력의 50%의 번개 원소 피해 추가. 붙어서 사용할 경우, 사라질 때와 나타날 때 한번 씩 공격",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="계뢰", type="elec", fightProp=damageBaseFightPropSchema(ATTACK=1))],
+            additionalAttack=[additionalAttackSchema(name="계뢰", type="elec", baseFightProp=damageBaseFightPropSchema(ATTACK=1))],
         ),
         contellationSchema(
             name="가연",
@@ -447,7 +447,7 @@ constellation = {
             name="달변으로 맺은 열매",
             description="원소 폭발 발동 후 일반공격 또는 강공격이 스칸다 씨앗 상태의 적 명중 시 삼업의 정화·업의 사면을 발동하고 나히다 공격력의 200%, 원소 마스터리의 400%에 기반해 풀 원소 피해",
             options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="삼업의 정화·업의 사면", type="glass", fightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENTAL_MASTARY=4))],
+            additionalAttack=[additionalAttackSchema(name="삼업의 정화·업의 사면", type="glass", baseFightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENTAL_MASTARY=4))],
         ),
     ],
     "라이덴 쇼군": [
@@ -524,7 +524,7 @@ constellation = {
             name="올가미에 걸린 적",
             description="원소 폭발의 협동 공격 시 야란 hp 최대치의 14%의 추가 데미지. 쿨타임 1.8초",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="올가미에 걸린 적 추가 피해", type="water", fightProp=damageBaseFightPropSchema(HP=0.14))],
+            additionalAttack=[additionalAttackSchema(name="올가미에 걸린 적 추가 피해", type="water", baseFightProp=damageBaseFightPropSchema(HP=0.14))],
         ),
         contellationSchema(
             name="노름꾼의 주사위",
@@ -599,7 +599,7 @@ constellation = {
             name="죽음을 거부하는 자의 영혼 해골",
             description="서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해. 재사용 대기시간 8초",
             options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="죽음을 거부하는 자의 영혼 해골 추가 피해", type="ice", fightProp=damageBaseFightPropSchema(ELEMENTAL_MASTARY=18))],
+            additionalAttack=[additionalAttackSchema(name="죽음을 거부하는 자의 영혼 해골 추가 피해", type="ice", baseFightProp=damageBaseFightPropSchema(ELEMENTAL_MASTARY=18))],
         ),
         contellationSchema(
             name="불길한 닷새의 저주",
@@ -643,8 +643,8 @@ constellation = {
             description="불볕 고리: 공격 적중 시 공격력의 200%에 해당하는 밤혼 성질의 불 원소 피해 추가. 바이크 : 주변 적 방어력 20% 감소 및 3초마다 공격력의 500%에 해당하는 밤혼 성질의 불 원소 피해 추가",
             options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
             additionalAttack=[
-                additionalAttackSchema(name="불볕 고리 추가 피해", type="fire", fightProp=damageBaseFightPropSchema(ATTACK=2)),
-                additionalAttackSchema(name="바이크 추가 피해", type="fire", fightProp=damageBaseFightPropSchema(ATTACK=5)),
+                additionalAttackSchema(name="불볕 고리 추가 피해", type="fire", baseFightProp=damageBaseFightPropSchema(ATTACK=2)),
+                additionalAttackSchema(name="바이크 추가 피해", type="fire", baseFightProp=damageBaseFightPropSchema(ATTACK=5)),
             ],
         ),
     ],
@@ -678,7 +678,7 @@ constellation = {
             name="분노의 보상",
             description="강공격 명중 시 hp최대치의 10% 물 원소 피해를 주는 격류 2개 소환",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="격류", type="charge", fightProp=damageBaseFightPropSchema(HP=0.1))],
+            additionalAttack=[additionalAttackSchema(name="격류", type="charge", baseFightProp=damageBaseFightPropSchema(HP=0.1))],
         ),
     ],
     "에스코피에": [
@@ -711,7 +711,7 @@ constellation = {
             name="무지갯빛 티타임",
             description="현재 필드 위에 있는 파티 내 자신의 캐릭터의 일반공격, 강공격, 낙하공격이 명중 시 에스코피에의 공격력의 500%에 해당하는 얼음 원소 추가 피해",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="무지갯빛 티타임 추가 피해", type="ice", fightProp=damageBaseFightPropSchema(ATTACK=5))],
+            additionalAttack=[additionalAttackSchema(name="무지갯빛 티타임 추가 피해", type="ice", baseFightProp=damageBaseFightPropSchema(ATTACK=5))],
         ),
     ],
     "스커크": [
@@ -719,7 +719,7 @@ constellation = {
             name="요원",
             description="허계 균열 1개 흡수할 때 마다 스커크 공격력의 500%에 해당하는 얼음 원소 피해 추가",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="수정 칼날", type="charge", fightProp=damageBaseFightPropSchema(ATTACK=5))],
+            additionalAttack=[additionalAttackSchema(name="수정 칼날", type="charge", baseFightProp=damageBaseFightPropSchema(ATTACK=5))],
         ),
         contellationSchema(
             name="심연",
@@ -746,8 +746,8 @@ constellation = {
             description="흡수한 허계 균열 수 당 극악기 · 참 스택 획득. 극악기 · 참 스택 마다 원소 폭발 발동 시 공격력의 750%에 해당하는 얼음 원소 피해 추가. 일곱빛 섬광 모드에서는 일반공격 또는 피격 시 협동 공격",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
             additionalAttack=[
-                additionalAttackSchema(name="극악기·참(원소 폭발)", type="ice", fightProp=damageBaseFightPropSchema(ATTACK=7.5)),
-                additionalAttackSchema(name="극악기·참(일반 공격)", type="ice", fightProp=damageBaseFightPropSchema(ATTACK=1.8)),
+                additionalAttackSchema(name="극악기·참(원소 폭발)", type="ice", baseFightProp=damageBaseFightPropSchema(ATTACK=7.5)),
+                additionalAttackSchema(name="극악기·참(일반 공격)", type="ice", baseFightProp=damageBaseFightPropSchema(ATTACK=1.8)),
             ],
         ),
     ],
