@@ -57,11 +57,18 @@ class damageResultSchema(BaseModel):
     meltDamage: float | None = None  # 융해
     reverseMeltDamage: float | None = None  # 역융해
     vaporizeDamage: float | None = None  # 증발
-    reversevaporizeDamage: float | None = None  # 역증발
+    reverseVaporizeDamage: float | None = None  # 역증발
 
     # 격화
     aggravateDamage: float | None = None  # 촉진
     spreadDamage: float | None = None  # 발산
+
+    # 추가 계수
+    additionalDamage: float | None = None  # 계수 추가 데미지
+    additionalMeltDamage: float | None = None  # 계수 추가 융해
+    additionalReverseMeltDamage: float | None = None  # 계수 추가 역융해
+    additionalVaporizeDamage: float | None = None  # 계수 추가 증발
+    additionalReversevaporizeDamage: float | None = None  # 계수 추가 역증발
 
 
 class responseDamageResult(BaseModel):
@@ -116,7 +123,7 @@ class responseDamageResult(BaseModel):
     lunarChargedDamageNonCritical: float | None = None  # 달감전 논치명타
 
     # 확산
-    fireSwirlDamage: float | None = None
-    waterSwirlDamage: float | None = None
-    iceSwirlDamage: float | None = None
-    elecSwirlDamage: float | None = None
+    fireSwirlDamage: float | None = None  # 불확산
+    waterSwirlDamage: float | None = None  # 물확산
+    iceSwirlDamage: float | None = None  # 얼음확산
+    elecSwirlDamage: float | None = None  # 번개확산

@@ -19,19 +19,18 @@ class damageBaseFightPropSchema(BaseModel):
     ELEMENTAL_MASTARY: float | None = None
 
 
+class additionalAttackSchema(BaseModel):
+    name: str
+    type: Literal["nomal", "charge", "falling", "elementalSkill", "elementalBurst", "fire", "water", "glass", "elec", "rock", "wind", "ice"] | None
+    fightProp: damageBaseFightPropSchema
+
+
 class skillBaseFightPropSchema(BaseModel):
-
-    class customDict(TypedDict):
-        name: str
-        type: Literal["nomal", "charge", "falling", "elementalSkill", "elementalBurst"] | None
-        fightProp: damageBaseFightPropSchema
-
     nomal: damageBaseFightPropSchema | None = None
     charge: damageBaseFightPropSchema | None = None
     falling: damageBaseFightPropSchema | None = None
     elementalSkill: damageBaseFightPropSchema | None = None
     elementalBurst: damageBaseFightPropSchema | None = None
-    customs: list[customDict] | None = None
 
 
 class skillConstellationOptionSchema(BaseModel):
@@ -43,16 +42,19 @@ class skillConstellationOptionSchema(BaseModel):
 class passiveSkillSchema(BaseModel):
     unlockLevel: int
     description: str
+    additionalAttack: list[additionalAttackSchema] = []
     options: list[skillConstellationOptionSchema]
 
 
 class activeSkillSchema(BaseModel):
     description: str = ""
     baseFightProp: skillBaseFightPropSchema = skillBaseFightPropSchema()
+    additionalAttack: list[additionalAttackSchema] = []
     options: list[skillConstellationOptionSchema] = []
 
 
 class contellationSchema(BaseModel):
     name: str
     description: str
+    additionalAttack: list[additionalAttackSchema] = []
     options: list[skillConstellationOptionSchema]

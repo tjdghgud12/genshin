@@ -465,6 +465,7 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
 async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -479,6 +480,9 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     if constellation.options[0].active:
                         # 평타 계수 추가이기 때문에 2025-08-05기준 미개발 상태
                         description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
+                        additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
+                        additionalAttackPoints.append({"key": fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
+                        additionalAttackPoints.append({"key": fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
                 case "「내 이름은 그 누구도 모르리라」":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "「난 알았노라, 그대의 이름은…!」":
@@ -541,6 +545,15 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                         hp = getattr(newFightProp, fightPropMpa.HP.value)
                         totalHp = baseHp * (hpPercent + 1) + hp
                         newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, min(totalHp / 1000 * 0.007, 0.28))
+
+    # 추가 계수 입력부
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
@@ -629,6 +642,7 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
 
 async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -644,6 +658,7 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
                         newFightProp.add(fightPropMpa.CRITICAL_HURT.value, 0.6)
                 case "예술의 경지에 이른 스튜":  # 스킬 계수 추가
                     description = "원소 전투 스킬 발동 시 피해를 에스코피에의 공격력의 240%만큼 증가시키는 즉석 요리 스텍 획득(신학 깃털 효과)"
+                    additionalAttackPoints.append({"key": fightPropMpa.ATTACK_ADD_POINT.value, "value": ("ATTACK", 2.4)})
                 case "무지갯빛 티타임":  # 스킬 계수 추가
                     description = "현재 필드 위에 있는 파티 내 자신의 캐릭터의 일반공격, 강공격, 낙하공격이 명중 시 에스코피에의 공격력의 500%에 해당하는 얼음 원소 추가 피해"
                 case "캐러멜화의 마법":
@@ -671,11 +686,20 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
         weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
     )
 
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        newFightProp.add(key, finalPoint * value)
+
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
 async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -688,11 +712,12 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
             match constellation.name:
                 case "사백 개의 별빛":  # 스킬 계수 추가
                     description = "파티 내 캐릭터가 공격 시 소모되는 별빛 검 스텍을 10개 획득. 별빛 검은 시틀라리의 원소 마스터리의 200%만큼 피해 증가"
+                    additionalAttackPoints.append({"key": fightPropMpa.ATTACK_ADD_POINT.value, "value": ("ELEMENT_MASTERY", 2)})
                 case "심장을 삼키는 자의 순행":
                     newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 125)
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 250)
-                case "죽음을 거부하는 자의 영혼 해골":  # 스킬 계수 추가
+                case "죽음을 거부하는 자의 영혼 해골":  # 추가 피해
                     if constellation.options[0].active:
                         description = "서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해."
                 case "아홉 번째 하늘의 계약":
@@ -725,6 +750,12 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     newFightProp = await getAfterWeaponArtifactFightProp(
         weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
     )
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
@@ -782,6 +813,7 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
 
 async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -797,6 +829,9 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                         newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.4)
                 case "잿더미의 대가":  # 스킬 계수 추가(일반공격, 강공격, 원소폭발의 석양 베기로 주는 피해가 마비카 공격력의 60%/90%/120%만큼 증가)
                     newFightProp.add(fightPropMpa.BASE_ATTACK.value, 200)
+                    additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", 0.6)})
+                    additionalAttackPoints.append({"key": fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", 0.9)})
+                    additionalAttackPoints.append({"key": fightPropMpa.ELEMENT_BURST_ATTACK_ADD_POINT.value, "value": ("ATTACK", 1.2)})
                 case "「인간의 이름」 해방":  # 스킬 계수 추가
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.DEFENSE_MINUS.value, 0.2)
@@ -829,6 +864,14 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     newFightProp = await getAfterWeaponArtifactFightProp(
         weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
     )
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
