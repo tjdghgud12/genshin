@@ -744,7 +744,10 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                         newFightProp.add(fightPropMpa.FIRE_RES_MINUS.value, 0.2)
                         newFightProp.add(fightPropMpa.WATER_RES_MINUS.value, 0.2)
                 case "하얀 불나비의 별옷":  # 스킬 계수 추가
-                    description = "원소 마스터리의 일정 비율 만큼 원소 전투 스킬 및 원소 폭발 피해 계수 추가"
+                    # 원소전투 스킬 검은 서리별의 이즈파파가 일으킨 서리운석 폭풍이 주는 피해가 시틀라리 원소 마스터리의 90%만큼 증가
+                    # 원소폭발 반짝이는 칙령의 얼음 폭풍이 주는 피해가 시틀라리 원소 마스터리의 1200%만큼 증가
+                    additionalAttackPoints.append({"key": fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_POINT, "value": ("ELEMENT_MASTERY", 0.9)})
+                    additionalAttackPoints.append({"key": fightPropMpa.ELEMENT_BURST_ATTACK_ADD_POINT, "value": ("ELEMENT_MASTERY", 12)})
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
