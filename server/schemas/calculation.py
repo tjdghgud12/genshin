@@ -64,11 +64,12 @@ class damageResultSchema(BaseModel):
     spreadDamage: float | None = None  # 발산
 
     # 추가 계수
-    additionalDamage: float | None = None  # 계수 추가 데미지
-    additionalMeltDamage: float | None = None  # 계수 추가 융해
-    additionalReverseMeltDamage: float | None = None  # 계수 추가 역융해
-    additionalVaporizeDamage: float | None = None  # 계수 추가 증발
-    additionalReversevaporizeDamage: float | None = None  # 계수 추가 역증발
+    physicalDamageAdditional: float | None = None  # 계수 추가 물리 데미지
+    elementalDamageAdditional: float | None = None  # 계수 추가 원소 데미지
+    meltDamageAdditional: float | None = None  # 계수 추가 융해
+    reverseMeltDamageAdditional: float | None = None  # 계수 추가 역융해
+    vaporizeDamageAdditional: float | None = None  # 계수 추가 증발
+    reversevaporizeDamageAdditional: float | None = None  # 계수 추가 역증발
 
 
 class responseDamageResult(BaseModel):
