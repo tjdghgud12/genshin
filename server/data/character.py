@@ -280,7 +280,7 @@ activeSkill = {
         "밀물이여, 내가 돌아왔노라": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(HP=1))),
     },
     "마비카": {
-        "불로 엮는 삶": activeSkillSchema(
+        "불로 엮은 삶": activeSkillSchema(
             baseFightProp=skillBaseFightPropSchema(
                 nomal=damageBaseFightPropSchema(ATTACK=1), charge=damageBaseFightPropSchema(ATTACK=1), falling=damageBaseFightPropSchema(ATTACK=1)
             )
