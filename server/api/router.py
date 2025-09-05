@@ -134,30 +134,31 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                         ],
                     }
                 )
-            for i, skill in enumerate(avatar.talents):
-                skillOption = characterActive.get(skill.name) or activeSkillSchema(
-                    description="", options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")]
-                )
-                skillDetail = next((t for t in ambrCharacterDetail.talents if t.name == skill.name), Talent)
-                characterInfo["activeSkill"].append(
-                    {
-                        **skillOption.model_dump(),
-                        "name": skill.name,
-                        "level": skill.level,
-                        "icon": skill.icon,
-                        "description": skillDetail.description,
-                        "unlocked": unlocked,
-                        "options": [
-                            {
-                                **vars(option),
-                                "active": True,
-                                "stack": option.maxStack if skillOption else 0,
-                            }
-                            for option in skillOption.options
-                        ],
-                        "baseFightProp": skillOption.baseFightProp,
-                    }
-                )
+            for i, skillDetail in enumerate(ambrCharacterDetail.talents):
+                skill = next((t for t in avatar.talents if t.name == skillDetail.name), None)
+                if skill:
+                    skillOption = characterActive.get(skill.name) or activeSkillSchema(
+                        description="", options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")]
+                    )
+                    characterInfo["activeSkill"].append(
+                        {
+                            **skillOption.model_dump(),
+                            "name": skill.name,
+                            "level": skill.level,
+                            "icon": skill.icon,
+                            "description": skillDetail.description,
+                            "unlocked": unlocked,
+                            "options": [
+                                {
+                                    **vars(option),
+                                    "active": True,
+                                    "stack": option.maxStack if skillOption else 0,
+                                }
+                                for option in skillOption.options
+                            ],
+                            "baseFightProp": skillOption.baseFightProp,
+                        }
+                    )
 
             for i, defaultConstellation in enumerate(characterConstellation):
                 name = defaultConstellation.name
