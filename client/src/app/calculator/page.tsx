@@ -66,6 +66,7 @@ const CalculatorPage = (): React.ReactElement => {
       toast.promise(api.post(`/calculation`, { characterInfo: characterInfo, additionalFightProp }), {
         loading: "로딩 중",
         success: (res) => {
+          console.log(res.data);
           return "데미지 연산을 완료하였습니다.";
         },
         error: (err) => {
