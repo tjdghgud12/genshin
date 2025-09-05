@@ -447,7 +447,7 @@ constellation = {
             name="달변으로 맺은 열매",
             description="원소 폭발 발동 후 일반공격 또는 강공격이 스칸다 씨앗 상태의 적 명중 시 삼업의 정화·업의 사면을 발동하고 나히다 공격력의 200%, 원소 마스터리의 400%에 기반해 풀 원소 피해",
             options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="삼업의 정화·업의 사면", type="glass", baseFightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENT_MASTERY=4))],
+            additionalAttack=[additionalAttackSchema(name="삼업의 정화·업의 사면", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENT_MASTERY=4))],
         ),
     ],
     "라이덴 쇼군": [
@@ -711,7 +711,7 @@ constellation = {
             name="무지갯빛 티타임",
             description="현재 필드 위에 있는 파티 내 자신의 캐릭터의 일반공격, 강공격, 낙하공격이 명중 시 에스코피에의 공격력의 500%에 해당하는 얼음 원소 추가 피해",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="무지갯빛 티타임 추가 피해", type="ice", baseFightProp=damageBaseFightPropSchema(ATTACK=5))],
+            additionalAttack=[additionalAttackSchema(name="무지갯빛 티타임 추가 피해", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=5))],
         ),
     ],
     "스커크": [
@@ -746,8 +746,9 @@ constellation = {
             description="흡수한 허계 균열 수 당 극악기 · 참 스택 획득. 극악기 · 참 스택 마다 원소 폭발 발동 시 공격력의 750%에 해당하는 얼음 원소 피해 추가. 일곱빛 섬광 모드에서는 일반공격 또는 피격 시 협동 공격",
             options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
             additionalAttack=[
-                additionalAttackSchema(name="극악기·참(원소 폭발)", type="ice", baseFightProp=damageBaseFightPropSchema(ATTACK=7.5)),
-                additionalAttackSchema(name="극악기·참(일반 공격)", type="ice", baseFightProp=damageBaseFightPropSchema(ATTACK=1.8)),
+                additionalAttackSchema(name="극악기·참(원소 폭발)", type="elementalBurst", baseFightProp=damageBaseFightPropSchema(ATTACK=7.5)),
+                additionalAttackSchema(name="극악기·참(일반 공격)", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=1.8)),
+                additionalAttackSchema(name="극악기·참(피격)", type="charge", baseFightProp=damageBaseFightPropSchema(ATTACK=1.8)),
             ],
         ),
     ],
