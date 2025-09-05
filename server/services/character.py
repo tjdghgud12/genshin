@@ -4,7 +4,7 @@ from services.artifact import getArtifactFightProp, getArtifactSetData
 from services.weapon import getTotalWeaponFightProp
 from schemas.artifact import artifactDataSchema
 from schemas.calculation import requestCharacterInfoSchema
-from schemas.fightProp import fightPropSchema
+from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 from schemas.weapon import weaponDataSchema
 from ambr import CharacterDetail, CharacterPromote
 from copy import deepcopy
@@ -73,7 +73,23 @@ async def getWeaponArtifactFightProp(fightProp: fightPropSchema, weapon: weaponD
 
     # ----------------------- 성유물 + 무기 데이터 합산 -----------------------
     for fightPropKey, value in artifactFightProp.model_dump().items():
-        fightProp.add(fightPropKey, value + getattr(artifactSetFightProp, fightPropKey) + getattr(weaponFightProp, fightPropKey))
+        if fightPropKey == "FIGHT_PROP_ADDITIONAL_ATTACK":
+            newAdditionalAttack: dict[str, additionalAttackFightPropSchema] = {}
+            s = getattr(artifactSetFightProp, fightPropKey)
+            w = getattr(weaponFightProp, fightPropKey)
+
+            for name in {**s, **w, **value}:
+                sTarget = s.get(name, additionalAttackFightPropSchema())
+                wTarget = w.get(name, additionalAttackFightPropSchema())
+                valueTarget = value.get(name, additionalAttackFightPropSchema())
+                for key, v in sTarget.items():
+                    valueTarget.add(key, v)
+                    valueTarget.add(key, getattr(wTarget, v))
+                    newAdditionalAttack[name] = valueTarget
+            fightProp.FIGHT_PROP_ADDITIONAL_ATTACK = newAdditionalAttack
+
+        else:
+            fightProp.add(fightPropKey, value + getattr(artifactSetFightProp, fightPropKey) + getattr(weaponFightProp, fightPropKey))
 
     return {"fightProp": fightProp, "weaponAfterProps": weaponData["afterAddProps"], "artifactAfterProps": artifactSetData["afterAddProps"]}
 
@@ -197,6 +213,11 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
 
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
     # ----------------------- constellations -----------------------
     # # 가연, 등루, 이등의 경우 fightProp에 영행 X
     for constellation in characterInfo.constellations:
@@ -240,6 +261,11 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
 
     # ----------------------- constellations -----------------------
     # # 지혜를 머금은 씨앗, 감화된 성취의 싹, 달변으로 맺은 열매, 깨달음을 주는 잎의 경우 fightProp에 영행 X
@@ -299,7 +325,13 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     addLevel = 3 if addElementalBurstLevel.unlocked else 0
                     skillValue = activeSkillLevelMap[active.name][active.level + addLevel - 1]
                     stack = min(option.stack + (1 if seedsOfWisdom.unlocked else 0), 2)
-                    newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, skillValue[stack - 1])
+
+                    target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화")
+                    secondTarget = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화·업의 사면")
+                    if target:
+                        target.add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[stack - 1])
+                    if secondTarget:
+                        secondTarget.add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[stack - 1])
 
     # ----------------------- passive -----------------------
     for passive in characterInfo.passiveSkill:
@@ -312,8 +344,14 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     if passive.options[0].active:
                         val = min(getattr(newFightProp, fightPropMpa.ELEMENT_MASTERY.value) - 200, 800)
                         if val > 0:
-                            newFightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL.value, val * 0.03 / 100)
-                            newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, val * 0.1 / 100)
+                            target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화")
+                            secondTarget = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화·업의 사면")
+                            if target:
+                                target.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
+                                target.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
+                            if secondTarget:
+                                secondTarget.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
+                                secondTarget.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -398,18 +436,10 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
 
-    # ----------------------- constellations -----------------------
-    # 진홍의 꽃다발, 비처럼 내리는 불안, 적색 피의 의식, 영원한 안식의 정원, 꽃잎 향초의 기도는 호두의 fightProp에 영향 X
-    for constellation in characterInfo.constellations:
-        if constellation.unlocked:
-            match constellation.name:
-                case "나비 잔향":
-                    if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.CRITICAL.value, 1.00)
-                case "적색 피의 의식":
-                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
-                case "꽃잎 향초의 기도":
-                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
 
     # ----------------------- passive -----------------------
     # 모습을 감춘 나비는 호두의 fightProp에 영향X
@@ -425,6 +455,28 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
     )
 
+    # ----------------------- constellations -----------------------
+    # 비처럼 내리는 불안이 가장 마지막 최대HP기준으로 적용되어야 하기 때문에 해당 위치로 이동
+    # 진홍의 꽃다발, 적색 피의 의식, 영원한 안식의 정원, 꽃잎 향초의 기도는 호두의 fightProp에 영향 X
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "나비 잔향":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.CRITICAL.value, 1.00)
+                case "비처럼 내리는 불안":
+                    # 최종 hp의 10%만큼
+                    target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("혈매향")
+                    if target:
+                        baseHp = getattr(newFightProp, fightPropMpa.BASE_HP.value)
+                        hpPercent = getattr(newFightProp, fightPropMpa.HP_PERCENT.value)
+                        hp = getattr(newFightProp, fightPropMpa.HP.value)
+                        totalHp = baseHp * (hpPercent + 1) + hp
+                        target.add(fightPropMpa.ATTACK_ADD_POINT.value, totalHp * 0.1)
+                case "적색 피의 의식":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "꽃잎 향초의 기도":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
     # ----------------------- active -----------------------
     # 가장 마지막 최대HP기준으로 적용되어야 하기 때문에 해당 위치로 이동
     activeSkillLevelMap = {
@@ -565,6 +617,11 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
 
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
     # ----------------------- constellations -----------------------
     # 심연, 악연, 소망, 멸류는 fightProp에 영향 없거나 각 스킬 연산 시 처리
     for constellation in characterInfo.constellations:
@@ -648,6 +705,11 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
 
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
     # ----------------------- constellations -----------------------
     # 로즈마리 비밀 레시피는 fightProp에 영향X
     for constellation in characterInfo.constellations:
@@ -704,6 +766,11 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
 
     # ----------------------- constellations -----------------------
     # 구름뱀의 깃털 왕관, 불길한 닷새의 저주은 fightProp에 영향 없거나 스킬에서 처리
@@ -770,6 +837,11 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
 
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
     # ----------------------- constellations -----------------------
     # 위대한 제정, 법의 계율, 고대의 의제, 연민의 왕관, 정의의 판결 fightProp에 영향 없거나 스킬에서 처리
     for constellation in characterInfo.constellations:
@@ -821,6 +893,11 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
     newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
 
     # ----------------------- constellations -----------------------
     # 타오르는 태양, 진정한 의미, 「지도자」의 각오는 fightProp에 영향 없거나 다른 곳에서 처리

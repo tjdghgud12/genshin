@@ -1,6 +1,25 @@
 from pydantic import BaseModel
 
 
+class additionalAttackFightPropSchema(BaseModel):
+    FIGHT_PROP_CRITICAL: float = 0.0
+    FIGHT_PROP_CRITICAL_HURT: float = 0.0
+    FIGHT_PROP_FIRE_ADD_HURT: float = 0.0
+    FIGHT_PROP_ELEC_ADD_HURT: float = 0.0
+    FIGHT_PROP_WATER_ADD_HURT: float = 0.0
+    FIGHT_PROP_GRASS_ADD_HURT: float = 0.0
+    FIGHT_PROP_WIND_ADD_HURT: float = 0.0
+    FIGHT_PROP_ROCK_ADD_HURT: float = 0.0
+    FIGHT_PROP_ICE_ADD_HURT: float = 0.0
+    FIGHT_PROP_ATTACK_ADD_HURT: float = 0.0
+    FIGHT_PROP_ATTACK_ADD_POINT: float = 0.0
+
+    def add(self, field_name: str, value: float):
+        if not hasattr(self, field_name):
+            raise KeyError(f"{field_name} is not a valid field")
+        setattr(self, field_name, getattr(self, field_name) + value)
+
+
 class fightPropSchema(BaseModel):
     # 공통
     FIGHT_PROP_BASE_HP: float = 0.0
@@ -103,6 +122,9 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_ELEMENT_BURST_ATTACK_ADD_HURT: float = 0.0
     FIGHT_PROP_ELEMENT_BURST_ATTACK_ADD_POINT: float = 0.0  # 계수 추가
 
+    # 추가 공격 전용 fight prop
+    FIGHT_PROP_ADDITIONAL_ATTACK: dict[str, additionalAttackFightPropSchema] = {}
+
     # 원소 반응 관련
     FIGHT_PROP_OVERLOADED_ADD_HURT: float = 0.0  # 과부하
     FIGHT_PROP_ELECTROCHARGED_ADD_HURT: float = 0.0  # 감전
@@ -141,10 +163,15 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_FINAL_CHARGED_ATTACK_ATTACK_ADD_HURT: float = 0.0
     FIGHT_PROP_FINAL_ELEMENT_BURST_ATTACK_ADD_HURT: float = 0.0
 
-    def add(self, field_name: str, value: float):
+    def add(self, field_name: str, value: float, additionalAttackName: str = ""):
         if not hasattr(self, field_name):
             raise KeyError(f"{field_name} is not a valid field")
-        setattr(self, field_name, getattr(self, field_name) + value)
+        if field_name == "FIGHT_PROP_ADDITIONAL_ATTACK":
+            target = self.FIGHT_PROP_ADDITIONAL_ATTACK.get(additionalAttackName, None)
+            if target:
+                setattr(target, field_name, getattr(target, field_name) + value)
+        else:
+            setattr(self, field_name, getattr(self, field_name) + value)
 
     @classmethod
     def extractFightPropKeys(cls) -> frozenset[str]:
