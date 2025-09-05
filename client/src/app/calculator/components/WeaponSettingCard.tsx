@@ -1,6 +1,5 @@
 "use client";
 
-import { calculatorCharacterInfoSchema } from "@/lib/calculatorSchema";
 import { Combobox } from "@/app/globalComponents/ComboBox";
 import GradientStar from "@/app/globalComponents/GradientStar";
 import { DotBounsLoading } from "@/app/loading";
@@ -10,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import api from "@/lib/axios";
+import { calculatorCharacterInfoSchema } from "@/lib/calculatorSchema";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { IWeaponInfo } from "@/types/weaponType";
@@ -87,7 +87,7 @@ const WeaponSettingCard = ({
       <CardContent className="w-full h-full p-1 text-gray-700">
         <div className="w-full flex">
           <div className="w-[40%] aspect-square mr-2">
-            {!imgLoading && !weaponDetail && <DotBounsLoading className="w-fit h-fit m-auto" dotClassName="size-4 stroke-8" />}
+            {!imgLoading && !weaponDetail && <DotBounsLoading className="w-fit h-full m-auto" dotClassName="size-4 stroke-8" />}
             {weaponDetail ? (
               <Tooltip delayDuration={500}>
                 <TooltipTrigger asChild>
