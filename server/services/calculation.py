@@ -318,4 +318,4 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
             setattr(damageResult, f"{attr}Critical", lunarDamage.criticalDamage)
             setattr(damageResult, attr, lunarDamage.expectedDamage)
 
-    return {"damage": {}, "totalFightProps": {}}
+    return {"damage": damageResult, "totalFightProps": fightProp}
