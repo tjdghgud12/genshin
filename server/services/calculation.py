@@ -7,6 +7,8 @@ from ambr import AmbrAPI
 from typing import Literal
 from pydantic import BaseModel
 from functools import partial
+from itertools import chain
+from enum import Enum
 import time
 
 
@@ -105,6 +107,12 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
         "elementalBurst": "ELEMENT_BURST",
     }
 
+    class baseFightPropKeyMap(str, Enum):
+        HP = "FIGHT_PROP_HP_FINAL"
+        ATTACK = "FIGHT_PROP_ATTACK_FINAL"
+        DEFENSE = "FIGHT_PROP_DEFENSE_FINAL"
+        ELEMENT_MASTERY = "FIGHT_PROP_ELEMENT_MASTERY"
+
     if getTotalFightProp is not None:
         result = await getTotalFightProp(ambrCharacterDetail, characterInfo)
         fightProp: responseFightPropSchema = responseFightPropSchema(**result.fightProp.model_dump())
@@ -184,16 +192,29 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     enableReaction = reactions[element]
     if characterInfo.name == "이네파":
         enableReaction.append("달감전")
-
     for skill in characterInfo.activeSkill:
-        for attackType, baseFightProp in {k: v for k, v in skill.baseFightProp.model_dump().items() if v is not None}.items():
+        additionalAttack = []
+        if skill.additionalAttack is not None:
+            for additional in skill.additionalAttack:
+                damageResult.customNonCritical[additional.name] = damageResultSchema()
+                damageResult.customCritical[additional.name] = damageResultSchema()
+                damageResult.custom[additional.name] = damageResultSchema()
+                additionalAttack.append((additional.type, additional.baseFightProp.model_dump(), additional.name))
+
+        for attackType, baseFightProp, customName in chain(((k, v, False) for k, v in skill.baseFightProp.model_dump().items() if v is not None), additionalAttack):
             # 차스카의 경우 별도로 처리 필요!
             # 커스텀 영역에 대해서 처리 필요!
             key = attackTypeKey[attackType]
-            targetNonCritical = getattr(damageResult, f"{attackType}NonCritical")
-            targetCritical = getattr(damageResult, f"{attackType}Critical")
-            targetExpected = getattr(damageResult, attackType)
-            finalAttackPoint = sum(getattr(fightProp, f"FIGHT_PROP_{key}_FINAL") * value for key, value in baseFightProp.items() if value is not None)
+            if isinstance(customName, str):
+                targetNonCritical = damageResult.customNonCritical[customName]
+                targetCritical = damageResult.customCritical[customName]
+                targetExpected = damageResult.custom[customName]
+            else:
+                targetNonCritical = getattr(damageResult, f"{attackType}NonCritical")
+                targetCritical = getattr(damageResult, f"{attackType}Critical")
+                targetExpected = getattr(damageResult, attackType)
+
+            finalAttackPoint = sum(getattr(fightProp, baseFightPropKeyMap[key]) * value for key, value in baseFightProp.items() if value is not None)
             additionalAttackPoint = fightProp.FIGHT_PROP_ATTACK_ADD_POINT + getattr(fightProp, f"FIGHT_PROP_{key}_ATTACK_ADD_POINT", 0.0)
             critical = fightProp.FIGHT_PROP_CRITICAL + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL")
             criticalHurt = fightProp.FIGHT_PROP_CRITICAL_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL_HURT")

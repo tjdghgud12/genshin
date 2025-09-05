@@ -93,10 +93,10 @@ class responseDamageResult(BaseModel):
     elementalBurst: damageResultSchema = damageResultSchema()
     elementalBurstCritical: damageResultSchema = damageResultSchema()
     elementalBurstNonCritical: damageResultSchema = damageResultSchema()
-    # 커스텀
-    custom: list[damageResultSchema] = []
-    customCritical: list[damageResultSchema] = []
-    customNonCritical: list[damageResultSchema] = []
+    # 추가 타격
+    custom: dict[str, damageResultSchema] = {}
+    customCritical: dict[str, damageResultSchema] = {}
+    customNonCritical: dict[str, damageResultSchema] = {}
 
     # 격변
     overloadedDamage: float | None = None  # 과부하
