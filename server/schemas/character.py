@@ -16,7 +16,7 @@ class damageBaseFightPropSchema(BaseModel):
     HP: float | None = None
     ATTACK: float | None = None
     DEFENSE: float | None = None
-    ELEMENTAL_MASTARY: float | None = None
+    ELEMENT_MASTERY: float | None = None
 
 
 class additionalAttackSchema(BaseModel):

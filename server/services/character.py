@@ -271,21 +271,21 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     # ----------------------- active -----------------------
     activeSkillLevelMap = {
         "마음이 그리는 환상": [
-            (14.9, 22.3),
-            (16.0, 24.0),
-            (17.1, 25.7),
-            (18.6, 27.9),
-            (19.7, 29.6),
-            (20.8, 31.2),
-            (22.3, 33.5),
-            (23.8, 35.7),
-            (25.3, 37.9),
-            (26.8, 40.2),
-            (28.3, 42.4),
-            (29.8, 44.6),
-            (31.6, 47.4),
-            (33.5, 50.2),
-            (35.3, 53.0),
+            (0.149, 0.223),
+            (0.160, 0.240),
+            (0.171, 0.257),
+            (0.186, 0.279),
+            (0.197, 0.296),
+            (0.208, 0.312),
+            (0.223, 0.335),
+            (0.238, 0.357),
+            (0.253, 0.379),
+            (0.268, 0.402),
+            (0.283, 0.424),
+            (0.298, 0.446),
+            (0.316, 0.474),
+            (0.335, 0.502),
+            (0.353, 0.530),
         ]
     }
 
@@ -312,8 +312,8 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     if passive.options[0].active:
                         val = min(getattr(newFightProp, fightPropMpa.ELEMENT_MASTERY.value) - 200, 800)
                         if val > 0:
-                            newFightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL.value, val * 0.03)
-                            newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, val * 0.1)
+                            newFightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL.value, val * 0.03 / 100)
+                            newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, val * 0.1 / 100)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(

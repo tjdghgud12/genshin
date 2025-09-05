@@ -202,7 +202,7 @@ activeSkill = {
             baseFightProp=skillBaseFightPropSchema(
                 elementalSkill=damageBaseFightPropSchema(ATTACK=1),
             ),
-            additionalAttack=[additionalAttackSchema(name="삼업의 정화", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=0.33, ELEMENTAL_MASTARY=0.67))],
+            additionalAttack=[additionalAttackSchema(name="삼업의 정화", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=0.33, ELEMENT_MASTERY=0.67))],
         ),
         "마음이 그리는 환상": activeSkillSchema(
             description="파티 내 불, 번개, 물 원소 타입 캐릭터가 있으면 각각 상응하는 효과가 발생",
@@ -447,7 +447,7 @@ constellation = {
             name="달변으로 맺은 열매",
             description="원소 폭발 발동 후 일반공격 또는 강공격이 스칸다 씨앗 상태의 적 명중 시 삼업의 정화·업의 사면을 발동하고 나히다 공격력의 200%, 원소 마스터리의 400%에 기반해 풀 원소 피해",
             options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="삼업의 정화·업의 사면", type="glass", baseFightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENTAL_MASTARY=4))],
+            additionalAttack=[additionalAttackSchema(name="삼업의 정화·업의 사면", type="glass", baseFightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENT_MASTERY=4))],
         ),
     ],
     "라이덴 쇼군": [
@@ -599,7 +599,7 @@ constellation = {
             name="죽음을 거부하는 자의 영혼 해골",
             description="서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해. 재사용 대기시간 8초",
             options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
-            additionalAttack=[additionalAttackSchema(name="죽음을 거부하는 자의 영혼 해골 추가 피해", type="ice", baseFightProp=damageBaseFightPropSchema(ELEMENTAL_MASTARY=18))],
+            additionalAttack=[additionalAttackSchema(name="죽음을 거부하는 자의 영혼 해골 추가 피해", type="ice", baseFightProp=damageBaseFightPropSchema(ELEMENT_MASTERY=18))],
         ),
         contellationSchema(
             name="불길한 닷새의 저주",
