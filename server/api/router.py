@@ -118,6 +118,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 )
                 characterInfo["passiveSkill"].append(
                     {
+                        **skillOption.model_dump(),
                         "name": skill.name,
                         "icon": skill.icon,
                         "description": skill.description,
@@ -140,6 +141,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 skillDetail = next((t for t in ambrCharacterDetail.talents if t.name == skill.name), Talent)
                 characterInfo["activeSkill"].append(
                     {
+                        **skillOption.model_dump(),
                         "name": skill.name,
                         "level": skill.level,
                         "icon": skill.icon,
@@ -164,6 +166,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                         **vars(defaultConstellation),
                         "icon": enkaConstellation[name].icon,
                         "unlocked": enkaConstellation[name].unlocked,
+                        # "unlocked": False,  # 테스트를 위한 모든 캐릭터 명함 처리
                         # "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
                         "description": ambrConstellation[name].description,
                         "options": [
@@ -233,7 +236,7 @@ async def calculation(characterInfo: requestCharacterInfoSchema, additionalFight
     if ambrApi is None:
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     result = await damageCalculation(characterInfo=characterInfo, additionalFightProp=additionalFightProp)
-    return {}
+    return result
 
 
 @router.get("/")
