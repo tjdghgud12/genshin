@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculatorSchema";
+import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculator";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { IArtifactOptionInfo } from "@/types/artifactType";

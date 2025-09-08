@@ -4,11 +4,11 @@ import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCa
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/lib/axios";
-import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculatorSchema";
+import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculator";
 import { fightPropLabels } from "@/lib/fightProps";
 import { parseCharacterInfo } from "@/lib/parseCharacterInfo";
 import { deepMergeAddOnly } from "@/lib/utils";
-import { IdamageCalculationResult } from "@/types/globalType";
+import { IdamageCalculationResult } from "@/types/calculatorType";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";

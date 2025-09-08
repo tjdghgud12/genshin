@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import api from "@/lib/axios";
-import { calculatorCharacterInfoSchema } from "@/lib/calculatorSchema";
+import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { fightPropLabels } from "@/lib/fightProps";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useCalculatorStore } from "@/store/useCalculatorStore";

@@ -1,4 +1,4 @@
-import { calculatorCharacterInfoSchema } from "@/lib/calculatorSchema";
+import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { z } from "zod";
 import { fightPropLabels } from "./fightProps";
 
