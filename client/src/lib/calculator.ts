@@ -105,4 +105,40 @@ const calculatorFormSchema = z.object({
   additionalFightProp: z.object(Object.fromEntries(Object.keys(fightPropLabels).map((key) => [key, createFloatSchema()]))),
 });
 
-export { calculatorCharacterInfoSchema, calculatorFormSchema, createFloatSchema };
+const calculatorLabel = {
+  nomal: "일반 공격",
+  charge: "강 공격",
+  falling: "낙하 공격",
+  elementalSkill: "원소 전투 스킬",
+  elementalBurst: "원소 폭발",
+
+  physical: "물리 피해",
+  elemental: "원소 피해",
+
+  Critical: "치명",
+  NonCritical: "비치명",
+  Additional: "추가 계수",
+
+  melt: "융해",
+  reverseMelt: "융해(역)",
+  vaporize: "증발",
+  reverseVaporize: "증발(역)",
+  aggravate: "촉진",
+  spread: "발산",
+  overloaded: "과부하", // 과부하
+  electroCharged: "감전", // 감전
+  superconduct: "초전도", // 초전도
+  shatter: "쇄빙", // 쇄빙
+  bloom: "개화", // 개화 기대값
+  hyperBloom: "만개", // 만개 기대값
+  burgeon: "발화", // 발화 기대값
+  burning: "연소", // 연소 기대값
+  fireSwirl: "확산(불)", // 불확산
+  waterSwirl: "확산(물)", // 물확산
+  iceSwirl: "확산(얼음)", // 얼음확산
+  elecSwirl: "확산(번개)", // 번개확산
+
+  lunarCharged: "달감전", // 달감전 기대값
+};
+
+export { calculatorCharacterInfoSchema, calculatorFormSchema, calculatorLabel, createFloatSchema };
