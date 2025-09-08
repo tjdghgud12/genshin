@@ -1,6 +1,7 @@
 "use client";
 import AdditionalFightProp from "@/app/calculator/components/AdditionalFightProp";
 import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCard";
+import DamageResultCard from "@/app/calculator/components/DamageResultCard";
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/lib/axios";
@@ -122,6 +123,7 @@ const CalculatorPage = (): React.ReactElement => {
               return (
                 <TabsContent key={`calculator-tab-content-${index}`} className={`w-full h-fit`} value={name}>
                   <CharacterSettingCard form={form} item={item} index={index} />
+                  <DamageResultCard damageResult={totalCalculatorData[index].result} element={item.raw.element} />
                 </TabsContent>
               );
             })}
