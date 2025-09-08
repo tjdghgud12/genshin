@@ -14,10 +14,10 @@ const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>)
   const artifactSets = (await api.get(`/artifactsets`)).data;
 
   return (
-    <html className="w-fit" lang="en">
-      <body className="flex flex-col">
+    <html className="h-full" lang="en">
+      <body className="min-h-screen grid grid-rows-[1fr_auto]">
         <Store weaponList={weaponList} artifactSets={artifactSets}>
-          {children}
+          <div className="flex flex-col justify-center">{children}</div>
         </Store>
         <footer className="text-gray-600 p-2 mt-5 mx-auto">Created by JjoriButler</footer>
       </body>

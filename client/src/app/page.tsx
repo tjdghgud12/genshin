@@ -67,7 +67,7 @@ const Home = (): React.ReactElement => {
         </div>
       ) : (
         <Fragment>
-          <div className="h-1/2 flex">
+          <div className="h-1/2 flex mt-8">
             <h1 className="text-8xl font-bold text-violet-800 mt-auto mb-4 mx-auto">Calculator</h1>
           </div>
           <div />
