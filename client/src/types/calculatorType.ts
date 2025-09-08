@@ -1,4 +1,4 @@
-interface IattackDamage {
+export interface IattackDamage {
   // 기본
   physicalDamage: number;
   elementalDamage: number;
@@ -16,10 +16,10 @@ interface IattackDamage {
   // 추가 계수
   physicalDamageAdditional: number; // 계수 추가 물리 데미지
   elementalDamageAdditional: number; // 계수 추가 원소 데미지
-  meltDamageAdditionalnumber: number; // 계수 추가 융해
-  reverseMeltDamageAdditionalnumber: number; // 계수 추가 역융해
-  vaporizeDamageAdditionalnumber: number; // 계수 추가 증발
-  reversevaporizeDamageAdditionalnumber: number; // 계수 추가 역증발
+  meltDamageAdditional: number; // 계수 추가 융해
+  reverseMeltDamageAdditional: number; // 계수 추가 역융해
+  vaporizeDamageAdditional: number; // 계수 추가 증발
+  reverseVaporizeDamageAdditional: number; // 계수 추가 역증발
 }
 
 export interface IdamageCalculationResult {
