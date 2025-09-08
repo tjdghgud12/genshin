@@ -89,7 +89,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     ambrCharacterDetail = await ambrApi.fetch_character_detail(str(characterInfo.id))
     getTotalFightProp = getFightProp.get(characterInfo.name)
     damageResult = responseDamageResult()
-    element = ambrCharacterDetail.element
+    element = ambrCharacterDetail.element if ambrCharacterDetail.element != "Electric" else "Elec"
     reactions = {
         "Fire": ["역융해", "증발", "연소", "발화", "과부하"],
         "Elec": ["촉진", "만개", "과부하", "감전", "초전도"],
