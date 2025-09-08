@@ -37,13 +37,13 @@ const CharacterSettingCard = ({
   };
 
   return (
-    <Card className={`aspect-[2/1.1] p-0 ${elementColors[item.raw.element].bg} shadow-lg ${elementColors[item.raw.element].shadow}`}>
+    <Card className={`aspect-[2/1.1] p-0 ${elementColors[item.raw.element].bg} shadow-lg ${elementColors[item.raw.element].shadow} border-none pb-6`}>
       <CardContent className={`h-full flex ${elementColors[item.raw.element].bg} rounded-2xl text-gray-700 pl-0 relative`}>
         <div className="w-[70%] h-full absolute z-0">
           <Image src={item.raw.icon.gacha} className={`object-cover object-[83%_center] opacity-90`} alt="" fill sizes="(max-width: 1200px) 7vw" />
         </div>
         <div className="w-full flex z-10">
-          <div className={`w-[45%] flex flex-col pl-8 py-3 z-10`}>
+          <div className={`w-[45%] flex flex-col pl-8 pt-3 z-10`}>
             <FormField
               control={form.control}
               name={`data.${index}.level`}
@@ -193,7 +193,7 @@ const CharacterSettingCard = ({
             </div>
           </div>
 
-          <div className="w-3/5 h-auto flex py-3 gap-3">
+          <div className="w-3/5 h-auto flex pt-3 gap-3">
             <div className="w-[40%] flex flex-col gap-2">
               {/* 무기 */}
               <div className="flex justify-start mb-auto">

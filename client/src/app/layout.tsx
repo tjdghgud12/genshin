@@ -14,8 +14,8 @@ const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>)
   const artifactSets = (await api.get(`/artifactsets`)).data;
 
   return (
-    <html className="w-full h-full" lang="en">
-      <body className="w-full h-full mb-10 flex flex-col">
+    <html className="w-fit" lang="en">
+      <body className="flex flex-col">
         <Store weaponList={weaponList} artifactSets={artifactSets}>
           {children}
         </Store>

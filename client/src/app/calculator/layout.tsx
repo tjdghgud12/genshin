@@ -64,7 +64,7 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
   };
 
   return (
-    <main className="w-full h-auto min-w-[1650px] min-h-[500px] flex flex-col flex-1">
+    <main className="w-full min-w-[1650px] min-h-[500px] flex flex-col">
       {waitUserInfoFlag ? (
         <div className="m-auto">
           <DotBounsLoading />
@@ -96,7 +96,7 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
               </form>
             </Form>
           </div>
-          <main>{children}</main>
+          <div className="w-full">{children}</div>
         </Fragment>
       )}
     </main>
