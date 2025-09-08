@@ -16,7 +16,7 @@ interface IuserSelectoptions {
   [key: string]: unknown;
 }
 
-const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalculatorData: T): TCalculatorData => {
+const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculatorData: T): TCalculatorData => {
   const data = rawCalculatorData.info;
   return {
     raw: data,
@@ -71,4 +71,4 @@ const parseCalculatorData = <T extends { info: Record<string, any> }>(rawCalcula
   };
 };
 
-export { parseCalculatorData };
+export { parseCharacterInfo };

@@ -4,10 +4,11 @@ import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCa
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/lib/axios";
-import { calculatorFormSchema as formSchema } from "@/lib/calculatorSchema";
+import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculatorSchema";
 import { fightPropLabels } from "@/lib/fightProps";
-import { parseCalculatorData } from "@/lib/parseCalculatorData";
+import { parseCharacterInfo } from "@/lib/parseCharacterInfo";
 import { deepMergeAddOnly } from "@/lib/utils";
+import { IdamageCalculationResult } from "@/types/globalType";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import { z } from "zod";
 
 const CalculatorPage = (): React.ReactElement => {
   const [selectedCharacter, setSelectedCharacter] = useState<string>("");
+  const [totalCalculatorData, setTotalCalculatorData] = useState<{ info: z.infer<typeof calculatorCharacterInfoSchema>; result: IdamageCalculationResult }[]>([]);
 
   const elementBgColors: Record<string, string> = {
     Fire: `bg-Fire`,
@@ -81,7 +83,8 @@ const CalculatorPage = (): React.ReactElement => {
     const calculatorDataRaw = window.sessionStorage.getItem(`calculatorData`);
     if (calculatorDataRaw) {
       const parseData = JSON.parse(calculatorDataRaw);
-      parseData.map((data: { info: object; result: object }) => append(parseCalculatorData<typeof data>(data)));
+      parseData.map((data: { info: object; result: object }) => append(parseCharacterInfo<typeof data>(data)));
+      setTotalCalculatorData(parseData);
       setSelectedCharacter(parseData[0].info.name);
     }
 
