@@ -226,9 +226,10 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 characterInfo["totalStat"] = newFightProp.fightProp
                 characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i].level} for i, active in enumerate(characterInfo["activeSkill"])]
 
-            # 3. 최종 캐릭터 스텟 및 데미지 계산
+                # 3. 최종 캐릭터 스텟 및 데미지 계산
+                damageCalculationResult = await damageCalculation(characterInfo=requestCharacterInfoSchema(**characterInfo), additionalFightProp=fightPropSchema())
 
-            parsedCharacters.append({"info": characterInfo, "result": {}})
+            parsedCharacters.append({"info": characterInfo, "result": damageCalculationResult["damage"]})
         return {"characters": parsedCharacters}
 
 
