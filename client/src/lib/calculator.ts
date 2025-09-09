@@ -1,4 +1,5 @@
 import { fightPropLabels } from "@/lib/fightProps";
+import { IdamageCalculationResult } from "@/types/calculatorType";
 import { z } from "zod";
 
 const createFloatSchema = (min?: number, max?: number, errorMessage?: string) => {
@@ -141,4 +142,6 @@ const calculatorLabel = {
   lunarCharged: "달감전", // 달감전 기대값
 };
 
-export { calculatorCharacterInfoSchema, calculatorFormSchema, calculatorLabel, createFloatSchema };
+const getCalculationResultData = <T extends keyof IdamageCalculationResult>(obj: IdamageCalculationResult, key: T): IdamageCalculationResult[T] => obj[key];
+
+export { calculatorCharacterInfoSchema, calculatorFormSchema, calculatorLabel, createFloatSchema, getCalculationResultData };

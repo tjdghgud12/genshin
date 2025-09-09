@@ -55,4 +55,8 @@ const deepMergeAddOnly = <T extends AnyObject, S extends AnyObject>(target: T, s
   return result as T & S;
 };
 
-export { deepMergeAddOnly, inputNumberWithSpace };
+const typedKeys = <T extends object>(obj: T) => {
+  return Object.keys(obj) as (keyof T)[];
+};
+
+export { deepMergeAddOnly, inputNumberWithSpace, typedKeys };
