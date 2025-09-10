@@ -50,8 +50,8 @@ class responseFightPropSchema(fightPropSchema):
 
 class damageResultSchema(BaseModel):
     # 기본
-    physicalDamage: float = 0.0
-    elementalDamage: float = 0.0
+    physicalDamage: float | None = None
+    elementalDamage: float | None = None
 
     # 증폭
     meltDamage: float | None = None  # 융해
