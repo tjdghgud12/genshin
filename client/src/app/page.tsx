@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
-import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { Fragment, useState } from "react";
@@ -23,7 +22,6 @@ const uidFormSchema = z.object({
 
 const Home = (): React.ReactElement => {
   const router = useRouter();
-  const setCalculatorData = useCalculatorStore((state) => state.setTotalCalculatorData);
   const [waitUserInfoFlag, setWaitUserInfoFlag] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof uidFormSchema>>({
@@ -44,7 +42,6 @@ const Home = (): React.ReactElement => {
     setWaitUserInfoFlag(true);
     toast.promise(api.get(`/user/${valus.uid}`), {
       success: (res) => {
-        setCalculatorData(res.data.characters);
         window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
         const searchParams = new URLSearchParams({ uid: valus.uid });
         router.push(`/calculator?${searchParams.toString()}`);

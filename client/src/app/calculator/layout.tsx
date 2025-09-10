@@ -2,7 +2,6 @@
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
-import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Home, Search } from "lucide-react";
 // import Image from "next/image";
@@ -25,7 +24,6 @@ const uidFormSchema = z.object({
 
 const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>): React.ReactElement => {
   const router = useRouter();
-  const setCalculatorData = useCalculatorStore((state) => state.setTotalCalculatorData);
   const [waitUserInfoFlag, setWaitUserInfoFlag] = useState<boolean>(false);
   const searchParams = useSearchParams();
 
@@ -48,7 +46,6 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
     toast.promise(api.get(`/user/${valus.uid}`), {
       loading: "로딩 중",
       success: (res) => {
-        setCalculatorData(res.data.characters);
         window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
         const searchParams = new URLSearchParams({ uid: valus.uid });
         router.push(`/calculator?${searchParams.toString()}`);
