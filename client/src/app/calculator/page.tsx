@@ -5,21 +5,21 @@ import DamageResultCard from "@/app/calculator/components/DamageResultCard";
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/lib/axios";
-import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculator";
+import { calculatorFormSchema as formSchema } from "@/lib/calculator";
 import { fightPropLabels } from "@/lib/fightProps";
 import { parseCharacterInfo } from "@/lib/parseCharacterInfo";
 import { deepMergeAddOnly } from "@/lib/utils";
-import { IdamageCalculationResult } from "@/types/calculatorType";
+import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { z } from "zod";
 
 const CalculatorPage = (): React.ReactElement => {
   const [selectedCharacter, setSelectedCharacter] = useState<string>("");
-  const [totalCalculatorData, setTotalCalculatorData] = useState<{ info: z.infer<typeof calculatorCharacterInfoSchema>; result: IdamageCalculationResult }[]>([]);
+  const { damageResult, setDamageResult } = useCalculatorStore();
 
   const elementBgColors: Record<string, string> = {
     Fire: `bg-Fire`,
@@ -45,14 +45,14 @@ const CalculatorPage = (): React.ReactElement => {
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (value, e): void => {
-    const index: string | undefined = e ? (e.nativeEvent as SubmitEvent).submitter?.dataset.index : undefined;
+    const index: number | undefined = e ? Number((e.nativeEvent as SubmitEvent).submitter?.dataset.index) : undefined;
 
-    if (index) {
-      const raw = value.data[Number(index)].raw;
+    if (index !== undefined) {
+      const raw = value.data[index].raw;
       const additionalFightProp = Object.fromEntries(
         Object.entries(value.additionalFightProp).map(([key, value]) => [key, fightPropLabels[key].includes("%") ? Number(value) / 100 : value]),
       );
-      const characterInfo = deepMergeAddOnly(value.data[Number(index)], raw);
+      const characterInfo = deepMergeAddOnly(value.data[index], raw);
 
       characterInfo.artifact.parts = characterInfo.artifact.parts.map((part) => {
         const [mainKey, mainValue] = Object.entries(part.mainStat)[0];
@@ -70,6 +70,9 @@ const CalculatorPage = (): React.ReactElement => {
         loading: "로딩 중",
         success: (res) => {
           console.log(res.data);
+          const newDamageResult = [...damageResult];
+          newDamageResult[index] = res.data.damage;
+          setDamageResult(newDamageResult);
           return "데미지 연산을 완료하였습니다.";
         },
         error: (err) => {
@@ -85,17 +88,18 @@ const CalculatorPage = (): React.ReactElement => {
     if (calculatorDataRaw) {
       const parseData = JSON.parse(calculatorDataRaw);
       parseData.map((data: { info: object; result: object }) => append(parseCharacterInfo<typeof data>(data)));
-      setTotalCalculatorData(parseData);
+      setDamageResult(parseData.map((data: { info: object; result: object }) => data.result));
       setSelectedCharacter(parseData[0].info.name);
     }
 
     return (): void => {
       form.reset();
     };
-  }, [append, form]);
+  }, [form, append, setDamageResult]);
 
   return (
     <div>
+      <Toaster richColors />
       <Form {...form}>
         <form id="page form" onSubmit={form.handleSubmit(onSubmit, (err) => toast.error(JSON.stringify(err)))} className="w-full mx-auto">
           <AdditionalFightProp form={form} />
@@ -123,7 +127,7 @@ const CalculatorPage = (): React.ReactElement => {
               return (
                 <TabsContent key={`calculator-tab-content-${index}`} className={`w-full h-fit`} value={name}>
                   <CharacterSettingCard form={form} item={item} index={index} />
-                  <DamageResultCard damageResult={totalCalculatorData[index].result} element={item.raw.element} />
+                  <DamageResultCard damageResult={damageResult[index]} element={item.raw.element} />
                 </TabsContent>
               );
             })}
