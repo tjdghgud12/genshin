@@ -77,7 +77,7 @@ const WeaponSettingCard = ({
   }, [weapon.id, getWeaponDetail]);
 
   useEffect(() => {
-    const newWeaponList = totalWeaponList.filter((w) => w.type === type);
+    const newWeaponList = Object.values(totalWeaponList).filter((w) => w.type === type);
     setWeaponList(newWeaponList);
     setSelectedWeapon(newWeaponList.find((w) => w.id === Number(weapon.id)));
   }, [totalWeaponList, type, weapon.id]);

@@ -171,7 +171,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): v
   );
 
   useEffect(() => {
-    getArtifactDetail(artifactSets.find((set) => set.name === artifact.setName)?.id || 0);
+    getArtifactDetail(artifactSets[artifact.setName]?.id || 0);
   }, [artifactSets, artifact.setName, getArtifactDetail]);
 
   return (
@@ -181,13 +181,16 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): v
           <Combobox
             className="w-full h-fit bg-gray-700 text-white font-bold border-2"
             optionClassName="bg-gray-700 text-white"
-            options={artifactSets.map((set) => ({ label: set.name, data: set.id.toString(), raw: set }))}
-            defaultValue={artifactSets.find((set) => set.name === artifact.setName)?.id.toString() || ""}
+            options={Object.keys(artifactSets).map((name) => ({ label: name, data: name }))}
+            defaultValue={artifactSets[artifact.setName]?.name.toString() || ""}
             placeholder="성유물 세트"
-            onChange={(id) => {
-              setAmbrArtifact(undefined);
-              setImgLoading(false);
-              getArtifactDetail(Number(id));
+            onChange={(name) => {
+              if (name) {
+                const artifactInfo = artifactSets[name];
+                setAmbrArtifact(undefined);
+                setImgLoading(false);
+                getArtifactDetail(Number(artifactInfo.id));
+              }
             }}
           />
           <div className="w-full flex mt-auto">

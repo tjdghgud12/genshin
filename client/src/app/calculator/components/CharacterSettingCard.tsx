@@ -248,7 +248,7 @@ const CharacterSettingCard = ({
                     <FormItem className="w-full h-fit mb-auto">
                       {field.value.map((set, i) => {
                         const parts = form.getValues(`data.${index}.artifact.parts`);
-                        const rawInfo = artifactSets.find((s) => s.name === set.name);
+                        const rawInfo = artifactSets[set.name];
                         const numberOfParts = parts.filter((p) => p.setName === set.name).length;
                         if (rawInfo) {
                           const options = rawInfo.options.map((o, j) => ({ ...o, ...field.value[i].options[j] }));

@@ -80,6 +80,7 @@ const calculatorCharacterInfoSchema = z.object({
   artifact: z.object({
     parts: z.array(
       z.object({
+        id: z.number(),
         name: z.string(),
         setName: z.string(),
         type: z.string(),
@@ -89,6 +90,7 @@ const calculatorCharacterInfoSchema = z.object({
     ),
     setInfo: z.array(
       z.object({
+        id: z.number(),
         name: z.string(),
         options: z.array(
           z.object({

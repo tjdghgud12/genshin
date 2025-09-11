@@ -10,12 +10,12 @@ export interface IUserCharacterData extends ICharacterInfo {
 }
 
 export interface IUserCalculaterStore {
-  weaponList: IWeaponInfo[];
-  artifactSets: IArtifactSetsInfo[];
+  weaponList: { [id: string]: IWeaponInfo };
+  artifactSets: { [name: string]: IArtifactSetsInfo };
   damageResult: IdamageCalculationResult[];
   calculatorData: { info: IUserCharacterData; result: object }[];
-  setWeaponList: (newWeaponList: IWeaponInfo[]) => void;
-  setArtifactSets: (newArtifactSets: IArtifactSetsInfo[]) => void;
+  setWeaponList: (newWeaponList: { [id: string]: IWeaponInfo }) => void;
+  setArtifactSets: (newArtifactSets: { [name: string]: IArtifactSetsInfo }) => void;
   setDamageResult: (newDamageResult: IdamageCalculationResult[]) => void;
   setCharacterInfo: (newCharactersInfo: IUserCharacterData) => void;
   setCalculateData: (newResult: object) => void;
@@ -23,8 +23,8 @@ export interface IUserCalculaterStore {
 }
 
 export const useCalculatorStore = create<IUserCalculaterStore>((set) => ({
-  weaponList: [],
-  artifactSets: [],
+  weaponList: {},
+  artifactSets: {},
   calculatorData: [],
   damageResult: [],
   setWeaponList: (newWeaponList): void => set(() => ({ weaponList: newWeaponList })),

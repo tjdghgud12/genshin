@@ -7,8 +7,8 @@ import { Fragment, ReactElement, ReactNode, useEffect } from "react";
 
 interface StoreProps {
   children: ReactNode;
-  weaponList?: IWeaponInfo[];
-  artifactSets?: IArtifactSetsInfo[];
+  weaponList?: { [id: string]: IWeaponInfo };
+  artifactSets?: { [name: string]: IArtifactSetsInfo };
 }
 
 const Store = ({ children, weaponList, artifactSets, ..._props }: StoreProps): ReactElement => {

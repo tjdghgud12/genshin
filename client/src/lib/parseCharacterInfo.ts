@@ -5,6 +5,7 @@ import { fightPropLabels } from "./fightProps";
 type TCalculatorData = z.infer<typeof calculatorCharacterInfoSchema>;
 
 interface IuserSelectoptions {
+  id: number;
   level?: number;
   unlocked?: boolean;
   options: {
@@ -47,16 +48,20 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
       })),
     },
     artifact: {
-      parts: data.artifact.parts.map((part: { name: string; setName: string; type: string; mainStat: { [key: string]: number }; subStat: { [key: string]: number }[] }) => ({
-        name: part.name,
-        setName: part.setName,
-        type: part.type,
-        mainStat: Object.fromEntries(Object.entries(part.mainStat).map(([k, v]) => [k, fightPropLabels[k].includes("%") ? (v * 100).toFixed(2) : v])),
-        subStat: part.subStat.map((s: { [key: string]: number }) =>
-          Object.fromEntries(Object.entries(s).map(([k, v]) => [k, fightPropLabels[k].includes("%") ? (v * 100).toFixed(2) : v])),
-        ),
-      })),
+      parts: data.artifact.parts.map(
+        (part: { id: number; name: string; setName: string; type: string; mainStat: { [key: string]: number }; subStat: { [key: string]: number }[] }) => ({
+          id: part.id,
+          name: part.name,
+          setName: part.setName,
+          type: part.type,
+          mainStat: Object.fromEntries(Object.entries(part.mainStat).map(([k, v]) => [k, fightPropLabels[k].includes("%") ? (v * 100).toFixed(2) : v])),
+          subStat: part.subStat.map((s: { [key: string]: number }) =>
+            Object.fromEntries(Object.entries(s).map(([k, v]) => [k, fightPropLabels[k].includes("%") ? (v * 100).toFixed(2) : v])),
+          ),
+        }),
+      ),
       setInfo: data.artifact.setInfo.map((s: IuserSelectoptions) => ({
+        id: s.id,
         name: s.name,
         options: s.options
           ? s.options.map((o: { active: boolean; stack: number }) => {

@@ -1,5 +1,7 @@
 import Store from "@/app/Store";
 import api from "@/lib/axios";
+import { IArtifactSetsInfo } from "@/types/artifactType";
+import { IWeaponInfo } from "@/types/weaponType";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import React from "react";
@@ -21,8 +23,8 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>): Promise<React.ReactElement> => {
-  const weaponList = (await api.get(`/weapons`)).data;
-  const artifactSets = (await api.get(`/artifactsets`)).data;
+  const weaponList = Object.fromEntries((await api.get(`/weapons`)).data.map((weapon: IWeaponInfo) => [weapon.id, weapon]));
+  const artifactSets = Object.fromEntries((await api.get(`/artifactsets`)).data.map((set: IArtifactSetsInfo) => [set.name, set]));
 
   return (
     <html className="h-full" lang="en">
