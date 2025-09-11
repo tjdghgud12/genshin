@@ -681,7 +681,9 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     if passive.options[0].active:
                         normal = [0, 1.1, 1.2, 1.7]
                         burst = [0, 1.05, 1.15, 1.6]
-                        newFightProp.add(fightPropMpa.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack])
+                        newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["극악기·섬(일반공격)"].add(
+                            fightPropMpa.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack]
+                        )
                         newFightProp.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, burst[passive.options[0].stack])
 
                         fourthConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "멸류"))
