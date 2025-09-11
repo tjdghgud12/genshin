@@ -47,7 +47,7 @@ const useDamageResultTable = (damageResult: IdamageCalculationResult) => {
         bodyData[rowIdx].push(
           criticalValue ? (
             <Tooltip delayDuration={500}>
-              <TooltipTrigger>{expectedValue}</TooltipTrigger>
+              <TooltipTrigger type="button">{expectedValue}</TooltipTrigger>
               <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
                 {criticalValue} / {nonCriticalValue}
               </TooltipContent>
