@@ -205,9 +205,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 for artifact in artifacts:
                     characterInfo["artifact"]["parts"].append(
                         {
-                            "name": artifact.name,
                             "setName": artifact.set_name,
-                            "id": artifact.id,
                             "type": artifact.equip_type.value,
                             "mainStat": {artifact.main_stat.type.value: artifact.main_stat.value / 100 if artifact.main_stat.is_percentage else artifact.main_stat.value},
                             "subStat": [{subStat.type.value: subStat.value / 100 if subStat.is_percentage else subStat.value} for subStat in artifact.sub_stats],

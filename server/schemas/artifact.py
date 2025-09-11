@@ -32,7 +32,6 @@ class artifactSetDataSchema(BaseModel):
 
 
 class artifactPartsDataSchema(BaseModel):
-    name: str
     setName: str
     type: str
     mainStat: dict[str, float]
