@@ -1,11 +1,12 @@
 import data.artifact as artifactData
-from data.character import passiveSkill, activeSkill, constellation, passiveSkillSchema, activeSkillSchema, skillConstellationOptionSchema, skillConstellationType
+from data.character import characterData
 import data.weapon as weaponData
 from services.artifact import getArtifactSetInfo
 from services.ambrApi import getAmbrApi
 from services.calculation import damageCalculation
 from services.character import getFightProp, requestCharacterInfoSchema
 from schemas.calculation import requestCharacterInfoSchema
+from schemas.character import passiveSkillSchema, activeSkillSchema, skillConstellationOptionSchema, skillConstellationType
 from schemas.fightProp import fightPropSchema
 from ambr import CharacterDetail, AmbrAPI, Talent, Constellation
 import enka
@@ -85,151 +86,152 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             weapon = avatar.weapon
             ambrCharacterDetail: CharacterDetail = await ambrApi.fetch_character_detail(str(avatar.id))
 
-            # Draw를 위한 데이터 제작
-            characterInfo = {
-                "id": avatar.id,
-                "name": avatar.name,
-                "element": avatar.element.value,
-                "level": avatar.level,
-                "ascension": avatar.ascension,
-                "icon": avatar.costume.icon if getattr(avatar, "costume", None) else avatar.icon,  # type: ignore
-                "weaponType": ambrCharacterDetail.weapon_type,
-                "weapon": {},
-                "artifact": {"parts": [], "setInfo": []},
-                "passiveSkill": [],
-                "activeSkill": [],
-                "constellations": [],
-                "totalStat": {},
-            }
+            if characterData.get(avatar.name):
+                # Draw를 위한 데이터 제작
+                characterInfo = {
+                    "id": avatar.id,
+                    "name": avatar.name,
+                    "element": avatar.element.value,
+                    "level": avatar.level,
+                    "ascension": avatar.ascension,
+                    "icon": avatar.costume.icon if getattr(avatar, "costume", None) else avatar.icon,  # type: ignore
+                    "weaponType": ambrCharacterDetail.weapon_type,
+                    "weapon": {},
+                    "artifact": {"parts": [], "setInfo": []},
+                    "passiveSkill": [],
+                    "activeSkill": [],
+                    "constellations": [],
+                    "totalStat": {},
+                }
 
-            # --------------------------- 스킬 및 운명의 자리 ---------------------------
-            characterConstellation = constellation.get(avatar.name, {})
-            ambrConstellation: dict[str, Constellation] = {c.name: c for c in ambrCharacterDetail.constellations}
-            enkaConstellation: dict[str, enka.gi.Constellation] = {c.name: c for c in avatar.constellations}
-            characterPassive = passiveSkill.get(avatar.name, {})
-            characterActive = activeSkill.get(avatar.name, {})
-            defaultFalseConstellation = ["잿더미의 대가"]
+                # --------------------------- 스킬 및 운명의 자리 ---------------------------
+                characterConstellation = characterData[avatar.name].constellation
+                ambrConstellation: dict[str, Constellation] = {c.name: c for c in ambrCharacterDetail.constellations}
+                enkaConstellation: dict[str, enka.gi.Constellation] = {c.name: c for c in avatar.constellations}
+                characterPassive = characterData[avatar.name].passiveSkill
+                characterActive = characterData[avatar.name].activeSkill
+                defaultFalseConstellation = ["잿더미의 대가"]
 
-            passive = list(filter(lambda talent: talent.type.name == "ULTIMATE" and characterPassive.get(talent.name), ambrCharacterDetail.talents))
-            for i, skill in enumerate(passive):
-                unlocked = avatar.ascension >= (1 if i == 0 else 4)
-                skillOption = characterPassive.get(skill.name) or passiveSkillSchema(
-                    unlockLevel=1, description="", options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")]
-                )
-                characterInfo["passiveSkill"].append(
-                    {
-                        **skillOption.model_dump(),
-                        "name": skill.name,
-                        "icon": skill.icon,
-                        "description": skill.description,
-                        "unlocked": unlocked,
-                        "unlockLevel": skillOption.unlockLevel,
-                        "options": [
-                            {
-                                **vars(option),
-                                "active": True if unlocked else False,
-                                "stack": option.maxStack,
-                            }
-                            for option in skillOption.options
-                        ],
-                    }
-                )
-            for i, skillDetail in enumerate(ambrCharacterDetail.talents):
-                skill = next((t for t in avatar.talents if t.name == skillDetail.name), None)
-                if skill:
-                    skillOption = characterActive.get(skill.name) or activeSkillSchema(
-                        description="", options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")]
+                passive = list(filter(lambda talent: talent.type.name == "ULTIMATE" and characterPassive.get(talent.name), ambrCharacterDetail.talents))
+                for i, skill in enumerate(passive):
+                    unlocked = avatar.ascension >= (1 if i == 0 else 4)
+                    skillOption = characterPassive.get(skill.name) or passiveSkillSchema(
+                        unlockLevel=1, description="", options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")]
                     )
-                    characterInfo["activeSkill"].append(
+                    characterInfo["passiveSkill"].append(
                         {
                             **skillOption.model_dump(),
                             "name": skill.name,
-                            "level": skill.level,
                             "icon": skill.icon,
-                            "description": skillDetail.description,
+                            "description": skill.description,
                             "unlocked": unlocked,
+                            "unlockLevel": skillOption.unlockLevel,
+                            "options": [
+                                {
+                                    **vars(option),
+                                    "active": True if unlocked else False,
+                                    "stack": option.maxStack,
+                                }
+                                for option in skillOption.options
+                            ],
+                        }
+                    )
+                for i, skillDetail in enumerate(ambrCharacterDetail.talents):
+                    skill = next((t for t in avatar.talents if t.name == skillDetail.name), None)
+                    if skill:
+                        skillOption = characterActive.get(skill.name) or activeSkillSchema(
+                            description="", options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")]
+                        )
+                        characterInfo["activeSkill"].append(
+                            {
+                                **skillOption.model_dump(),
+                                "name": skill.name,
+                                "level": skill.level,
+                                "icon": skill.icon,
+                                "description": skillDetail.description,
+                                "unlocked": unlocked,
+                                "options": [
+                                    {
+                                        **vars(option),
+                                        "active": True,
+                                        "stack": option.maxStack if skillOption else 0,
+                                    }
+                                    for option in skillOption.options
+                                ],
+                                "baseFightProp": skillOption.baseFightProp,
+                            }
+                        )
+
+                for i, defaultConstellation in enumerate(characterConstellation):
+                    name = defaultConstellation.name
+                    characterInfo["constellations"].append(
+                        {
+                            **vars(defaultConstellation),
+                            "icon": enkaConstellation[name].icon,
+                            "unlocked": enkaConstellation[name].unlocked,
+                            # "unlocked": False,  # 테스트를 위한 모든 캐릭터 명함 처리
+                            # "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
+                            "description": ambrConstellation[name].description,
                             "options": [
                                 {
                                     **vars(option),
                                     "active": True,
-                                    "stack": option.maxStack if skillOption else 0,
+                                    "stack": option.maxStack,
                                 }
-                                for option in skillOption.options
+                                for option in defaultConstellation.options
                             ],
-                            "baseFightProp": skillOption.baseFightProp,
                         }
                     )
 
-            for i, defaultConstellation in enumerate(characterConstellation):
-                name = defaultConstellation.name
-                characterInfo["constellations"].append(
-                    {
-                        **vars(defaultConstellation),
-                        "icon": enkaConstellation[name].icon,
-                        "unlocked": enkaConstellation[name].unlocked,
-                        # "unlocked": False,  # 테스트를 위한 모든 캐릭터 명함 처리
-                        # "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
-                        "description": ambrConstellation[name].description,
-                        "options": [
-                            {
-                                **vars(option),
-                                "active": True,
-                                "stack": option.maxStack,
-                            }
-                            for option in defaultConstellation.options
-                        ],
-                    }
-                )
+                # ---------------------------------------------------------------------
 
-            # ---------------------------------------------------------------------
+                # --------------------------- 무기 ---------------------------
+                characterInfo["weapon"] = {
+                    "id": weapon.item_id,
+                    "name": weapon.name,
+                    "refinement": weapon.refinement,
+                    "level": weapon.level,
+                    "icon": weapon.icon,
+                    "options": [],
+                    "stat": {stat.type.value: stat.value / 100 if stat.is_percentage else stat.value for stat in weapon.stats},
+                }
+                weaponOption = weaponData.weaponInfo.get(weapon.name)
+                if weaponOption is not None:
+                    for option in weaponOption:
+                        characterInfo["weapon"]["options"].append({**vars(option), "active": True, "stack": option.maxStack})
+                # ---------------------------------------------------------------------
 
-            # --------------------------- 무기 ---------------------------
-            characterInfo["weapon"] = {
-                "id": weapon.item_id,
-                "name": weapon.name,
-                "refinement": weapon.refinement,
-                "level": weapon.level,
-                "icon": weapon.icon,
-                "options": [],
-                "stat": {stat.type.value: stat.value / 100 if stat.is_percentage else stat.value for stat in weapon.stats},
-            }
-            weaponOption = weaponData.weaponInfo.get(weapon.name)
-            if weaponOption is not None:
-                for option in weaponOption:
-                    characterInfo["weapon"]["options"].append({**vars(option), "active": True, "stack": option.maxStack})
-            # ---------------------------------------------------------------------
+                # -------------------------- 성유물 --------------------------
+                for artifact in artifacts:
+                    characterInfo["artifact"]["parts"].append(
+                        {
+                            "name": artifact.name,
+                            "setName": artifact.set_name,
+                            "id": artifact.id,
+                            "type": artifact.equip_type.value,
+                            "mainStat": {artifact.main_stat.type.value: artifact.main_stat.value / 100 if artifact.main_stat.is_percentage else artifact.main_stat.value},
+                            "subStat": [{subStat.type.value: subStat.value / 100 if subStat.is_percentage else subStat.value} for subStat in artifact.sub_stats],
+                            "icon": artifact.icon,
+                        }
+                    )
+                artifactSetInfo = getArtifactSetInfo(characterInfo["artifact"]["parts"])
+                for setInfo in artifactSetInfo:
+                    options = setInfo.get("options") if setInfo.get("options") else []
+                    characterInfo["artifact"]["setInfo"].append({**setInfo, "options": [{**vars(option), "active": True, "stack": option.maxStack} for option in options]})
+                # ---------------------------------------------------------------------
 
-            # -------------------------- 성유물 --------------------------
-            for artifact in artifacts:
-                characterInfo["artifact"]["parts"].append(
-                    {
-                        "name": artifact.name,
-                        "setName": artifact.set_name,
-                        "id": artifact.id,
-                        "type": artifact.equip_type.value,
-                        "mainStat": {artifact.main_stat.type.value: artifact.main_stat.value / 100 if artifact.main_stat.is_percentage else artifact.main_stat.value},
-                        "subStat": [{subStat.type.value: subStat.value / 100 if subStat.is_percentage else subStat.value} for subStat in artifact.sub_stats],
-                        "icon": artifact.icon,
-                    }
-                )
-            artifactSetInfo = getArtifactSetInfo(characterInfo["artifact"]["parts"])
-            for setInfo in artifactSetInfo:
-                options = setInfo.get("options") if setInfo.get("options") else []
-                characterInfo["artifact"]["setInfo"].append({**setInfo, "options": [{**vars(option), "active": True, "stack": option.maxStack} for option in options]})
-            # ---------------------------------------------------------------------
+                # 2. 최종 Fight Prop 데이터 계산
+                getTotalFightProp = getFightProp.get(avatar.name)
+                avatarRawData = rawRes["avatarInfoList"][i]
+                if getTotalFightProp is not None:
+                    newFightProp = await getTotalFightProp(ambrCharacterDetail, requestCharacterInfoSchema(**characterInfo), enkaDataFlag=True)
+                    characterInfo["totalStat"] = newFightProp.fightProp
+                    characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i].level} for i, active in enumerate(characterInfo["activeSkill"])]
 
-            # 2. 최종 Fight Prop 데이터 계산
-            getTotalFightProp = getFightProp.get(avatar.name)
-            avatarRawData = rawRes["avatarInfoList"][i]
-            if getTotalFightProp is not None:
-                newFightProp = await getTotalFightProp(ambrCharacterDetail, requestCharacterInfoSchema(**characterInfo), enkaDataFlag=True)
-                characterInfo["totalStat"] = newFightProp.fightProp
-                characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i].level} for i, active in enumerate(characterInfo["activeSkill"])]
+                    # 3. 최종 캐릭터 스텟 및 데미지 계산
+                    damageCalculationResult = await damageCalculation(characterInfo=requestCharacterInfoSchema(**characterInfo), additionalFightProp=fightPropSchema())
 
-                # 3. 최종 캐릭터 스텟 및 데미지 계산
-                damageCalculationResult = await damageCalculation(characterInfo=requestCharacterInfoSchema(**characterInfo), additionalFightProp=fightPropSchema())
-
-            parsedCharacters.append({"info": characterInfo, "result": damageCalculationResult["damage"]})
+                parsedCharacters.append({"info": characterInfo, "result": damageCalculationResult["damage"]})
         return {"characters": parsedCharacters}
 
 

@@ -59,3 +59,9 @@ class contellationSchema(BaseModel):
     description: str
     additionalAttack: list[additionalAttackSchema] | None = None
     options: list[skillConstellationOptionSchema]
+
+
+class characterDataSchema(BaseModel):
+    passiveSkill: dict[str, passiveSkillSchema]
+    activeSkill: dict[str, activeSkillSchema]
+    constellation: list[contellationSchema]
