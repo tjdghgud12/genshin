@@ -37,15 +37,16 @@ interface IArtifactPartCard {
   main: IArtifactOptionInfo;
   artifact: TArtifactPartInfo;
   sub: IArtifactOptionInfo[];
+  onSetChange?: (value: string) => void;
   onMainChange?: (val: Record<string, string | number>) => void;
   onSubChange?: ((val: Record<string, string | number>) => void)[];
 }
 
 interface IArtifactPart {
-  description: string | null;
-  icon: string | null;
-  name: string | null;
-  pos: string | null;
+  description: string;
+  icon: string;
+  name: string;
+  pos: string;
   [key: string]: unknown;
 }
 
@@ -116,7 +117,7 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
   );
 };
 
-const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): void => {}, onSubChange = [] }: IArtifactPartCard): ReactElement => {
+const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): void => {}, onMainChange = (): void => {}, onSubChange = [] }: IArtifactPartCard): ReactElement => {
   const artifactSets = useCalculatorStore((store) => store.artifactSets);
   const [ambrArtifact, setAmbrArtifact] = useState<IArtifactPart | undefined>();
   const [imgLoading, setImgLoading] = useState<boolean>(false);
@@ -158,8 +159,8 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): v
         .get(`artifactsets/${id}`)
         .then((res) => {
           if (res.status === 200) {
-            const artifacts = res.data.suit as IArtifactPart[];
-            setAmbrArtifact(artifacts.find((a) => a.pos === artifact.type));
+            const newArtifact = (res.data.suit as IArtifactPart[]).find((a) => a.pos === artifact.type);
+            if (newArtifact) setAmbrArtifact(newArtifact);
           }
         })
         .catch((err) => {
@@ -189,6 +190,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onMainChange = (): v
                 const artifactInfo = artifactSets[name];
                 setAmbrArtifact(undefined);
                 setImgLoading(false);
+                onSetChange(name);
                 getArtifactDetail(Number(artifactInfo.id));
               }
             }}

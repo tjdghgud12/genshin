@@ -80,8 +80,6 @@ const calculatorCharacterInfoSchema = z.object({
   artifact: z.object({
     parts: z.array(
       z.object({
-        id: z.number(),
-        name: z.string(),
         setName: z.string(),
         type: z.string(),
         mainStat: z.record(z.string(), createFloatSchema()),

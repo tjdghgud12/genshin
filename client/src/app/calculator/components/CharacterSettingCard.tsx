@@ -300,6 +300,10 @@ const CharacterSettingCard = ({
                               artifact={artifact}
                               main={{ key: mainKey, value: mainValue }}
                               sub={subOptions}
+                              onSetChange={(value) => {
+                                field.value.setName = value;
+                                field.onChange(field.value);
+                              }}
                               onMainChange={(mainValue) => {
                                 field.value.mainStat = mainValue;
                                 field.onChange(field.value);
