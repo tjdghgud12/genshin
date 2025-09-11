@@ -89,15 +89,15 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
     ambrCharacterDetail = await ambrApi.fetch_character_detail(str(characterInfo.id))
     getTotalFightProp = getFightProp.get(characterInfo.name)
     damageResult = responseDamageResult()
-    element = ambrCharacterDetail.element if ambrCharacterDetail.element != "Electric" else "Elec"
+    element = (ambrCharacterDetail.element if ambrCharacterDetail.element != "Electric" else "Elec").lower()
     reactions = {
-        "Fire": ["역융해", "증발", "연소", "발화", "과부하"],
-        "Elec": ["촉진", "만개", "과부하", "감전", "초전도"],
-        "Water": ["역증발", "개화", "감전"],
-        "Grass": ["발산", "개화", "연소"],
-        "Wind": ["확산"],
-        "Rock": [],
-        "Ice": ["융해", "초전도"],
+        "fire": ["역융해", "증발", "연소", "발화", "과부하"],
+        "elec": ["촉진", "만개", "과부하", "감전", "초전도"],
+        "water": ["역증발", "개화", "감전"],
+        "grass": ["발산", "개화", "연소"],
+        "wind": ["확산"],
+        "rock": [],
+        "ice": ["융해", "초전도"],
     }
     attackTypeKey = {
         "nomal": "NOMAL_ATTACK",
@@ -106,6 +106,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
         "elementalSkill": "ELEMENT_SKILL",
         "elementalBurst": "ELEMENT_BURST",
     }
+    elementalList = ["fire", "water", "glass", "elec", "rock", "wind", "ice"]
 
     class baseFightPropKeyMap(str, Enum):
         HP = "FIGHT_PROP_HP_FINAL"
@@ -205,6 +206,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
             # 차스카의 경우 별도로 처리 필요!
             # 커스텀 영역에 대해서 처리 필요!
             key = attackTypeKey[attackType]
+            useEelementalAttack = set(baseFightProp["element"]) & set(elementalList)
             if isinstance(customName, str):
                 targetNonCritical = damageResult.customNonCritical[customName]
                 targetCritical = damageResult.customCritical[customName]
@@ -214,7 +216,9 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 targetCritical = getattr(damageResult, f"{attackType}Critical")
                 targetExpected = getattr(damageResult, attackType)
 
-            baseFightPropList = [getattr(fightProp, baseFightPropKeyMap[key]) * value for key, value in baseFightProp.items() if value is not None]
+            baseFightPropList = [
+                getattr(fightProp, baseFightPropKeyMap[base.name]) * baseFightProp[base.name] for base in baseFightPropKeyMap if baseFightProp[base.name] is not None
+            ]
             finalAttackPoint = sum(baseFightPropList) if baseFightPropList else None
 
             if finalAttackPoint:
@@ -223,68 +227,72 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 criticalHurt = fightProp.FIGHT_PROP_CRITICAL_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL_HURT")
 
                 addHurt = fightProp.FIGHT_PROP_ATTACK_ADD_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_ATTACK_ADD_HURT")
-                elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{element.upper()}_ADD_HURT") + getattr(fightProp, f"FIGHT_PROP_{element.upper()}_ADD_HURT")
-                physicalAddHurt = fightProp.FIGHT_PROP_PHYSICAL_ADD_HURT
                 finalAddHurt = 1 + getattr(fightProp, f"FIGHT_PROP_FINAL_{key}_ATTACK_ADD_HURT", 0.0)
-                finalElementalAddHurt = (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient * finalAddHurt
-                finalPhysicalAddHurt = (1 + physicalAddHurt + addHurt) * physicalToleranceCoefficient * defensCoefficient * finalAddHurt
 
-                physicalDamages = getCriticalDamageInfo(
-                    damage=finalAttackPoint * finalPhysicalAddHurt,
-                    critical=critical,
-                    criticalHurt=criticalHurt,
-                )
-                elementalDamages = getCriticalDamageInfo(
-                    damage=finalAttackPoint * finalElementalAddHurt,
-                    critical=critical,
-                    criticalHurt=criticalHurt,
-                )
-                targetNonCritical.physicalDamage = physicalDamages.nonCriticalDamage
-                targetNonCritical.elementalDamage = elementalDamages.nonCriticalDamage
-                targetCritical.physicalDamage = physicalDamages.criticalDamage
-                targetCritical.elementalDamage = elementalDamages.criticalDamage
-                targetExpected.physicalDamage = physicalDamages.expectedDamage
-                targetExpected.elementalDamage = elementalDamages.expectedDamage
-
-                # 추가 계수 영역
-                if additionalAttackPoint > 0:
-                    additionalPhysicalDamages = getCriticalDamageInfo(
-                        damage=additionalAttackPoint * finalPhysicalAddHurt,
+                if "physical" in baseFightProp["element"]:
+                    physicalAddHurt = fightProp.FIGHT_PROP_PHYSICAL_ADD_HURT
+                    finalPhysicalAddHurt = (1 + physicalAddHurt + addHurt) * physicalToleranceCoefficient * defensCoefficient * finalAddHurt
+                    physicalDamages = getCriticalDamageInfo(
+                        damage=finalAttackPoint * finalPhysicalAddHurt,
                         critical=critical,
                         criticalHurt=criticalHurt,
                     )
-                    additionalElementalDamages = getCriticalDamageInfo(
-                        damage=additionalAttackPoint * finalElementalAddHurt,
-                        critical=critical,
-                        criticalHurt=criticalHurt,
-                    )
-                    targetNonCritical.physicalDamageAdditional = additionalPhysicalDamages.nonCriticalDamage
-                    targetNonCritical.elementalDamageAdditional = additionalElementalDamages.nonCriticalDamage
-                    targetCritical.physicalDamageAdditional = additionalPhysicalDamages.criticalDamage
-                    targetCritical.elementalDamageAdditional = additionalElementalDamages.criticalDamage
-                    targetExpected.physicalDamageAdditional = additionalPhysicalDamages.expectedDamage
-                    targetExpected.elementalDamageAdditional = additionalElementalDamages.expectedDamage
+                    targetNonCritical.physicalDamage = physicalDamages.nonCriticalDamage
+                    targetCritical.physicalDamage = physicalDamages.criticalDamage
+                    targetExpected.physicalDamage = physicalDamages.expectedDamage
 
-                for reaction in enableReaction:  # 증폭 격변 반응 연산
-                    attackPoints = (
-                        getCriticalDamageInfo(
-                            damage=levelCoefficientMap[characterInfo.level] * finalElementalAddHurt,
+                    if additionalAttackPoint > 0:  # 추가 계수 영역
+                        additionalPhysicalDamages = getCriticalDamageInfo(
+                            damage=additionalAttackPoint * finalPhysicalAddHurt,
                             critical=critical,
                             criticalHurt=criticalHurt,
                         )
-                        if reaction == "촉진" or reaction == "발산"
-                        else elementalDamages
-                    )
-                    if reaction in roopReactionHandlerMap:
-                        reactionHandler, attr = roopReactionHandlerMap[reaction]
-                        setattr(targetNonCritical, attr, reactionHandler(attackPoints.nonCriticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
-                        setattr(targetCritical, attr, reactionHandler(attackPoints.criticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
-                        setattr(targetExpected, attr, reactionHandler(attackPoints.expectedDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                        targetNonCritical.physicalDamageAdditional = additionalPhysicalDamages.nonCriticalDamage
+                        targetCritical.physicalDamageAdditional = additionalPhysicalDamages.criticalDamage
+                        targetExpected.physicalDamageAdditional = additionalPhysicalDamages.expectedDamage
 
-                        if additionalAttackPoint > 0 and (reaction in "융해" or reaction in "증발"):
-                            setattr(targetNonCritical, f"{attr}Additional", reactionHandler(additionalElementalDamages.nonCriticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
-                            setattr(targetCritical, f"{attr}Additional", reactionHandler(additionalElementalDamages.criticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
-                            setattr(targetExpected, f"{attr}Additional", reactionHandler(additionalElementalDamages.expectedDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                if useEelementalAttack:
+                    elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{element.upper()}_ADD_HURT") + getattr(fightProp, f"FIGHT_PROP_{element.upper()}_ADD_HURT")
+                    finalElementalAddHurt = (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient * finalAddHurt
+                    elementalDamages = getCriticalDamageInfo(
+                        damage=finalAttackPoint * finalElementalAddHurt,
+                        critical=critical,
+                        criticalHurt=criticalHurt,
+                    )
+                    targetNonCritical.elementalDamage = elementalDamages.nonCriticalDamage
+                    targetCritical.elementalDamage = elementalDamages.criticalDamage
+                    targetExpected.elementalDamage = elementalDamages.expectedDamage
+
+                    if additionalAttackPoint > 0:  # 추가 계수 영역
+                        additionalElementalDamages = getCriticalDamageInfo(
+                            damage=additionalAttackPoint * finalElementalAddHurt,
+                            critical=critical,
+                            criticalHurt=criticalHurt,
+                        )
+                        targetNonCritical.elementalDamageAdditional = additionalElementalDamages.nonCriticalDamage
+                        targetCritical.elementalDamageAdditional = additionalElementalDamages.criticalDamage
+                        targetExpected.elementalDamageAdditional = additionalElementalDamages.expectedDamage
+
+                    for reaction in enableReaction:  # 증폭 격변 반응 연산
+                        attackPoints = (
+                            getCriticalDamageInfo(
+                                damage=levelCoefficientMap[characterInfo.level] * finalElementalAddHurt,
+                                critical=critical,
+                                criticalHurt=criticalHurt,
+                            )
+                            if reaction == "촉진" or reaction == "발산"
+                            else elementalDamages
+                        )
+                        if reaction in roopReactionHandlerMap:
+                            reactionHandler, attr = roopReactionHandlerMap[reaction]
+                            setattr(targetNonCritical, attr, reactionHandler(attackPoints.nonCriticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                            setattr(targetCritical, attr, reactionHandler(attackPoints.criticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                            setattr(targetExpected, attr, reactionHandler(attackPoints.expectedDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+
+                            if additionalAttackPoint > 0 and (reaction in "융해" or reaction in "증발"):
+                                setattr(targetNonCritical, f"{attr}Additional", reactionHandler(additionalElementalDamages.nonCriticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                                setattr(targetCritical, f"{attr}Additional", reactionHandler(additionalElementalDamages.criticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
+                                setattr(targetExpected, f"{attr}Additional", reactionHandler(additionalElementalDamages.expectedDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
 
     # 격변 반응 별도 처리 진행
     for reaction in enableReaction:

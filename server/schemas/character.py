@@ -13,6 +13,7 @@ class skillConstellationType(Enum):
 
 
 class damageBaseFightPropSchema(BaseModel):
+    element: list[Literal["fire", "water", "glass", "elec", "rock", "wind", "ice", "physical"]] | None = None
     HP: float | None = None
     ATTACK: float | None = None
     DEFENSE: float | None = None
