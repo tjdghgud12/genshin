@@ -1,12 +1,12 @@
 "use client";
+import { DotBounsLoading } from "@/app/loading";
+import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Home, Search } from "lucide-react";
-// import Image from "next/image";
-import { DotBounsLoading } from "@/app/loading";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Fragment, useState } from "react";
@@ -70,9 +70,8 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
         <Fragment>
           <div className="w-full flex">
             {/* Header */}
-            <Link className="w-fit h-fit rounded-full" href={`/`}>
-              {/* <Image src={`/img/paimon-face.png`} alt="" priority width={60} height={60} /> */}
-              <Home className="text-indigo-800" width={60} height={60} />
+            <Link className="w-fit h-fit rounded-full py-1 px-3" href={`/`}>
+              <Image src={`/img/homeIcon.png`} alt="" priority width={80} height={80} />
             </Link>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 m-auto">
