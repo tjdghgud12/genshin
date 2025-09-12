@@ -82,11 +82,10 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
             # draw 필요 데이터 : 이름, 레벨, icon, 성유물 정보, 운명의 자리, 스킬 정보, 무기 정보
             # 최종 연산 필요 데이터 : 이름, 레벨, ambrCharacterDetail, 성유물 정보, 운명의 자리, 스킬 정보, 무기 정보, 최종 연산 완료 후 fightProp
 
-            artifacts = avatar.artifacts
-            weapon = avatar.weapon
-            ambrCharacterDetail: CharacterDetail = await ambrApi.fetch_character_detail(str(avatar.id))
-
             if characterData.get(avatar.name):
+                artifacts = avatar.artifacts
+                weapon = avatar.weapon
+                ambrCharacterDetail: CharacterDetail = await ambrApi.fetch_character_detail(str(avatar.id))
                 # Draw를 위한 데이터 제작
                 characterInfo = {
                     "id": avatar.id,
