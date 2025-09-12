@@ -80,7 +80,7 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
           </Label>
           <div className="flex flex-col gap-2 my-auto">
             {setInfo.options.map((option, i) => {
-              if (option.type === "always") {
+              if (option.type === "always" || option.requiredParts > setInfo.numberOfParts) {
                 return <Fragment key={`${option.label}-${i}`} />;
               }
               return (

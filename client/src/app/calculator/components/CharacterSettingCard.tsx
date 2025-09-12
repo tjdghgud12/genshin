@@ -16,6 +16,9 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
+type TArtifactSetInfo = z.infer<typeof calculatorCharacterInfoSchema>["artifact"]["setInfo"][number];
+type TArtifactPartInfo = z.infer<typeof calculatorCharacterInfoSchema>["artifact"]["parts"][number];
+
 const CharacterSettingCard = ({
   form,
   item,
@@ -34,6 +37,20 @@ const CharacterSettingCard = ({
     Ice: { bg: `bg-Ice`, shadow: "shadow-shadow-Ice" },
     Rock: { bg: `bg-Rock`, shadow: "shadow-shadow-Rock" },
     Grass: { bg: `bg-Grass`, shadow: "shadow-shadow-Grass" },
+  };
+
+  const getArtifactSetInfo = (parts: TArtifactPartInfo[]): TArtifactSetInfo[] => {
+    const setList = new Set(parts.map((part) => part.setName));
+    return [...setList]
+      .filter((setName: string) => {
+        const numberOfParts = parts.filter((part) => part.setName === setName).length;
+        return numberOfParts >= 2;
+      })
+      .map((setName) => {
+        const numberOfParts = parts.filter((part) => part.setName === setName).length;
+        const options = artifactSets[setName].options.map((o) => ({ ...o, active: true, stack: o.maxStack }));
+        return { name: setName, options: options.filter((o) => o.requiredParts <= numberOfParts) };
+      });
   };
 
   return (
@@ -303,6 +320,8 @@ const CharacterSettingCard = ({
                               onSetChange={(value) => {
                                 field.value.setName = value;
                                 field.onChange(field.value);
+                                const parts = form.getValues(`data.${index}.artifact.parts`);
+                                form.setValue(`data.${index}.artifact.setInfo`, getArtifactSetInfo(parts));
                               }}
                               onMainChange={(mainValue) => {
                                 field.value.mainStat = mainValue;
