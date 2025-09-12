@@ -12,11 +12,11 @@ export interface IUserCharacterData extends ICharacterInfo {
 export interface IUserCalculaterStore {
   weaponList: { [id: string]: IWeaponInfo };
   artifactSets: { [name: string]: IArtifactSetsInfo };
-  damageResult: IdamageCalculationResult[];
+  damageResult: (IdamageCalculationResult | null)[];
   calculatorData: { info: IUserCharacterData; result: object }[];
   setWeaponList: (newWeaponList: { [id: string]: IWeaponInfo }) => void;
   setArtifactSets: (newArtifactSets: { [name: string]: IArtifactSetsInfo }) => void;
-  setDamageResult: (newDamageResult: IdamageCalculationResult[]) => void;
+  setDamageResult: (newDamageResult: (IdamageCalculationResult | null)[]) => void;
   setCharacterInfo: (newCharactersInfo: IUserCharacterData) => void;
   setCalculateData: (newResult: object) => void;
   setTotalCalculatorData: (newCalculatorData: { info: IUserCharacterData; result: object }[]) => void;

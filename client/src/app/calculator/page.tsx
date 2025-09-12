@@ -48,6 +48,9 @@ const CalculatorPage = (): React.ReactElement => {
     const index: number | undefined = e ? Number((e.nativeEvent as SubmitEvent).submitter?.dataset.index) : undefined;
 
     if (index !== undefined) {
+      const newDamageResult = [...damageResult];
+      newDamageResult[index] = null;
+      setDamageResult(newDamageResult);
       const raw = value.data[index].raw;
       const additionalFightProp = Object.fromEntries(
         Object.entries(value.additionalFightProp).map(([key, value]) => [key, fightPropLabels[key].includes("%") ? Number(value) / 100 : value]),
@@ -69,14 +72,11 @@ const CalculatorPage = (): React.ReactElement => {
       toast.promise(api.post(`/calculation`, { characterInfo: characterInfo, additionalFightProp }), {
         loading: "로딩 중",
         success: (res) => {
-          console.log(res.data);
-          const newDamageResult = [...damageResult];
           newDamageResult[index] = res.data.damage;
           setDamageResult(newDamageResult);
           return "데미지 연산을 완료하였습니다.";
         },
         error: (err) => {
-          console.log(err);
           return "데미지 연산에 실패하였습니다.";
         },
       });
