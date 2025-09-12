@@ -218,7 +218,7 @@ info = {
                     additionalAttackSchema(name="솟구치는 칼날", type="elec", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["elec"])),
                 ],
             ),
-            "곧 꺼질 영광": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["elec"]))),
+            "곧 꺼질 여광": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["elec"]))),
         },
         constellation=[
             contellationSchema(
