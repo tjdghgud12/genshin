@@ -53,5 +53,9 @@ weaponInfo = {
         weaponOptionSchema(type=weaponOptionType.toggle, description="원소 전투 스킬 또는 원소 폭발 발동 시 공격력 및 치명타 피해 증가(불빛)", label="불빛"),
         weaponOptionSchema(type=weaponOptionType.toggle, description="밤혼 가호 상태에서는 불빛 효과 강화", label="밤혼 가호"),
     ],
+    "사면": [
+        weaponOptionSchema(description="치명타 피해가 증가한다."),
+        weaponOptionSchema(type=weaponOptionType.stack, maxStack=3, description="생명의 계약 증가 시 캐릭터가 주는 피해가 증가한다", label="생명의 계약 증가"),
+    ],
     "학도의 노트": [],
 }

@@ -319,6 +319,30 @@ async def getApprenticesNotesFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getAbsolutionFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.20, 0.16],
+        [0.25, 0.20],
+        [0.30, 0.24],
+        [0.35, 0.28],
+        [0.40, 0.32],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, refinementValue[1] * option.maxStack)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -333,4 +357,5 @@ getTotalWeaponFightProp = {
     "영원히 샘솟는 법전": getTomeOfTheEternalFlowFightProp,
     "학도의 노트": getApprenticesNotesFightProp,
     "타오르는 천 개의 태양": getAThousandBlazingSunsFightProp,
+    "사면": getAbsolutionFightProp,
 }
