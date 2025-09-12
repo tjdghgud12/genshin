@@ -63,6 +63,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_DEFENSE_IGNORE: float = 0.0
     FIGHT_PROP_HEAL_ADD: float = 0.0
     FIGHT_PROP_ATTACK_ADD_POINT: float = 0.0  # 계수 추가
+    FIGHT_PROP_ELEC_ADD_POINT: float = 0.0  # 계수 추가
 
     # 일반공격 관련
     FIGHT_PROP_NOMAL_ATTACK_CRITICAL: float = 0.0
@@ -77,6 +78,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_NOMAL_ATTACK_ICE_ADD_HURT: float = 0.0
     FIGHT_PROP_NOMAL_ATTACK_ATTACK_ADD_HURT: float = 0.0
     FIGHT_PROP_NOMAL_ATTACK_ATTACK_ADD_POINT: float = 0.0  # 계수 추가
+    FIGHT_PROP_NOMAL_ATTACK_ELEC_ADD_POINT: float = 0.0  # 계수 추가
 
     # 강공격 관련
     FIGHT_PROP_CHARGED_ATTACK_CRITICAL: float = 0.0
@@ -91,6 +93,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_CHARGED_ATTACK_ICE_ADD_HURT: float = 0.0
     FIGHT_PROP_CHARGED_ATTACK_ATTACK_ADD_HURT: float = 0.0
     FIGHT_PROP_CHARGED_ATTACK_ATTACK_ADD_POINT: float = 0.0  # 계수 추가
+    FIGHT_PROP_CHARGED_ATTACK_ELEC_ADD_POINT: float = 0.0  # 계수 추가
 
     # 낙하공격 관련
     FIGHT_PROP_FALLING_ATTACK_CRITICAL: float = 0.0
@@ -105,6 +108,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_FALLING_ATTACK_ICE_ADD_HURT: float = 0.0
     FIGHT_PROP_FALLING_ATTACK_ATTACK_ADD_HURT: float = 0.0
     FIGHT_PROP_FALLING_ATTACK_ATTACK_ADD_POINT: float = 0.0  # 계수 추가
+    FIGHT_PROP_FALLING_ATTACK_ELEC_ADD_POINT: float = 0.0  # 계수 추가
 
     # 원소 전투 스킬 관련
     FIGHT_PROP_ELEMENT_SKILL_CRITICAL: float = 0.0
@@ -119,6 +123,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_ELEMENT_SKILL_ICE_ADD_HURT: float = 0.0
     FIGHT_PROP_ELEMENT_SKILL_ATTACK_ADD_HURT: float = 0.0
     FIGHT_PROP_ELEMENT_SKILL_ATTACK_ADD_POINT: float = 0.0  # 계수 추가
+    FIGHT_PROP_ELEMENT_SKILL_ELEC_ADD_POINT: float = 0.0  # 계수 추가
 
     # 원소 폭발 관련
     FIGHT_PROP_ELEMENT_BURST_CRITICAL: float = 0.0
@@ -133,6 +138,7 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_ELEMENT_BURST_ICE_ADD_HURT: float = 0.0
     FIGHT_PROP_ELEMENT_BURST_ATTACK_ADD_HURT: float = 0.0
     FIGHT_PROP_ELEMENT_BURST_ATTACK_ADD_POINT: float = 0.0  # 계수 추가
+    FIGHT_PROP_ELEMENT_BURST_ELEC_ADD_POINT: float = 0.0  # 계수 추가
 
     # 추가 공격 전용 fight prop
     FIGHT_PROP_ADDITIONAL_ATTACK: dict[str, additionalAttackFightPropSchema] = {}

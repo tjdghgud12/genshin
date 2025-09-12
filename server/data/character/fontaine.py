@@ -189,4 +189,70 @@ info = {
             ),
         ],
     ),
+    "클로린드": characterDataSchema(
+        passiveSkill={
+            "밤을 가르는 불꽃": passiveSkillSchema(
+                description="번개 원소 관련 반응 발동 시 일반 공격 및 원소 폭발의 번개 원소 피해 증가",
+                unlockLevel=1,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=3, label="번개 원소 관련 반응")],
+            ),
+            "계약의 보상": passiveSkillSchema(
+                description="생명의 계약 수치가 증가 또는 감소 시 치명타 확률 10%씩 증가(2중첩)",
+                unlockLevel=4,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=2, label="생명의 계약 변화")],
+            ),
+        },
+        activeSkill={
+            "그림자 사냥의 맹세": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                )
+            ),
+            "밤 사냥": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(),
+                additionalAttack=[
+                    additionalAttackSchema(name="수렵", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["elec"])),
+                    additionalAttackSchema(name="밤 꿰뚫기", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["elec"])),
+                    additionalAttackSchema(name="솟구치는 칼날", type="elec", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["elec"])),
+                ],
+            ),
+            "곧 꺼질 영광": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["elec"]))),
+        },
+        constellation=[
+            contellationSchema(
+                name="「지금부터 촛불의 장막을 지나」",
+                description="밤 사냥 상태의 일반 공격 적중 시 합동 공격 2회 진행",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
+                additionalAttack=[additionalAttackSchema(name="협동 공격", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=0.3, element=["elec"]))],
+            ),
+            contellationSchema(
+                name="「지금부터 긴 밤의 위험에 맞선다」",
+                description="밤을 가르는 불꽃의 효과 강화",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
+            ),
+            contellationSchema(
+                name="「난 낮의 맹세를 명심하고」",
+                description="원소 전투 스킬 레벨 +3",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
+            ),
+            contellationSchema(
+                name="「눈물, 생명, 사랑을 간직하며」",
+                description="생명의 계약 백분율에 따라 원소 폭발 피해 증가",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=100, label="생명의 계약(%)")],
+            ),
+            contellationSchema(
+                name="「언젠가 찾아올 여명을 믿겠다」",
+                description="원소 폭발 레벨 +3",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
+            ),
+            contellationSchema(
+                name="「절대 희망을 버리지 않으리라」",
+                description="원소 전투 스킬 발동 시 치명타 피해 및 치명타 확률 증가. 특정 조건마다 일반 공격 판정의 추가 번개 원소 피해 타격",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
+                additionalAttack=[additionalAttackSchema(name="촛불의 그림자", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=2, element=["elec"]))],
+            ),
+        ],
+    ),
 }

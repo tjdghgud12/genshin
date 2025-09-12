@@ -252,6 +252,8 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                         targetExpected.physicalDamageAdditional = additionalPhysicalDamages.expectedDamage
 
                 if useEelementalAttack:
+                    attackElement = next((x for x in baseFightProp["element"] if x != "physical"), "")
+                    elementAddPoint = additionalAttackPoint + getattr(fightProp, f"FIGHT_PROP_{key}_{attackElement.upper()}_ADD_POINT", 0.0)
                     elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{element.upper()}_ADD_HURT") + getattr(fightProp, f"FIGHT_PROP_{element.upper()}_ADD_HURT")
                     finalElementalAddHurt = (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient * finalAddHurt
                     elementalDamages = getCriticalDamageInfo(
@@ -265,7 +267,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
 
                     if additionalAttackPoint > 0:  # 추가 계수 영역
                         additionalElementalDamages = getCriticalDamageInfo(
-                            damage=additionalAttackPoint * finalElementalAddHurt,
+                            damage=elementAddPoint * finalElementalAddHurt,
                             critical=critical,
                             criticalHurt=criticalHurt,
                         )
