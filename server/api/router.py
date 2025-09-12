@@ -4,7 +4,7 @@ import data.weapon as weaponData
 from services.artifact import getArtifactSetInfo
 from services.ambrApi import getAmbrApi
 from services.calculation import damageCalculation
-from services.character import getFightProp, requestCharacterInfoSchema
+from services.character import getFightProp
 from schemas.calculation import requestCharacterInfoSchema
 from schemas.character import passiveSkillSchema, activeSkillSchema, skillConstellationOptionSchema, skillConstellationType
 from schemas.fightProp import fightPropSchema
