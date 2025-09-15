@@ -188,6 +188,23 @@ def getObsidianCodexSetOption(
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
+def getFragmentOfHarmonicWhimsySetOption(
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
+) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.18)
+                case 1:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT, 0.18 * info.stack)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
@@ -199,6 +216,7 @@ getArtifactSetsFightProp = {
     "깊은 회랑의 피날레": getFinaleOfTheDeepGalleriesSetOption,
     "잿더미성 용사의 두루마리": getScrollOfTheHeroOfCinderCitySetOption,
     "흑요석 비전": getObsidianCodexSetOption,
+    "조화로운 공상의 단편": getFragmentOfHarmonicWhimsySetOption,
 }
 
 

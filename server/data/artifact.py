@@ -82,4 +82,14 @@ artifactSetOptions = {
             type=artifactSetOptionType.toggle, description="장착 캐릭터가 필드 위에서 밤혼을 1pt 소모한 후 치명타 확률이 40% 증가", requiredParts=4, label="밤혼 소모"
         ),
     ],
+    "조화로운 공상의 단편": [
+        artifactSetOptionSchema(type=artifactSetOptionType.always, description="공격력 18% 증가", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            description="생명의 계약의 수치가 증가 또는 감소 시, 캐릭터가 주는 피해가 18% 증가한다. 지속 시간: 6초, 최대 중첩수: 3회",
+            maxStack=3,
+            requiredParts=4,
+            label="생명의 계약 변화",
+        ),
+    ],
 }
