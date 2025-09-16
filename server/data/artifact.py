@@ -92,4 +92,14 @@ artifactSetOptions = {
             label="생명의 계약 변화",
         ),
     ],
+    "지난날의 노래": [
+        artifactSetOptionSchema(type=artifactSetOptionType.always, description="치유 보너스 15% 증가", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            description="회복량에 비례하여 일반 공격, 강 공격, 낙하 공격, 원소 전투 스킬, 원소 폭발에 계수 추가. 최대 15000pt",
+            maxStack=15000,
+            requiredParts=4,
+            label="회복량(pt)",
+        ),
+    ],
 }

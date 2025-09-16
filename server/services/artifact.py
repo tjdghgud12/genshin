@@ -200,7 +200,27 @@ def getFragmentOfHarmonicWhimsySetOption(
                         fightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.18)
                 case 1:
                     if info.active:
-                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT, 0.18 * info.stack)
+                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.18 * info.stack)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
+def getSongOfDaysPastSetOption(
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
+) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.HEAL_ADD.value, 0.15)
+                case 1:
+                    if info.active:
+                        fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, info.stack * 0.08)
+                        fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, info.stack * 0.08)
+                        fightProp.add(fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, info.stack * 0.08)
+                        fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_POINT.value, info.stack * 0.08)
+                        fightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_POINT.value, info.stack * 0.08)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -217,6 +237,7 @@ getArtifactSetsFightProp = {
     "잿더미성 용사의 두루마리": getScrollOfTheHeroOfCinderCitySetOption,
     "흑요석 비전": getObsidianCodexSetOption,
     "조화로운 공상의 단편": getFragmentOfHarmonicWhimsySetOption,
+    "지난날의 노래": getSongOfDaysPastSetOption,
 }
 
 
