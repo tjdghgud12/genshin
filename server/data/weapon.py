@@ -57,5 +57,11 @@ weaponInfo = {
         weaponOptionSchema(description="치명타 피해가 증가한다."),
         weaponOptionSchema(type=weaponOptionType.stack, maxStack=3, description="생명의 계약 증가 시 캐릭터가 주는 피해가 증가한다", label="생명의 계약 증가"),
     ],
+    "붉은 달의 형상": [
+        weaponOptionSchema(type=weaponOptionType.toggle, maxStack=3, description="생명의 계약 보유 시 캐릭터가 주는 피해가 증가한다", label="생명의 계약 보유"),
+        weaponOptionSchema(
+            type=weaponOptionType.toggle, maxStack=3, description="생명의 계약이 HP최대치의 30% 이상일 시 캐릭터가 주는 피해가 증가한다", label="생명의 계약 최대 HP 30% 이상"
+        ),
+    ],
     "학도의 노트": [],
 }
