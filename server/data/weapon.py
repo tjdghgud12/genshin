@@ -63,5 +63,15 @@ weaponInfo = {
             type=weaponOptionType.toggle, maxStack=3, description="생명의 계약이 HP최대치의 30% 이상일 시 캐릭터가 주는 피해가 증가한다", label="생명의 계약 최대 HP 30% 이상"
         ),
     ],
+    "무공의 검": [
+        weaponOptionSchema(type=weaponOptionType.stack, maxStack=5, description="공격 명중 시 공격력 증가", label="공격 명중"),
+        weaponOptionSchema(type=weaponOptionType.toggle, maxStack=1, description="보호막 존재 시 공격력 증가 효과가 100%증가", label="보호막"),
+    ],
+    "판정": [
+        weaponOptionSchema(description="공격력 증가"),
+        weaponOptionSchema(
+            type=weaponOptionType.stack, maxStack=2, description="결정 반응으로 생성된 결정 조각 획득 시 약인 1스텍 획득. 약인 당 원소 전투 스킬 피해 증가", label="약인"
+        ),
+    ],
     "학도의 노트": [],
 }

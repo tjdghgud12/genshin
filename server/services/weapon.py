@@ -367,6 +367,48 @@ async def getCrimsonMoonsSemblanceFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getTheUnforgedFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [0.04, 0.05, 0.06, 0.07, 0.08]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue * option.stack)
+                case 1:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue * options[0].stack)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getVerdictFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.20, 0.18],
+        [0.25, 0.225],
+        [0.30, 0.27],
+        [0.35, 0.315],
+        [0.40, 0.36],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[1] * option.stack)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -383,4 +425,5 @@ getTotalWeaponFightProp = {
     "타오르는 천 개의 태양": getAThousandBlazingSunsFightProp,
     "사면": getAbsolutionFightProp,
     "붉은 달의 형상": getCrimsonMoonsSemblanceFightProp,
+    "무공의 검": getTheUnforgedFightProp,
 }
