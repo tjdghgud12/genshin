@@ -255,4 +255,68 @@ info = {
             ),
         ],
     ),
+    "나비아": characterDataSchema(
+        passiveSkill={
+            "비밀 유통 경로": passiveSkillSchema(
+                description="결정 축포 발동 후 4초 동안 나비아의 일반 공격, 강공격, 낙하 공격이 주는 피해가 다른 원소 부여 효과로 대체될 수 없는 바위 원소 피해로 전환되고 나비아의 일반 공격, 강공격, 낙하 공격이 주는 피해가 40% 증가한다",
+                unlockLevel=1,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
+            ),
+            "상호 협력망": passiveSkillSchema(
+                description="파티 내 불 원소/번개 원소/얼음 원소/물 원소 캐릭터가 1명 존재할 때마다 나비아의 공격력이 20% 증가한다.(2중첩)",
+                unlockLevel=4,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=2, label="캐릭터 수")],
+            ),
+        },
+        activeSkill={
+            "솔직한 거절": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["physical", "rock"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["physical", "rock"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["physical", "rock"]),
+                )
+            ),
+            "결정 축포": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["rock"])),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=6, label="소모 결정 파편")],
+                additionalAttack=[additionalAttackSchema(name="솟구치는 칼날", type="rock", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["rock"]))],
+            ),
+            "창공을 울리는 포성": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["rock"])),
+                additionalAttack=[additionalAttackSchema(name="지원 포격", type="elementalBurst", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["rock"]))],
+            ),
+        },
+        constellation=[
+            contellationSchema(
+                name="숙녀의 거리감 수칙",
+                description="결정 파편 소모할 때 소모 갯수 당 원소 에너지 회복 및 원소 폭발 쿨타임 감소",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
+            ),
+            contellationSchema(
+                name="통솔자의 승승장구",
+                description="결정 축포 발동 시, 「결정 파편」을 1개 소모할 때마다 이번 결정 축포의 치명타 확률이 12% 증가한다. 해당 방식으로 결정 축포의 치명타 확률은 최대 36% 증가",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=3, label="소모 결정 파편")],
+            ),
+            contellationSchema(
+                name="경영자의 넓은 시야",
+                description="원소 전투 스킬 레벨 +3",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
+            ),
+            contellationSchema(
+                name="맹세자의 엄격함",
+                description="원소 폭발 명중 적 바위 원소 내성 감소",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="원소 폭발 명중")],
+            ),
+            contellationSchema(
+                name="협상가의 단호함",
+                description="원소 폭발 레벨 +3",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
+            ),
+            contellationSchema(
+                name="보스의 기민한 수완",
+                description="결정 축포 발동 시, 「결정 파편」을 3개 넘게 소모하면 3개를 초과한 「결정 파편」 1개당 이번 결정 축포의 치명타 피해가 45% 증가",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=3, label="소모 결정 파편")],
+            ),
+        ],
+    ),
 }

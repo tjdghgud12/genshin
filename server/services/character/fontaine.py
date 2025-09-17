@@ -239,10 +239,10 @@ async def getClorindeFightProp(ambrCharacterDetail: CharacterDetail, characterIn
             match constellation.name:
                 case "「눈물, 생명, 사랑을 간직하며」":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT, constellation.options[0].stack * 0.02)
+                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, constellation.options[0].stack * 0.02)
                 case "「절대 희망을 버리지 않으리라」":  # 스킬 계수 추가(일반공격, 강공격, 원소폭발의 석양 베기로 주는 피해가 마비카 공격력의 60%/90%/120%만큼 증가)
-                    newFightProp.add(fightPropMpa.CRITICAL, 0.1)
-                    newFightProp.add(fightPropMpa.CRITICAL_HURT, 0.7)
+                    newFightProp.add(fightPropMpa.CRITICAL.value, 0.1)
+                    newFightProp.add(fightPropMpa.CRITICAL_HURT.value, 0.7)
                 case "「난 낮의 맹세를 명심하고」":
                     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "「언젠가 찾아올 여명을 믿겠다」":
@@ -269,7 +269,79 @@ async def getClorindeFightProp(ambrCharacterDetail: CharacterDetail, characterIn
                         additionalAttackPoints.append({"key": fightPropMpa.ELEMENT_BURST_ELEC_ADD_POINT.value, "value": ("ATTACK", value * option.stack), "max": max})
                 case "계약의 보상":
                     if passive.options[0].active:
-                        newFightProp.add(fightPropMpa.CRITICAL, 0.1 * passive.options[0].stack)
+                        newFightProp.add(fightPropMpa.CRITICAL.value, 0.1 * passive.options[0].stack)
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        max = additionalAttackPoint["max"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        newFightProp.add(key, min(finalPoint * value, max))
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
+async def getNaviaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- constellations -----------------------
+    # 숙녀의 거리감 수칙 fightProp에 영향 없거나 다른 곳에서 처리
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "통솔자의 승승장구":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL.value, constellation.options[0].stack * 0.12)
+                case "경영자의 넓은 시야":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "맹세자의 엄격함":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ROCK_RES_MINUS.value, 0.2)
+                case "협상가의 단호함":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                case "보스의 기민한 수완":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL_HURT.value, constellation.options[0].stack * 0.45)
+
+    # ----------------------- active -----------------------
+    for active in characterInfo.activeSkill:
+        match active.name:
+            case "결정 축포":
+                if active.options[0].active:
+                    stack = active.options[0].stack - 3
+                    if stack > 0:
+                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, active.options[0].stack * 0.15)
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "비밀 유통 경로":
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.NOMAL_ATTACK_ROCK_ADD_HURT.value, 0.40)
+                        newFightProp.add(fightPropMpa.CHARGED_ATTACK_ROCK_ADD_HURT.value, 0.40)
+                        newFightProp.add(fightPropMpa.FALLING_ATTACK_ROCK_ADD_HURT.value, 0.40)
+
+                case "상호 협력망":
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, passive.options[0].stack * 0.20)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
