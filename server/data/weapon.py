@@ -73,5 +73,13 @@ weaponInfo = {
             type=weaponOptionType.stack, maxStack=2, description="결정 반응으로 생성된 결정 조각 획득 시 약인 1스텍 획득. 약인 당 원소 전투 스킬 피해 증가", label="약인"
         ),
     ],
+    "녹슨 활": [
+        weaponOptionSchema(description="일반 공격으로 주는 피해가 40/50/60/70/80% 증가"),
+        weaponOptionSchema(description="강공격 피해 10%감소"),
+    ],
+    "비뢰의 고동": [
+        weaponOptionSchema(maxStack=1, description="공격력 증가"),
+        weaponOptionSchema(type=weaponOptionType.stack, maxStack=3, label="비뢰의 문장"),
+    ],
     "학도의 노트": [],
 }
