@@ -365,4 +365,5 @@ getFightProp: dict[str, CharacterFightPropGetter] = {
     "느비예트": getNeuvilletteFightProp,
     "에스코피에": getEscoffierFightProp,
     "클로린드": getClorindeFightProp,
+    "나비아": getNaviaFightProp,
 }
