@@ -111,4 +111,10 @@ artifactSetOptions = {
             type=artifactSetOptionType.toggle, description="결정 보호막 보유 시 바위 원소 피해 보너스 증가 효과 150% 증가", requiredParts=4, label="결정 보호막"
         ),
     ],
+    "추억의 시메나와": [
+        artifactSetOptionSchema(type=artifactSetOptionType.always, description="공격력 18% 증가", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.toggle, description="원소 전투 스킬 발동 후 일반 공격, 강공격, 낙하 공격으로 주는 피해가 증가", requiredParts=4, label="원소 전투 스킬 발동"
+        ),
+    ],
 }
