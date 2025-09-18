@@ -40,28 +40,28 @@ info = {
         },
         constellation=[
             contellationSchema(
-                name="「모든 원한과 빚은 내가 갚고...」",
+                name="「모든 원한과 빚은 내가 갚고…」",
                 description="붉은 죽음의 무도회의 증가량이 100% 더 증가한다. 또한 붉은 죽음의 무도회 상태에서 일반 공격 또는 강공격 시, 아를레키노의 경직 저항력이 증가한다",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.always)],
             ),
             contellationSchema(
-                name="「모든 상벌은 내가 내릴 것이다...」",
+                name="「모든 상벌은 내가 내릴 것이다…」",
                 description="핏값 부여 시 바로 핏값·결산이 된다. 핏값·결산 회수 시 전방에 핏빛 화염을 소환해 공격력의 900%에 해당하는 불 원소 범위 피해를 준다. 고유 특성 '고통만이 갚을 수 있고' 를 해금해야한다.",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
                 additionalAttack=[additionalAttackSchema(name="핏빛 화염", type="fire", baseFightProp=damageBaseFightPropSchema(ATTACK=9, element=["fire"]))],
             ),
             contellationSchema(
-                name="「우리의 새 가족이 되었으니...」",
+                name="「우리의 새 가족이 되었으니…」",
                 description="사형장으로의 초대(일반 공격) 레벨 +3",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
             ),
             contellationSchema(
-                name="「앞으로 사이좋게 지내거라...」",
+                name="「앞으로 사이좋게 지내거라…」",
                 description="아를레키노가 핏값 회수 성공 시, 떠오르는 재액의 달의 재사용 대기시간이 2초 감소한다. 또한 아를레키노가 원소 에너지를 15pt 회복한다. 해당 효과는 10초마다 최대 1회 발동한다",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.always)],
             ),
             contellationSchema(
-                name="「고독한 우리는 망자와 다름없으나...」",
+                name="「고독한 우리는 망자와 다름없으나…」",
                 description="원소 폭발 레벨 +3",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
             ),
