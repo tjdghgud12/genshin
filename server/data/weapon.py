@@ -78,8 +78,12 @@ weaponInfo = {
         weaponOptionSchema(description="강공격 피해 10%감소"),
     ],
     "비뢰의 고동": [
-        weaponOptionSchema(maxStack=1, description="공격력 증가"),
+        weaponOptionSchema(description="공격력 증가"),
         weaponOptionSchema(type=weaponOptionType.stack, maxStack=3, label="비뢰의 문장"),
+    ],
+    "송뢰가 울릴 무렵": [
+        weaponOptionSchema(description="공격력 증가"),
+        weaponOptionSchema(type=weaponOptionType.toggle, label="천년의 대악장·깃발의 노래"),
     ],
     "학도의 노트": [],
 }

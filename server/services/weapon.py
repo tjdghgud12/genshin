@@ -446,7 +446,31 @@ async def getThunderingPulseFightProp(
                 case 0:
                     fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
                 case 1:
-                    fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, refinementValue[0][option.stack])
+                    fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, refinementValue[1][option.stack])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getSongOfBrokenPinesFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.16, 20],
+        [0.20, 25],
+        [0.24, 30],
+        [0.28, 35],
+        [0.32, 40],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -470,4 +494,5 @@ getTotalWeaponFightProp = {
     "무공의 검": getTheUnforgedFightProp,
     "녹슨 활": getRustFightProp,
     "비뢰의 고동": getThunderingPulseFightProp,
+    "송뢰가 울릴 무렵": getSongOfBrokenPinesFightProp,
 }
