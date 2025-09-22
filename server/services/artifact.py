@@ -262,6 +262,24 @@ def getShimenawasReminiscenceSetOption(
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
+def getPaleFlameSetOption(
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], _characterFightProp: fightPropSchema
+) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.PHYSICAL_ADD_HURT.value, 0.25)
+                case 1:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ATTACK_PERCENT.value, info.stack * 0.09)
+                        if info.stack >= info.maxStack:
+                            fightProp.add(fightPropMpa.PHYSICAL_ADD_HURT.value, 0.25)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
@@ -277,6 +295,7 @@ getArtifactSetsFightProp = {
     "지난날의 노래": getSongOfDaysPastSetOption,
     "메아리숲의 야화": getNighttimeWhispersInTheEchoingWoodsSetOption,
     "추억의 시메나와": getShimenawasReminiscenceSetOption,
+    "창백의 화염": getPaleFlameSetOption,
 }
 
 

@@ -117,4 +117,14 @@ artifactSetOptions = {
             type=artifactSetOptionType.toggle, description="원소 전투 스킬 발동 후 일반 공격, 강공격, 낙하 공격으로 주는 피해가 증가", requiredParts=4, label="원소 전투 스킬 발동"
         ),
     ],
+    "창백의 화염": [
+        artifactSetOptionSchema(type=artifactSetOptionType.always, description="가하는 물리 피해+25%", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            description="원소전투 스킬로 적을 명중하면 공격력이 9% 증가한다. 지속 시간: 7초, 최대 중첩수: 2회. 해당 효과는 0.3초마다 1회 발동되며, 2회 중첩 시 2세트의 효과가 100% 증가한다",
+            requiredParts=4,
+            maxStack=2,
+            label="원소 전투 스킬 발동",
+        ),
+    ],
 }
