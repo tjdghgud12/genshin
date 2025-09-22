@@ -183,9 +183,7 @@ info = {
                 name="무지갯빛 티타임",
                 description="현재 필드 위에 있는 파티 내 자신의 캐릭터의 일반공격, 강공격, 낙하공격이 명중 시 에스코피에의 공격력의 500%에 해당하는 얼음 원소 추가 피해",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-                additionalAttack=[
-                    additionalAttackSchema(name="무지갯빛 티타임 추가 피해", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=5, element=["ice"]))
-                ],
+                additionalAttack=[additionalAttackSchema(name="특급 서리 파르페", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=5, element=["ice"]))],
             ),
         ],
     ),
@@ -225,7 +223,7 @@ info = {
                 name="「지금부터 촛불의 장막을 지나」",
                 description="밤 사냥 상태의 일반 공격 적중 시 합동 공격 2회 진행",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-                additionalAttack=[additionalAttackSchema(name="협동 공격", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=0.3, element=["elec"]))],
+                additionalAttack=[additionalAttackSchema(name="밤 순찰의 그림자", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=0.3, element=["elec"]))],
             ),
             contellationSchema(
                 name="「지금부터 긴 밤의 위험에 맞선다」",

@@ -221,7 +221,7 @@ info = {
                 name="올가미에 걸린 적",
                 description="원소 폭발의 협동 공격 시 야란 hp 최대치의 14%의 추가 데미지. 쿨타임 1.8초",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.always, maxStack=1, label="")],
-                additionalAttack=[additionalAttackSchema(name="올가미에 걸린 적 추가 피해", type="water", baseFightProp=damageBaseFightPropSchema(HP=0.14, element=["water"]))],
+                additionalAttack=[additionalAttackSchema(name="올가미에 걸린 적 추가 공격", type="water", baseFightProp=damageBaseFightPropSchema(HP=0.14, element=["water"]))],
             ),
             contellationSchema(
                 name="노름꾼의 주사위",

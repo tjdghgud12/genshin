@@ -55,11 +55,7 @@ info = {
                 name="죽음을 거부하는 자의 영혼 해골",
                 description="서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해. 재사용 대기시간 8초",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
-                additionalAttack=[
-                    additionalAttackSchema(
-                        name="죽음을 거부하는 자의 영혼 해골 추가 피해", type="ice", baseFightProp=damageBaseFightPropSchema(ELEMENT_MASTERY=18, element=["ice"])
-                    )
-                ],
+                additionalAttack=[additionalAttackSchema(name="영혼 해골·검은별", type="ice", baseFightProp=damageBaseFightPropSchema(ELEMENT_MASTERY=18, element=["ice"]))],
             ),
             contellationSchema(
                 name="불길한 닷새의 저주",
@@ -128,8 +124,8 @@ info = {
                 description="불볕 고리: 공격 적중 시 공격력의 200%에 해당하는 밤혼 성질의 불 원소 피해 추가. 바이크 : 주변 적 방어력 20% 감소 및 3초마다 공격력의 500%에 해당하는 밤혼 성질의 불 원소 피해 추가",
                 options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, maxStack=1, label="")],
                 additionalAttack=[
-                    additionalAttackSchema(name="불볕 고리 추가 피해", type="fire", baseFightProp=damageBaseFightPropSchema(ATTACK=2, element=["fire"])),
-                    additionalAttackSchema(name="바이크 추가 피해", type="fire", baseFightProp=damageBaseFightPropSchema(ATTACK=5, element=["fire"])),
+                    additionalAttackSchema(name="불볕 고리·빛", type="fire", baseFightProp=damageBaseFightPropSchema(ATTACK=2, element=["fire"])),
+                    additionalAttackSchema(name="바이크", type="fire", baseFightProp=damageBaseFightPropSchema(ATTACK=5, element=["fire"])),
                 ],
             ),
         ],
