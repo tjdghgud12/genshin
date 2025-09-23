@@ -205,12 +205,13 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 attacks.append((additional.type, additional.baseFightProp.model_dump(), additional.name))
 
     for data in chain(characterInfo.passiveSkill, characterInfo.constellations):
-        if data.additionalAttack is not None:
-            for additional in data.additionalAttack:
-                damageResult.customNonCritical[additional.name] = damageResultSchema()
-                damageResult.customCritical[additional.name] = damageResultSchema()
-                damageResult.custom[additional.name] = damageResultSchema()
-                attacks.append((additional.type, additional.baseFightProp.model_dump(), additional.name))
+        if data.unlocked:
+            if data.additionalAttack is not None:
+                for additional in data.additionalAttack:
+                    damageResult.customNonCritical[additional.name] = damageResultSchema()
+                    damageResult.customCritical[additional.name] = damageResultSchema()
+                    damageResult.custom[additional.name] = damageResultSchema()
+                    attacks.append((additional.type, additional.baseFightProp.model_dump(), additional.name))
 
     for attackType, baseFightProp, customName in attacks:
         # 차스카의 경우 별도로 처리 필요!
