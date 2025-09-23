@@ -109,10 +109,9 @@ async def getRaidenShogunFightProp(ambrCharacterDetail: CharacterDetail, charact
         if passive.unlocked:
             match passive.name:
                 case "비범한 옥체":
-                    if passive.options[0].active:
-                        val = getattr(newFightProp, fightPropMpa.CHARGE_EFFICIENCY.value) - 1
-                        if val > 0:
-                            newFightProp.add(fightPropMpa.ELEC_ADD_HURT.value, val * 0.4)
+                    val = getattr(newFightProp, fightPropMpa.CHARGE_EFFICIENCY.value) - 1
+                    if val > 0:
+                        newFightProp.add(fightPropMpa.ELEC_ADD_HURT.value, val * 0.4)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(

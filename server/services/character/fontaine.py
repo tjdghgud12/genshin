@@ -21,7 +21,6 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
             match constellation.name:
                 case "「모두 사랑의 축배를 들렴!」":
                     if constellation.options[0].active:
-                        # 평타 계수 추가이기 때문에 2025-08-05기준 미개발 상태
                         description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
                         additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
                         additionalAttackPoints.append({"key": fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
@@ -82,12 +81,11 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
         if passive.unlocked:
             match passive.name:
                 case "고독한 독백":
-                    if passive.options[0].active:
-                        baseHp = getattr(newFightProp, fightPropMpa.BASE_HP.value)
-                        hpPercent = getattr(newFightProp, fightPropMpa.HP_PERCENT.value)
-                        hp = getattr(newFightProp, fightPropMpa.HP.value)
-                        totalHp = baseHp * (hpPercent + 1) + hp
-                        newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, min(totalHp / 1000 * 0.007, 0.28))
+                    baseHp = getattr(newFightProp, fightPropMpa.BASE_HP.value)
+                    hpPercent = getattr(newFightProp, fightPropMpa.HP_PERCENT.value)
+                    hp = getattr(newFightProp, fightPropMpa.HP.value)
+                    totalHp = baseHp * (hpPercent + 1) + hp
+                    newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, min(totalHp / 1000 * 0.007, 0.28))
 
     # 추가 계수 입력부
     for additionalAttackPoint in additionalAttackPoints:

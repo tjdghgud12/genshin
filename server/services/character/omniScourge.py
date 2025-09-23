@@ -26,6 +26,8 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                 case "요원":  # 스킬 계수 추가
                     description = "허계 균열 1개 흡수할 때 마다 스커크 공격력의 500%에 해당하는 얼음 원소 피해 추가"
                 case "심연":  # 스킬 계수 추가
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.7)
                     description = "원소 전투 스킬 발동 시 뱀의 계략 10pt 획득. 원소 폭발 사용 시 뱀의 계략 최대치 10pt 증가."
                 case "근원":  # 스킬 계수 추가
                     description = "흡수한 허계 균열 수 당 극악기 · 참 스택 획득. 극악기 · 참 스택 마다 원소 폭발 발동 시 공격력의 750%에 해당하는 얼음 원소 피해 추가. 일곱빛 섬광 모드에서는 일반공격 또는 피격 시 협동 공격"
@@ -64,9 +66,8 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     addLevel = 3 if addElementalSkillLevel.unlocked else 0
                     skillValue = activeSkillLevelMap[active.name][active.level + addLevel - 1]
                     if secondConstellation.unlocked:
-                        newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.7)
-
-                    newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[option.stack])
+                        description = "뱀의 계략 pt에 따라 원폭 계수 추가"
+                    newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["일곱빛 섬광(일반공격)"].add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[option.stack])
 
     # ----------------------- passive -----------------------
     # 이치 너머의 이치는 원소전투스킬과 원소폭발의 계수 추가. 계수 추가는 미개발 상태
@@ -77,7 +78,7 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     if passive.options[0].active:
                         normal = [0, 1.1, 1.2, 1.7]
                         burst = [0, 1.05, 1.15, 1.6]
-                        newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["극악기·섬(일반공격)"].add(
+                        newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["일곱빛 섬광(일반공격)"].add(
                             fightPropMpa.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack]
                         )
                         newFightProp.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, burst[passive.options[0].stack])

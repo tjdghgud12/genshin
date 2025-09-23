@@ -20,7 +20,7 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                 newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
 
     # ----------------------- constellations -----------------------
-    # 구름뱀의 깃털 왕관, 불길한 닷새의 저주은 fightProp에 영향 없거나 스킬에서 처리
+    # 구름뱀의 깃털 왕관, 불길한 닷새의 저주, 죽음을 거부하는 자의 영혼 해골은 fightProp에 영향 없거나 스킬에서 처리
     for constellation in characterInfo.constellations:
         if constellation.unlocked:
             match constellation.name:
@@ -31,9 +31,6 @@ async def getCitlaliFightProp(ambrCharacterDetail: CharacterDetail, characterInf
                     newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 125)
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 250)
-                case "죽음을 거부하는 자의 영혼 해골":  # 추가 피해
-                    if constellation.options[0].active:
-                        description = "서리 운석 폭풍 명중 시 시틀라리의 원소 마스터리의 1800%만큼의 추가 피해."
                 case "아홉 번째 하늘의 계약":
                     newFightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.015 * constellation.options[0].stack)
                     newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, 0.015 * constellation.options[0].stack)

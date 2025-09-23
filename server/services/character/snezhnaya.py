@@ -4,6 +4,7 @@ from schemas.calculation import requestCharacterInfoSchema
 from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 from ambr import CharacterDetail
 from copy import deepcopy
+from schemas.character import damageBaseFightPropSchema, additionalAttackSchema
 
 
 async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
@@ -20,14 +21,10 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
                 newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
 
     # ----------------------- constellations -----------------------
-    # 「모든 원한과 빚은 내가 갚고…」, 「앞으로 사이좋게 지내거라…」 는 fightProp에 영향 없거나 각 스킬 연산 시 처리
+    # 「모든 원한과 빚은 내가 갚고…」, 「모든 상벌은 내가 내릴 것이다…」, 「앞으로 사이좋게 지내거라…」 는 fightProp에 영향 없거나 각 스킬 연산 시 처리
     for constellation in characterInfo.constellations:
         if constellation.unlocked:
             match constellation.name:
-                case "「모든 상벌은 내가 내릴 것이다…」":
-                    firstPassive = next((passive for passive in characterInfo.passiveSkill if constellation.name == "고통만이 갚을 수 있고"))
-                    if not firstPassive.unlocked:
-                        constellation.additionalAttack = []
                 case "「우리의 새 가족이 되었으니…」":
                     characterInfo.activeSkill[0].level -= 3 if enkaDataFlag else 0
                 case "「고독한 우리는 망자와 다름없으나…」":
@@ -51,7 +48,7 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
                     addElementalBurstLevel = next((constellation for constellation in characterInfo.constellations if constellation.name == "「우리의 새 가족이 되었으니…」"))
                     addLevel = 3 if addElementalBurstLevel.unlocked else 0
                     skillValue = activeSkillLevelMap[active.name][active.level + addLevel - 1]
-                    if firstConstellation.options[0].active:
+                    if firstConstellation.unlocked:
                         skillValue += 1
                     addPointValue = (option.stack * skillValue) / 100
                     additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", addPointValue)})
@@ -63,8 +60,7 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
         if passive.unlocked:
             match passive.name:
                 case "힘만이 지킬 수 있으며":
-                    if passive.options[0].active:
-                        newFightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.4)
+                    newFightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.4)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(

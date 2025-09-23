@@ -92,17 +92,16 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     if passive.options[0].active:
                         newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, min(getattr(newFightProp, fightPropMpa.ELEMENT_MASTERY.value) * 0.25, 250))
                 case "지혜로 깨우친 지론":
-                    if passive.options[0].active:
-                        val = min(getattr(newFightProp, fightPropMpa.ELEMENT_MASTERY.value) - 200, 800)
-                        if val > 0:
-                            target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화")
-                            secondTarget = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화·업의 사면")
-                            if target:
-                                target.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
-                                target.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
-                            if secondTarget:
-                                secondTarget.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
-                                secondTarget.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
+                    val = min(getattr(newFightProp, fightPropMpa.ELEMENT_MASTERY.value) - 200, 800)
+                    if val > 0:
+                        target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화")
+                        secondTarget = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화·업의 사면")
+                        if target:
+                            target.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
+                            target.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
+                        if secondTarget:
+                            secondTarget.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
+                            secondTarget.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
