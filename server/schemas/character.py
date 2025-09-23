@@ -44,7 +44,7 @@ class passiveSkillSchema(BaseModel):
     unlockLevel: int
     description: str
     additionalAttack: list[additionalAttackSchema] | None = None
-    options: list[skillConstellationOptionSchema]
+    options: list[skillConstellationOptionSchema] = []
 
 
 class activeSkillSchema(BaseModel):
@@ -58,7 +58,7 @@ class contellationSchema(BaseModel):
     name: str
     description: str
     additionalAttack: list[additionalAttackSchema] | None = None
-    options: list[skillConstellationOptionSchema]
+    options: list[skillConstellationOptionSchema] = []
 
 
 class characterDataSchema(BaseModel):
