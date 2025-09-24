@@ -88,7 +88,12 @@ const CharacterOptionControlCircle = ({
                     <Fragment key={`skill-option-${o.inputLabel}`}>
                       <Label className="w-fit my-auto">{o.inputLabel}:</Label>
                       {o.type === "toggle" ? (
-                        <Switch defaultChecked={o.active} onCheckedChange={(e) => onChange(e, i)} />
+                        <Switch
+                          className="w-[50px] ml-1 my-auto"
+                          thumbClassName="data-[state=checked]:translate-x-[calc(50px-(100%+2px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
+                          defaultChecked={o.active}
+                          onCheckedChange={(e) => onChange(e, i)}
+                        />
                       ) : (
                         <Input
                           type="number"
