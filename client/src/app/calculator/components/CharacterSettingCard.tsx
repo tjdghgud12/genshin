@@ -105,13 +105,19 @@ const CharacterSettingCard = ({
                               options={field.value.options.map((o, k) => ({ ...passiveInfo.options[k], ...o, inputLabel: passiveInfo.options[k].label }))}
                               icon={passiveInfo.icon}
                               onClick={() => {
-                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.value.unlocked = !field.value.unlocked;
                                 field.onChange(field.value);
                               }}
-                              onChange={(e, k) => {
-                                const maxStack = passiveInfo.options[k].maxStack;
-                                const value = inputNumberWithSpace(e.target.value);
-                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                              onChange={(newValue, k) => {
+                                const option = field.value.options[k];
+                                if (typeof newValue === "boolean") {
+                                  option.active = newValue;
+                                }
+                                if (typeof newValue === "string") {
+                                  const maxStack = passiveInfo.options[k].maxStack;
+                                  const value = inputNumberWithSpace(newValue);
+                                  option.stack = value > maxStack ? maxStack : value;
+                                }
                                 field.onChange(field.value);
                               }}
                             />
@@ -145,14 +151,16 @@ const CharacterSettingCard = ({
                               icon={activeInfo.icon}
                               useLevel
                               level={field.value.level}
-                              onClick={() => {
-                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
-                                field.onChange(field.value);
-                              }}
-                              onChange={(e, k) => {
-                                const maxStack = activeInfo.options[k].maxStack;
-                                const value = inputNumberWithSpace(e.target.value);
-                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                              onChange={(newValue, k) => {
+                                const option = field.value.options[k];
+                                if (typeof newValue === "boolean") {
+                                  option.active = newValue;
+                                }
+                                if (typeof newValue === "string") {
+                                  const maxStack = activeInfo.options[k].maxStack;
+                                  const value = inputNumberWithSpace(newValue);
+                                  option.stack = value > maxStack ? maxStack : value;
+                                }
                                 field.onChange(field.value);
                               }}
                               onLevelChange={(level) => {
@@ -189,13 +197,19 @@ const CharacterSettingCard = ({
                               options={field.value.options.map((o, k) => ({ ...constellationInfo.options[k], ...o, inputLabel: constellationInfo.options[k].label }))}
                               icon={constellationInfo.icon}
                               onClick={() => {
-                                field.value.options = field.value.options.map((o) => ({ ...o, active: !o.active }));
+                                field.value.unlocked = !field.value.unlocked;
                                 field.onChange(field.value);
                               }}
-                              onChange={(e, k) => {
-                                const maxStack = constellationInfo.options[k].maxStack;
-                                const value = inputNumberWithSpace(e.target.value);
-                                field.value.options[k].stack = value > maxStack ? maxStack : value;
+                              onChange={(newValue, k) => {
+                                const option = field.value.options[k];
+                                if (typeof newValue === "boolean") {
+                                  option.active = newValue;
+                                }
+                                if (typeof newValue === "string") {
+                                  const maxStack = constellationInfo.options[k].maxStack;
+                                  const value = inputNumberWithSpace(newValue);
+                                  option.stack = value > maxStack ? maxStack : value;
+                                }
                                 field.onChange(field.value);
                               }}
                             />
