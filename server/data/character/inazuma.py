@@ -39,7 +39,11 @@ info = {
             contellationSchema(
                 name="서리에 검게 물든 벚꽃", description="일반 공격 또는 강공격으로 얼음 원소 피해를 주면, 50% 확률로 원소 전투 스킬의 재사용 대기시간이 0.3초 감소"
             ),
-            contellationSchema(name="삼중 서리 관문", description="원소 폭발 발동 시 기존 공격력의 20%의 피해를 주는 소형 서리 관문 2개 추가"),
+            contellationSchema(
+                name="삼중 서리 관문",
+                description="원소 폭발 발동 시 기존 공격력의 20%의 피해를 주는 소형 서리 관문 2개 추가",
+                additionalAttack=[additionalAttackSchema(name="소형 서리 관문*2", type="elementalBurst", baseFightProp=damageBaseFightPropSchema(ATTACK=0.4, element=["ice"]))],
+            ),
             contellationSchema(name="흩날리는 카미후부키", description="원소 폭발 레벨 +3"),
             contellationSchema(
                 name="영고성쇠",

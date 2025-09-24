@@ -18,8 +18,6 @@ async def getKamisatoAyakaFightProp(ambrCharacterDetail: CharacterDetail, charac
     for constellation in characterInfo.constellations:
         if constellation.unlocked:
             match constellation.name:
-                case "삼중 서리 관문":  # 최종 데미지 기준 추가 피해
-                    newFightProp.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, 1.4)
                 case "영고성쇠":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.DEFENSE_MINUS.value, 0.3)
