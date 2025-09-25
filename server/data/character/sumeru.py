@@ -58,7 +58,7 @@ info = {
             contellationSchema(
                 name="추론으로 드러난 줄기",
                 description="스칸다 씨앗 상태에 있는 적 수당 나히다의 원소 마스터리 증가",
-                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=4, label="스칸다 씨앗 상태 적 수")],
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=4, label="스칸다 씨앗 상태 적")],
             ),
             contellationSchema(name="깨달음을 주는 잎", description="원소 폭발 레벨 +3"),
             contellationSchema(

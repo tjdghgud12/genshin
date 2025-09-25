@@ -88,7 +88,7 @@ info = {
             "영감의 조미료": passiveSkillSchema(
                 description="원소 전투 스킬 또는 원소 폭발 명중 시 파티 내 물 원소 캐릭터 또는 얼음 원소 캐릭터 수 마다 명중한 적 물 원소 내성 및 얼음 원소 내성 감소",
                 unlockLevel=4,
-                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=4, label="물 또는 얼음 원소 파티원 수")],
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=4, label="물 또는 얼음 원소 파티원")],
             ),
         },
         activeSkill={
@@ -186,7 +186,7 @@ info = {
             "상호 협력망": passiveSkillSchema(
                 description="파티 내 불 원소/번개 원소/얼음 원소/물 원소 캐릭터가 1명 존재할 때마다 나비아의 공격력이 20% 증가한다.(2중첩)",
                 unlockLevel=4,
-                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=2, label="캐릭터 수")],
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=2, label="원소 종류")],
             ),
         },
         activeSkill={

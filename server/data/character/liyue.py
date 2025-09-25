@@ -138,7 +138,7 @@ info = {
             "선공의 묘수": passiveSkillSchema(
                 description="파티 내 캐릭터의 원소 타입 종류 마다 야란의 최대 hp 증가",
                 unlockLevel=1,
-                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=4, label="원소 타입 종류 수")],
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=4, label="원소 타입 종류")],
             ),
             "마음 가는 대로": passiveSkillSchema(
                 description="원소 폭발 발동 시 필드 위 캐릭터가 가하는 피해가 1초마다 증가",
