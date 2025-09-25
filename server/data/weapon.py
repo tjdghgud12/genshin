@@ -88,5 +88,8 @@ weaponInfo = {
     "카구라의 진의": [
         weaponOptionSchema(type=weaponOptionType.stack, label="카구라의 춤"),
     ],
+    "음유시인의 악장": [
+        weaponOptionSchema(type=weaponOptionType.select, selectList=[None, "서장(공격력)", "영탄곡(모든 원소 피해)", "간주곡(원소 마스터리)"], label="테마송"),
+    ],
     "학도의 노트": [],
 }

@@ -511,6 +511,43 @@ async def getKagurasVerityFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getTheWidsithFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        {"서장(공격력)": 0.60, "영탄곡(모든 원소 피해)": 0.48, "간주곡(원소 마스터리)": 240},
+        {"서장(공격력)": 0.75, "영탄곡(모든 원소 피해)": 0.60, "간주곡(원소 마스터리)": 300},
+        {"서장(공격력)": 0.90, "영탄곡(모든 원소 피해)": 0.72, "간주곡(원소 마스터리)": 360},
+        {"서장(공격력)": 1.05, "영탄곡(모든 원소 피해)": 0.84, "간주곡(원소 마스터리)": 420},
+        {"서장(공격력)": 1.20, "영탄곡(모든 원소 피해)": 0.96, "간주곡(원소 마스터리)": 480},
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    if option.select:
+                        addList = []
+                        if option.select == "서장(공격력)":
+                            addList.append(fightPropMpa.ATTACK_PERCENT.value)
+                        if option.select == "영탄곡(모든 원소 피해)":
+                            addList.append(fightPropMpa.FIRE_ADD_HURT.value)
+                            addList.append(fightPropMpa.WATER_ADD_HURT.value)
+                            addList.append(fightPropMpa.ELEC_ADD_HURT.value)
+                            addList.append(fightPropMpa.WIND_ADD_HURT.value)
+                            addList.append(fightPropMpa.GRASS_ADD_HURT.value)
+                            addList.append(fightPropMpa.ICE_ADD_HURT.value)
+                            addList.append(fightPropMpa.ROCK_ADD_HURT.value)
+                        if option.select == "간주곡(원소 마스터리)":
+                            addList.append(fightPropMpa.ELEMENT_MASTERY.value)
+                        for key in addList:
+                            fightProp.add(key, refinementValue[option.select])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,

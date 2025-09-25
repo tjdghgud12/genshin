@@ -7,15 +7,18 @@ class weaponOptionType(Enum):
     always = "always"
     toggle = "toggle"
     stack = "stack"
+    select = "select"
 
 
 class StatusMixin(BaseModel):
+    select: str
     active: bool
     stack: int
 
 
 class weaponOptionSchema(BaseModel):
     type: weaponOptionType = weaponOptionType.always
+    selectList: list[str | None] = []
     maxStack: int = 1
     description: str = ""
     label: str = ""

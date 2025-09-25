@@ -194,7 +194,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 weaponOption = weaponData.weaponInfo.get(weapon.name)
                 if weaponOption is not None:
                     for option in weaponOption:
-                        characterInfo["weapon"]["options"].append({**vars(option), "active": True, "stack": option.maxStack})
+                        characterInfo["weapon"]["options"].append({**vars(option), "active": True, "stack": option.maxStack, "select": None})
                 # ---------------------------------------------------------------------
 
                 # -------------------------- 성유물 --------------------------
