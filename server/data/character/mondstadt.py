@@ -63,4 +63,50 @@ info = {
             ),
         ],
     ),
+    "모나": characterDataSchema(
+        passiveSkill={
+            "「할망구, 나 잡아 봐라!」": passiveSkillSchema(
+                description="흐르는 허와 실 상태에 진입 후 2초 동안 만약 주변에 적이 존재하면 자동으로 허영을 하나 만들어낸다. 이러한 방식으로 생성된 허영은 2초 동안 지속되며 터지면서 가하는 피해는 수중 환원 피해의 50%이다.",
+                unlockLevel=1,
+            ),
+            "「운명에 맡겨!」": passiveSkillSchema(description="모나의 물 원소 피해 보너스가 추가로 모나 원소 충전 효율의 20%만큼 상승한다.", unlockLevel=4),
+        },
+        activeSkill={
+            "인과 간파": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["water"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["water"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["water"]),
+                )
+            ),
+            "수중 환원": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["water"])),
+                additionalAttack=[additionalAttackSchema(name="폭렬", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["water"]))],
+            ),
+            "별의 운명": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["water"])),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="성이(星異)")],
+            ),
+        },
+        constellation=[
+            contellationSchema(
+                name="침몰한 예언",
+                description="파티 내 자신의 캐릭터가 성이 상태의 적을 명중하면 8초 동안 물 원소 관련 반응의 효과가 상승한다.",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="성이 상태 적 공격")],
+            ),
+            contellationSchema(name="성월의 연주", description="일반 공격 명중 시 20%의 확률로 강공격을 1회 추가 발동한다."),
+            contellationSchema(name="멈추지 않는 천상", description="원소 폭발 레벨 +3"),
+            contellationSchema(
+                name="절멸의 예언",
+                description="파티 내 모든 캐릭터가 성이 상태의 적을 공격 시 치명타 확률이 15% 증가한다.",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="성이 상태 적 공격")],
+            ),
+            contellationSchema(name="운명의 우롱", description="원소 전투 스킬 레벨 +3"),
+            contellationSchema(
+                name="악운의 수식",
+                description="흐르는 허와 실 상태에 진입 후 1초 이동할 때마다 모나의 다음 강공격 피해가 60% 증가한다. 이러한 방식으로 강공격 피해가 최대 180%까지 증가할 수 있다.",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=3, label="시간(초)")],
+            ),
+        ],
+    ),
 }

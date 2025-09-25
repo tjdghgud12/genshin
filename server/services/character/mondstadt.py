@@ -67,4 +67,66 @@ async def getEulaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
-getFightProp: dict[str, CharacterFightPropGetter] = {"유라": getEulaFightProp}
+async def getMonaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- constellations -----------------------
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "침몰한 예언":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ELECTROCHARGED_ADD_HURT.value, 0.15)
+                        newFightProp.add(fightPropMpa.LUNARCHARGED_ADD_HURT.value, 0.15)
+                        newFightProp.add(fightPropMpa.VAPORIZE_ADD_HURT.value, 0.15)
+                        newFightProp.add(fightPropMpa.SWIRL_ADD_HURT.value, 0.15)
+                case "멈추지 않는 천상":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                case "절멸의 예언":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.CRITICAL.value, 0.15)
+                case "운명의 우롱":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "악운의 수식":
+                    option = constellation.options[0]
+                    if option.active:
+                        newFightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, option.stack * 0.6)
+
+    # ----------------------- active -----------------------
+    activeSkillLevelMap = {"별의 운명": [0.42, 0.44, 0.46, 0.48, 0.50, 0.52, 0.54, 0.56, 0.58, 0.60, 0.60, 0.60, 0.60, 0.60, 0.60]}
+    for active in characterInfo.activeSkill:
+        match active.name:
+            case "별의 운명":
+                option = active.options[0]
+                if option.active:
+                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.name == "멈추지 않는 천상"))
+                    addLevel = 3 if addElementalSkillLevel.unlocked else 0
+                    skillValue = activeSkillLevelMap[active.name][active.level + addLevel - 1]
+                    newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue)
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "「운명에 맡겨!」":
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, newFightProp.FIGHT_PROP_CHARGE_EFFICIENCY * 0.2 / 100)
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
+getFightProp: dict[str, CharacterFightPropGetter] = {"유라": getEulaFightProp, "모나": getMonaFightProp}
