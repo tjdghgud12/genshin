@@ -23,14 +23,9 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     for constellation in characterInfo.constellations:
         if constellation.unlocked:
             match constellation.name:
-                case "요원":  # 스킬 계수 추가
-                    description = "허계 균열 1개 흡수할 때 마다 스커크 공격력의 500%에 해당하는 얼음 원소 피해 추가"
-                case "심연":  # 스킬 계수 추가
+                case "심연":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.7)
-                    description = "원소 전투 스킬 발동 시 뱀의 계략 10pt 획득. 원소 폭발 사용 시 뱀의 계략 최대치 10pt 증가."
-                case "근원":  # 스킬 계수 추가
-                    description = "흡수한 허계 균열 수 당 극악기 · 참 스택 획득. 극악기 · 참 스택 마다 원소 폭발 발동 시 공격력의 750%에 해당하는 얼음 원소 피해 추가. 일곱빛 섬광 모드에서는 일반공격 또는 피격 시 협동 공격"
                 case "악연":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "소망":

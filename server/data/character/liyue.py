@@ -57,11 +57,7 @@ info = {
     ),
     "각청": characterDataSchema(
         passiveSkill={
-            "하늘에 닿은 뇌벌": passiveSkillSchema(
-                description="원소 전투 스킬 발동 후 번개 원소 인챈트",
-                unlockLevel=1,
-                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="원소 전투 스킬 발동")],
-            ),
+            "하늘에 닿은 뇌벌": passiveSkillSchema(description="원소 전투 스킬 발동 후 번개 원소 인챈트", unlockLevel=1),
             "옥형의 품격": passiveSkillSchema(
                 description="원소 폭발 발동 후 치명타 확률 및 원소 충전 효율 증가",
                 unlockLevel=4,

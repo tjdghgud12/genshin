@@ -39,7 +39,9 @@ async def getEulaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: 
     for active in characterInfo.activeSkill:
         match active.name:
             case "얼음 파도의 와류":
-                option = active.options[0]
+                if active.options[0].active:
+                    newFightProp.add(fightPropMpa.DEFENSE_PERCENT.value, active.options[0].stack * 0.3)
+                option = active.options[1]
                 if option.active:
                     addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.name == "기사의 소양"))
                     addLevel = 3 if addElementalSkillLevel.unlocked else 0

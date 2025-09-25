@@ -69,13 +69,12 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     for constellation in characterInfo.constellations:
         if constellation.unlocked:
             match constellation.name:
-                case "계뢰":  # 원소 전투 스킬 추가 피해
-                    description = "뇌설이 존재하는 동안 다시 원소 전투 스킬 발동 시 공격력의 50%의 번개 원소 피해 추가"
                 case "조율":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.25)
                 case "염정":
-                    newFightProp.add(fightPropMpa.ELEC_ADD_HURT.value, constellation.options[0].stack * 0.06)
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ELEC_ADD_HURT.value, constellation.options[0].stack * 0.06)
                 case "등루":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "이등":
@@ -103,6 +102,7 @@ async def getKeqingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
 
 async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
     newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints: list[dict] = []
 
     # -----------------------weapon & Artifact -----------------------
     weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
@@ -133,18 +133,11 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     for constellation in characterInfo.constellations:
         if constellation.unlocked:
             match constellation.name:
+                case "비처럼 내리는 불안":
+                    additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.1), "additionalAttack": "혈매향"})
                 case "나비 잔향":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.CRITICAL.value, 1.00)
-                case "비처럼 내리는 불안":
-                    # 최종 hp의 10%만큼
-                    target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("혈매향")
-                    if target:
-                        baseHp = getattr(newFightProp, fightPropMpa.BASE_HP.value)
-                        hpPercent = getattr(newFightProp, fightPropMpa.HP_PERCENT.value)
-                        hp = getattr(newFightProp, fightPropMpa.HP.value)
-                        totalHp = baseHp * (hpPercent + 1) + hp
-                        target.add(fightPropMpa.ATTACK_ADD_POINT.value, totalHp * 0.1)
                 case "적색 피의 의식":
                     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "꽃잎 향초의 기도":
@@ -183,6 +176,18 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     hp = getattr(newFightProp, fightPropMpa.HP.value)
                     totalHp = baseHp * (hpPercent + 1) + hp
                     newFightProp.add(fightPropMpa.ATTACK.value, totalHp * skillValue)
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+
+        if "additionalAttack" in additionalAttackPoint:
+            newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[additionalAttackPoint["additionalAttack"]].add(fightPropMpa.ATTACK_ADD_POINT.value, 0.1)
+        else:
+            newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 

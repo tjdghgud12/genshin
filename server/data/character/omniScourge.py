@@ -14,15 +14,16 @@ from schemas.character import (
 info = {
     "스커크": characterDataSchema(
         passiveSkill={
-            "이치 너머의 이치": passiveSkillSchema(
-                description="빙결, 초전도, 얼음 확산, 얼음 결정 반응 발동 시 허계 균열 1개 생성. 허계 균열은 흡수 가능하며 흡수 시 원소 전투 스킬 및 원소 폭발 계수 증가",
-                unlockLevel=1,
-                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=3, label="흡수 허계 균열 수")],
-            ),
+            "이치 너머의 이치": passiveSkillSchema(description="빙결, 초전도, 얼음 확산, 얼음 결정 반응 발동 시 허계 균열 1개 생성. 허계 균열은 흡수 가능", unlockLevel=1),
             "흐름의 적멸": passiveSkillSchema(
                 description="파티 내 주변에 있는 물 원소 또는 얼음 원소 캐릭터가 각각 물 원소 또는 얼음 원소 공격으로 적 명중 시 최종 데미지 증가(마지막 곱연산)",
                 unlockLevel=4,
                 options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=3, label="죽음의 강")],
+            ),
+            "무예 전수": passiveSkillSchema(
+                description="파티 내 모든 캐릭터의 원소 타입이 물 원소 또는 얼음 원소이며, 물 원소와 얼음 원소 캐릭터가 각각 최소 1명씩 있을 경우: 파티 내 자신의 캐릭터 원소전투 스킬 레벨이 Lv.1 증가한다",
+                unlockLevel=0,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="무예 전수")],
             ),
         },
         activeSkill={
