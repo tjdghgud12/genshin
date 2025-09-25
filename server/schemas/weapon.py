@@ -1,5 +1,6 @@
 from pydantic import BaseModel, model_validator
 from enum import Enum
+from ambr import WeaponType
 
 
 class weaponOptionType(Enum):
