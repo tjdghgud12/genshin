@@ -49,7 +49,7 @@ const CharacterSettingCard = ({
       .map((setName) => {
         const numberOfParts = parts.filter((part) => part.setName === setName).length;
         const options = artifactSets[setName].options.map((o) => ({ ...o, active: true, stack: o.maxStack }));
-        return { name: setName, options: options.filter((o) => o.requiredParts <= numberOfParts) };
+        return { name: setName, options: options.filter((o) => o.requiredParts <= numberOfParts), numberOfParts: numberOfParts };
       });
   };
 

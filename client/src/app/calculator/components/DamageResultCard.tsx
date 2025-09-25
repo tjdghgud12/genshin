@@ -36,7 +36,6 @@ const DamageResultCard = ({
           <AccordionItem className={`w-full flex flex-col -translate-y-3 relative `} value="calculation-result">
             <AccordionTrigger className="flex-none p-0 m-0 mx-auto bg-gray-700 rounded-full" arrowClassName="size-10 text-white" />
             <AccordionContent className="w-full">
-              {/* 이제 로딩인지 아닌지 알아야해. */}
               {damageResult ? (
                 <Table>
                   <TableCaption>

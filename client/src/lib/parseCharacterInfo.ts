@@ -7,6 +7,7 @@ type TCalculatorData = z.infer<typeof calculatorCharacterInfoSchema>;
 interface IuserSelectoptions {
   id: number;
   level?: number;
+  numberOfParts?: number;
   unlocked?: boolean;
   options: {
     level?: number;
@@ -59,6 +60,7 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
       setInfo: data.artifact.setInfo.map((s: IuserSelectoptions) => ({
         id: s.id,
         name: s.name,
+        numberOfParts: s.numberOfParts,
         options: s.options
           ? s.options.map((o: { active: boolean; stack: number }) => {
               return {

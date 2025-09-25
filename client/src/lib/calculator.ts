@@ -89,6 +89,7 @@ const calculatorCharacterInfoSchema = z.object({
     setInfo: z.array(
       z.object({
         name: z.string(),
+        numberOfParts: z.number(),
         options: z.array(
           z.object({
             active: z.boolean(),
