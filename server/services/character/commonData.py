@@ -53,7 +53,7 @@ def getConstellationData():
 async def getWeaponArtifactFightProp(fightProp: fightPropSchema, weapon: weaponDataSchema, artifact: artifactDataSchema):
     # ----------------------- Artifact -----------------------
     artifactFightProp = getArtifactFightProp(artifact)
-    artifactSetData = getArtifactSetData(artifact.setInfo, fightProp)
+    artifactSetData = getArtifactSetData(artifact.setInfo, fightProp, weapon.type)
     artifactSetFightProp = artifactSetData["fightProp"]
     if artifactSetData["afterAddProps"] != None:
         for key in artifactSetData["afterAddProps"]:
@@ -101,7 +101,7 @@ async def getAfterWeaponArtifactFightProp(
             fightProp.add(key, getattr(finallyWeaponData["fightProp"], key))
 
     if artifactAfterProps != None:
-        finallyArtifactSetData = getArtifactSetData(artifact.setInfo, fightProp)
+        finallyArtifactSetData = getArtifactSetData(artifact.setInfo, fightProp, weapon.type)
         for key in finallyArtifactSetData["afterAddProps"] or []:
             fightProp.add(key, getattr(finallyArtifactSetData["fightProp"], key))
 

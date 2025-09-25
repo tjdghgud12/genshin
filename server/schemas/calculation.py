@@ -13,22 +13,26 @@ class StatusMixin(BaseModel):
 
 class requestCharacterInfoSchema(BaseModel):
     class requestSkillConstellationOptionSchema(skillConstellationOptionSchema, StatusMixin):
+        model_config = {"extra": "ignore"}
         pass
 
     class requestPassiveSkillSchema(passiveSkillSchema):
         name: str
         unlocked: bool
-        options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema]
+        options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema] = []
+        model_config = {"extra": "ignore"}
 
     class requestActiveSkillSchema(activeSkillSchema):
         name: str
         level: int
         options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema] = []
+        model_config = {"extra": "ignore"}
 
     class requestContellationSchema(contellationSchema):
         name: str
         unlocked: bool
-        options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema]
+        options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema] = []
+        model_config = {"extra": "ignore"}
 
     name: str
     id: int

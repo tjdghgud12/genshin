@@ -127,4 +127,8 @@ artifactSetOptions = {
             label="원소 전투 스킬 발동",
         ),
     ],
+    "검투사의 피날레": [
+        artifactSetOptionSchema(type=artifactSetOptionType.always, description="공격력 +18%", requiredParts=2),
+        artifactSetOptionSchema(description="해당 성유물 세트를 장착한 캐릭터가 한손검, 양손검, 장병기를 사용 시 캐릭터의 일반 공격으로 주는 피해가 35% 증가한다", requiredParts=4),
+    ],
 }

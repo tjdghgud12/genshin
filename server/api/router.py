@@ -184,6 +184,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 characterInfo["weapon"] = {
                     "id": weapon.item_id,
                     "name": weapon.name,
+                    "type": ambrCharacterDetail.weapon_type,
                     "refinement": weapon.refinement,
                     "level": weapon.level,
                     "icon": weapon.icon,

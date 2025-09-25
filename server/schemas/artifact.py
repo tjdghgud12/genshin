@@ -87,3 +87,5 @@ class artifactPartsDataSchema(BaseModel):
 class artifactDataSchema(BaseModel):
     parts: list[artifactPartsDataSchema]
     setInfo: list[artifactSetDataSchema]
+
+    model_config = {"extra": "ignore"}
