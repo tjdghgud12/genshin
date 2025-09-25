@@ -329,6 +329,7 @@ def getArtifactFightProp(artifactInfo: artifactDataSchema) -> fightPropSchema:
 
 def getArtifactSetData(setInfos: list[artifactSetDataSchema], characterFightProp: fightPropSchema, weaponType: WeaponType) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
+    afterAddProps = None
     for setInfo in setInfos:
         getSetFightProp = getArtifactSetsFightProp[setInfo.name]
         variableList = inspect.signature(getSetFightProp).parameters
@@ -354,7 +355,7 @@ def getArtifactSetInfo(artifacts: list[dict]):
 
     for setName in setList:
         numberOfParts = sum(1 for artifact in artifacts if artifact.get("setName") == setName)
-        if numberOfParts > 2:
+        if numberOfParts >= 2:
             setInfo.append({"name": setName, "options": artifactSetOptions.get(setName), "numberOfParts": numberOfParts})
 
     return setInfo
