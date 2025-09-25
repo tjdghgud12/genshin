@@ -149,4 +149,38 @@ info = {
             ),
         ],
     ),
+    "야에 미코": characterDataSchema(
+        passiveSkill={
+            "히모로기의 그늘": passiveSkillSchema(
+                description="대비법·천호현신 발동 시, 하나의 살생앵이 파괴될 때마다, 야칸의 소환·살생앵의 재사용 대기시간이 초기화된다", unlockLevel=1
+            ),
+            "계칩의 축문": passiveSkillSchema(description="야에 미코의 원소 마스터리 1pt당 살생앵이 가하는 피해가 0.15% 증가한다.", unlockLevel=4),
+        },
+        activeSkill={
+            "죄를 삼키는 여우령": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["elec"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["elec"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["elec"]),
+                )
+            ),
+            "야칸의 소환·살생앵": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["elec"]))),
+            "대비법·천호 현신": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["elec"])),
+                additionalAttack=[additionalAttackSchema(name="천호 뇌정", type="elementalBurst", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["elec"]))],
+            ),
+        },
+        constellation=[
+            contellationSchema(name="여우의 제물", description="대비법 · 천호(天狐) 현신으로 천호 뇌정을 1회 발동할 때마다 야에 미코 자신의 원소 에너지를 8pt 회복한다."),
+            contellationSchema(name="달을 향한 포효", description="살생앵이 생성될 때의 초기 등급이 2단계 상승하며, 등급 최대치가 4단계까지 상승한다. 공격 범위가 60% 증가한다."),
+            contellationSchema(name="신묘한 7단 변화", description="원소 전투 스킬 레벨 +3"),
+            contellationSchema(
+                name="벚꽃이 불러온 뇌장",
+                description="살생앵의 낙뢰가 적을 명중하면, 근처 파티 내 모든 캐릭터가 번개 원소 피해 보너스를 20% 획득한다.",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="원소 전투 스킬 명중")],
+            ),
+            contellationSchema(name="폭악 조소의 가면", description="원소 폭발 레벨 +3"),
+            contellationSchema(name="대살생의 저주", description=""),
+        ],
+    ),
 }

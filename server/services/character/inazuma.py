@@ -196,8 +196,48 @@ async def getYoimiyaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
+async def getYaeMikoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    # ----------------------- constellations -----------------------
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "벚꽃이 불러온 뇌장":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ELEC_ADD_HURT.value, 0.2)
+                case "대살생의 저주":
+                    newFightProp.add(fightPropMpa.ELEMENT_SKILL_DEFENSE_IGNORE.value, 0.6)
+                case "신묘한 7단 변화":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "폭악 조소의 가면":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+
+    # ----------------------- active -----------------------
+    # active: 야에 미코의 active에는 버프 효과 존재 X
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "계칩의 축문":
+                    newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, newFightProp.FIGHT_PROP_ELEMENT_MASTERY * 0.0015)
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "카미사토 아야카": getKamisatoAyakaFightProp,
     "라이덴 쇼군": getRaidenShogunFightProp,
     "요이미야": getYoimiyaFightProp,
+    "야에 미코": getYaeMikoFightProp,
 }
