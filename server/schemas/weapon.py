@@ -11,7 +11,7 @@ class weaponOptionType(Enum):
 
 
 class StatusMixin(BaseModel):
-    select: str
+    select: str | None
     active: bool
     stack: int
 
