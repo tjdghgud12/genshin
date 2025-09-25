@@ -475,6 +475,36 @@ async def getSongOfBrokenPinesFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getKagurasVerityFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.12, 0.12],
+        [0.15, 0.15],
+        [0.18, 0.18],
+        [0.21, 0.21],
+        [0.24, 0.24],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[0] * option.stack)
+                    if option.stack >= option.maxStack:
+                        fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, refinementValue[1])
+                        fightProp.add(fightPropMpa.WATER_ADD_HURT.value, refinementValue[1])
+                        fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, refinementValue[1])
+                        fightProp.add(fightPropMpa.WIND_ADD_HURT.value, refinementValue[1])
+                        fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, refinementValue[1])
+                        fightProp.add(fightPropMpa.ICE_ADD_HURT.value, refinementValue[1])
+                        fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, refinementValue[1])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -495,4 +525,5 @@ getTotalWeaponFightProp = {
     "녹슨 활": getRustFightProp,
     "비뢰의 고동": getThunderingPulseFightProp,
     "송뢰가 울릴 무렵": getSongOfBrokenPinesFightProp,
+    "카구라의 진의": getKagurasVerityFightProp,
 }

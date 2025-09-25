@@ -85,5 +85,8 @@ weaponInfo = {
         weaponOptionSchema(description="공격력 증가"),
         weaponOptionSchema(type=weaponOptionType.toggle, label="천년의 대악장·깃발의 노래"),
     ],
+    "카구라의 진의": [
+        weaponOptionSchema(type=weaponOptionType.stack, label="카구라의 춤"),
+    ],
     "학도의 노트": [],
 }
