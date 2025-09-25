@@ -262,11 +262,26 @@ def getGladiatorsFinaleSetOption(numberOfParts: int, optionInfo: list[artifactSe
                 case 0:
                     fightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.18)
                 case 1:
-                    # 조건에 한손검 양손검 장병기를 알아야함.
-                    # fightProp이 아니라 캐릭터의 옵션 자체를 알아야하네
                     weaponList = [WeaponType.CLAYMORE, WeaponType.SWORD, WeaponType.POLE]
                     if weaponType in weaponList:
                         fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_HURT.value, 0.35)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
+def getGildedDreamsSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 80)
+                case 1:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ATTACK_PERCENT.value, info.stack * 0.14)
+                case 2:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, info.stack * 50)
 
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
@@ -288,6 +303,7 @@ getArtifactSetsFightProp = {
     "추억의 시메나와": getShimenawasReminiscenceSetOption,
     "창백의 화염": getPaleFlameSetOption,
     "검투사의 피날레": getGladiatorsFinaleSetOption,
+    "도금된 꿈": getGildedDreamsSetOption,
 }
 
 

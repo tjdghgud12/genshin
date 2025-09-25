@@ -131,4 +131,21 @@ artifactSetOptions = {
         artifactSetOptionSchema(type=artifactSetOptionType.always, description="공격력 +18%", requiredParts=2),
         artifactSetOptionSchema(description="해당 성유물 세트를 장착한 캐릭터가 한손검, 양손검, 장병기를 사용 시 캐릭터의 일반 공격으로 주는 피해가 35% 증가한다", requiredParts=4),
     ],
+    "도금된 꿈": [
+        artifactSetOptionSchema(type=artifactSetOptionType.always, description="원소 마스터리 +80", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            description="원소 반응 발동 후 8초 동안 파티 내 다른 캐릭터의 원소 유형에 따라 장착 캐릭터가 강화 효과를 받는다. 동일한 원소 타입의 캐릭터가 1명 존재할 때마다 공격력이 14% 증가",
+            maxStack=3,
+            requiredParts=4,
+            label="동일 원소 파티원",
+        ),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            description="원소 반응 발동 후 8초 동안 파티 내 다른 캐릭터의 원소 유형에 따라 장착 캐릭터가 강화 효과를 받는다. 다른 원소 타입의 캐릭터가 1명 존재할 때마다 원소 마스터리가 50pt 증가",
+            maxStack=3,
+            requiredParts=4,
+            label="다른 원소 파티원",
+        ),
+    ],
 }
