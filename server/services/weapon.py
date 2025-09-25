@@ -62,7 +62,13 @@ async def getMistsplitterReforgedFightProp(
     for i, option in enumerate(options):
         if option.active:
             value = refinementValue[i] if i == 0 else refinementValue[i][int(option.stack) - 1]
-            fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.WATER_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.WIND_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.ICE_ADD_HURT.value, value)
+            fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
