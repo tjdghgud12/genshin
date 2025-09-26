@@ -10,5 +10,7 @@ export interface IWeaponInfo {
     maxStack: number;
     description: string;
     label: string;
+    select: string;
+    selectList: string[];
   }[];
 }

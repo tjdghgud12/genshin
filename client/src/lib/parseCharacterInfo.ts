@@ -14,6 +14,7 @@ interface IuserSelectoptions {
     unlocked?: boolean;
     stack: number;
     active: boolean;
+    select?: string | null;
   }[];
   [key: string]: unknown;
 }
@@ -46,6 +47,7 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
       options: data.weapon.options.map((o: IuserSelectoptions) => ({
         active: o.active,
         stack: o.stack,
+        select: o.select,
       })),
     },
     artifact: {

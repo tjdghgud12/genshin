@@ -47,7 +47,7 @@ const Combobox = ({
           </PopoverTrigger>
         </TooltipTrigger>
         <TooltipContent className="w-full max-w-[200px] bg-gray-500 fill-gray-500 ${className} p-2 rounded-lg text-white" side="top">
-          <p>{options.find((option) => option.data.toString() === value)?.label}</p>
+          <p>{options.find((option) => (typeof option.data === "string" ? option.data : option.data.toString()) === value)?.label}</p>
         </TooltipContent>
       </Tooltip>
 
@@ -57,21 +57,25 @@ const Combobox = ({
           <CommandList id="CommandList">
             <CommandEmpty>No Weapon found.</CommandEmpty>
             <CommandGroup className={`${optionClassName}`}>
-              {options.map((option) => (
-                <CommandItem
-                  className={value === option.data.toString() ? `bg-accent text-accent-foreground` : ``}
-                  key={option.data}
-                  value={option.data.toString()}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue);
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  {option.label}
-                  <Check className={cn("ml-auto", value === option.data.toString() ? "opacity-100" : "opacity-0")} />
-                </CommandItem>
-              ))}
+              {options.map((option) => {
+                const selectedValue = typeof option.data === "string" ? option.data : option.data.toString();
+                const selected = value === selectedValue;
+                return (
+                  <CommandItem
+                    className={selected ? `bg-accent text-accent-foreground` : ``}
+                    key={option.data}
+                    value={selectedValue}
+                    onSelect={(currentValue) => {
+                      onChange(currentValue);
+                      setValue(currentValue === value ? "" : currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    {option.label}
+                    <Check className={cn("ml-auto", selected ? "opacity-100" : "opacity-0")} />
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           </CommandList>
         </Command>

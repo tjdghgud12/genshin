@@ -55,7 +55,7 @@ const WeaponSettingCard = ({
   onChange?: (weapon: IWeaponInfo | undefined) => void;
   onLevelChange?: (level: number | string) => void;
   onRefinementChange?: (refinement: number | string) => void;
-  onOptionsChange?: ((value: boolean | number | string) => void)[];
+  onOptionsChange?: ((value: boolean | number | string | null, key: string) => void)[];
 }): React.ReactElement => {
   const totalWeaponList = useCalculatorStore((state) => state.weaponList);
   const [weaponDetail, setWeaponDetail] = useState<IWeaponDetail | null>(null);
@@ -175,7 +175,7 @@ const WeaponSettingCard = ({
             />
           </div>
         </div>
-        <div>
+        <div className="mt-3">
           {selectedWeapon ? (
             selectedWeapon.options.map((option, i) => {
               const optionValue = weapon.options[i];
@@ -188,7 +188,7 @@ const WeaponSettingCard = ({
                         className="w-[50px]"
                         thumbClassName="data-[state=checked]:translate-x-[calc(50px-(100%+2px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
                         checked={optionValue.active}
-                        onCheckedChange={onOptionsChange[i]}
+                        onCheckedChange={(checked) => onOptionsChange[i](checked, "active")}
                       />
                     </div>
                   ) : option.type === "stack" ? (
@@ -204,9 +204,23 @@ const WeaponSettingCard = ({
                         placeholder="중첩"
                         onChange={(e) => {
                           const value = inputNumberWithSpace(e.target.value);
-                          onOptionsChange[i](value);
+                          onOptionsChange[i](value, "stack");
                         }}
                       />
+                    </div>
+                  ) : option.type === "select" ? (
+                    <div className="flex mb-1">
+                      <Label className="font-bold text-lg mr-1">{option.label}:</Label>
+                      <div className="w-[40%]">
+                        <Combobox
+                          className="w-full h-fit bg-gray-700 text-white font-bold border-2 text-md text-center"
+                          optionClassName="bg-gray-700 text-white"
+                          options={option.selectList.filter((w) => w).map((w) => ({ label: w, data: w }))}
+                          defaultValue={option.select}
+                          placeholder={option.label}
+                          onChange={(value) => onOptionsChange[i](value === undefined ? null : value, "select")}
+                        />
+                      </div>
                     </div>
                   ) : (
                     <></>
