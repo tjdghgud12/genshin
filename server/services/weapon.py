@@ -569,4 +569,5 @@ getTotalWeaponFightProp = {
     "비뢰의 고동": getThunderingPulseFightProp,
     "송뢰가 울릴 무렵": getSongOfBrokenPinesFightProp,
     "카구라의 진의": getKagurasVerityFightProp,
+    "음유시인의 악장": getTheWidsithFightProp,
 }

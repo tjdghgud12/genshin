@@ -123,8 +123,7 @@ async def getMonaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: 
         if passive.unlocked:
             match passive.name:
                 case "「운명에 맡겨!」":
-                    if passive.options[0].active:
-                        newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, newFightProp.FIGHT_PROP_CHARGE_EFFICIENCY * 0.2 / 100)
+                    newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, newFightProp.FIGHT_PROP_CHARGE_EFFICIENCY * 0.2 / 100)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 

@@ -288,7 +288,7 @@ def getGildedDreamsSetOption(numberOfParts: int, optionInfo: list[artifactSetDat
 
 def getNymphsDreamSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
-    option = [(0.07, 0.04), (0.16, 0.9), (0.25, 0.15)]
+    option = [(0, 0), (0.07, 0.04), (0.16, 0.9), (0.25, 0.15)]
 
     for i, info in enumerate(optionInfo):
         if numberOfParts >= info.requiredParts:
