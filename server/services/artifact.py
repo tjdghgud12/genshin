@@ -286,6 +286,23 @@ def getGildedDreamsSetOption(numberOfParts: int, optionInfo: list[artifactSetDat
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
+def getNymphsDreamSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    option = [(0.07, 0.04), (0.16, 0.9), (0.25, 0.15)]
+
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.WATER_ADD_HURT.value, 0.15)
+                case 1:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ATTACK_PERCENT.value, option[info.stack][0])
+                        fightProp.add(fightPropMpa.WATER_ADD_HURT.value, option[info.stack][0])
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
@@ -304,6 +321,7 @@ getArtifactSetsFightProp = {
     "창백의 화염": getPaleFlameSetOption,
     "검투사의 피날레": getGladiatorsFinaleSetOption,
     "도금된 꿈": getGildedDreamsSetOption,
+    "님프의 꿈": getNymphsDreamSetOption,
 }
 
 

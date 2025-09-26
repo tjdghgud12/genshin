@@ -148,4 +148,14 @@ artifactSetOptions = {
             label="다른 원소 파티원",
         ),
     ],
+    "님프의 꿈": [
+        artifactSetOptionSchema(type=artifactSetOptionType.always, description="물 원소 피해 보너스 15%", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            description="일반 공격, 강공격, 낙하 공격, 원소전투 스킬 또는 원소폭발이 적에게 명중한 후, 8초 동안 지속되는 「거울 속 님프」 효과가 1스택 생성된다.  효과가 1/2/3스택 이상일 시, 공격력이 7%/16%/25% 증가하고 물 원소 피해 보너스가 4%/9%/15% 증가한다.",
+            maxStack=3,
+            requiredParts=4,
+            label="거울 속 님프",
+        ),
+    ],
 }
