@@ -70,7 +70,9 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
     for additionalAttackPoint in additionalAttackPoints:
         key = additionalAttackPoint["key"]
         pointKey, value = additionalAttackPoint["value"]
-        finalPoint = getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
         newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)

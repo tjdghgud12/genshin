@@ -32,7 +32,10 @@ info = {
                 baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["fire"])),
                 additionalAttack=[additionalAttackSchema(name="핏값", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["fire"]))],
             ),
-            "떠오르는 재액의 달": activeSkillSchema(description="불 원소 범위 피해를 준 다음. 재가 된 만상의 재사용 대기시간을 초기화하고 자신의 HP를 회복한다."),
+            "떠오르는 재액의 달": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["fire"])),
+                description="불 원소 범위 피해를 준 다음. 재가 된 만상의 재사용 대기시간을 초기화하고 자신의 HP를 회복한다.",
+            ),
         },
         constellation=[
             contellationSchema(
