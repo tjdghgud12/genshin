@@ -90,7 +90,7 @@ async def getMonaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: 
                         newFightProp.add(fightPropMpa.VAPORIZE_ADD_HURT.value, 0.15)
                         newFightProp.add(fightPropMpa.SWIRL_ADD_HURT.value, 0.15)
                 case "멈추지 않는 천상":
-                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                    characterInfo.activeSkill[3].level -= 3 if enkaDataFlag else 0
                 case "절멸의 예언":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMpa.CRITICAL.value, 0.15)
