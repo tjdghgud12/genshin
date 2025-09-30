@@ -462,11 +462,11 @@ async def getSongOfBrokenPinesFightProp(
 ) -> WeaponDataReturnSchema:
     fightProp = await getWeaponBaseFightProp(id, level)
     optionRefinementMap = [
-        [0.16, 20],
-        [0.20, 25],
-        [0.24, 30],
-        [0.28, 35],
-        [0.32, 40],
+        [0.16, 0.20],
+        [0.20, 0.25],
+        [0.24, 0.30],
+        [0.28, 0.35],
+        [0.32, 0.40],
     ]
     refinementValue = optionRefinementMap[refinement - 1]
 
