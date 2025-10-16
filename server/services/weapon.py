@@ -714,7 +714,7 @@ getTotalWeaponFightProp = {
     "음유시인의 악장": getTheWidsithFightProp,
     "페보니우스 활": getFavoniusWarbowFightProp,
     "아메노마 카게우치가타나": getAmenomaKageuchiFightProp,
-    "늑대의 송곳니": getWolfFangFightProp,
+    "늑대 송곳니": getWolfFangFightProp,
     "식재": getCalamityQuellerFightProp,
     "화박연": getPrimordialJadeWingedSpearFightProp,
     "사풍 원서": getLostPrayerToTheSacredWindsFightProp,
