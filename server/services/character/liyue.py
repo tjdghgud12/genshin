@@ -192,8 +192,67 @@ async def getHuTaoFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
+async def getYelanFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints: list[dict] = []
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "선공의 묘수":
+                    if passive.options[0].active:
+                        values = [0.0, 0.06, 0.12, 0.18, 0.30]
+                        newFightProp.add(fightPropMpa.HP_PERCENT.value, values[passive.options[0].stack])
+                case "마음 가는 대로":
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, passive.options[0].stack * 0.035 + 0.01)
+
+    # ----------------------- constellations -----------------------
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "이화접목의 현혹술":
+                    newFightProp.add(fightPropMpa.HP_PERCENT.value, constellation.options[0].stack * 0.1)
+                case "노름꾼의 주사위":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                case "눈보다 빠른 손":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+    # ----------------------- active -----------------------
+    # 야란의 active 스킬은 fightProp 영향 X
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+
+        if "additionalAttack" in additionalAttackPoint:
+            newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[additionalAttackPoint["additionalAttack"]].add(fightPropMpa.ATTACK_ADD_POINT.value, 0.1)
+        else:
+            newFightProp.add(key, finalPoint * value)
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "감우": getGanyuFightProp,
     "각청": getKeqingFightProp,
     "호두": getHuTaoFightProp,
+    "야란": getYelanFightProp,
 }
