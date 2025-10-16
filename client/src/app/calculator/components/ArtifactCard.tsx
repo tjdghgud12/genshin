@@ -55,7 +55,7 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
 
   return (
     <Card className={`w-full border-0 border-gray-400 p-1 shadow-md bg-transparent ${className}`}>
-      <CardContent className="p-1 text-gray-700 flex">
+      <CardContent className="p-1 text-white flex">
         {!imgLoading && <DotBounsLoading className="w-fit h-fit m-auto" dotClassName="size-4 stroke-8" />}
         <div className="w-[40%] aspect-square mr-2 my-auto relative">
           <Tooltip delayDuration={500}>
@@ -75,10 +75,10 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
         </div>
 
         <div className="flex-1 flex flex-col gap-5">
-          <Label className="text-base font-bold mx-auto">
+          <Label className="text-2xl font-bold mx-auto">
             {setInfo.name}({setInfo.numberOfParts})
           </Label>
-          <div className="flex flex-col gap-2 my-auto">
+          <div className="flex flex-col gap-2 my-auto overflow-auto" style={{ scrollbarGutter: "stable" }}>
             {setInfo.options.map((option, i) => {
               if (option.type === "always" || option.requiredParts > setInfo.numberOfParts) {
                 return <Fragment key={`${option.label}-${i}`} />;
@@ -177,43 +177,44 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
 
   return (
     <Card className={`w-full border-0 border-gray-400 text-base p-1 shadow-md bg-transparent ${className}`}>
-      <CardContent className="w-full h-full p-1 text-gray-700 flex overflow-hidden">
-        <div className="w-2/5 flex flex-col mr-2">
-          <Combobox
-            className="w-full h-fit bg-gray-700 text-white font-bold border-2"
-            optionClassName="bg-gray-700 text-white"
-            options={Object.keys(artifactSets).map((name) => ({ label: name, data: name }))}
-            defaultValue={artifactSets[artifact.setName]?.name.toString() || ""}
-            placeholder="성유물 세트"
-            onChange={(name) => {
-              if (name) {
-                const artifactInfo = artifactSets[name];
-                setAmbrArtifact(undefined);
-                setImgLoading(false);
-                onSetChange(name);
-                getArtifactDetail(Number(artifactInfo.id));
-              }
-            }}
-          />
-          <div className="w-full flex mt-auto">
-            <div className="w-[40%] aspect-square flex flex-col relative">
-              {!imgLoading && <DotBounsLoading className="w-fit h-fit m-auto" dotClassName="size-4 stroke-8" />}
-              {ambrArtifact === undefined ? (
-                <CircleOff className="size-10 m-auto" />
-              ) : (
-                <Image
-                  className={imgLoading ? "" : "hidden"}
-                  src={ambrArtifact?.icon || ""}
-                  alt=""
-                  priority
-                  fill
-                  sizes="(max-width: 1200px) 7vw"
-                  onLoad={() => setImgLoading(true)}
-                />
-              )}
-            </div>
+      <CardContent className="w-full h-full p-1 text-white flex flex-col gap-4 overflow-hidden">
+        <div className="w-full flex">
+          <div className="w-[45%] aspect-square flex flex-col relative">
+            {!imgLoading && <DotBounsLoading className="w-auto h-auto m-auto" dotClassName="size-4 stroke-8" />}
+            {ambrArtifact === undefined ? (
+              <CircleOff className="size-10 m-auto" />
+            ) : (
+              <Image
+                className={imgLoading ? "" : "hidden"}
+                src={ambrArtifact?.icon || ""}
+                alt=""
+                priority
+                fill
+                sizes="(max-width: 1200px) 7vw"
+                onLoad={() => setImgLoading(true)}
+              />
+            )}
+          </div>
+          <div className="w-[55%] h-full flex flex-col justify-between">
+            <Combobox
+              className="h-fit bg-gray-700 text-white text-base font-bold border-2"
+              optionClassName="bg-gray-700 text-white"
+              options={Object.keys(artifactSets).map((name) => ({ label: name, data: name }))}
+              defaultValue={artifactSets[artifact.setName]?.name.toString() || ""}
+              placeholder="성유물 세트"
+              onChange={(name) => {
+                if (name) {
+                  const artifactInfo = artifactSets[name];
+                  setAmbrArtifact(undefined);
+                  setImgLoading(false);
+                  onSetChange(name);
+                  getArtifactDetail(Number(artifactInfo.id));
+                }
+              }}
+            />
+
             {artifact && (
-              <div className="flex-1 min-w-0 mt-auto flex flex-col">
+              <div className="min-w-0 flex flex-col">
                 {Array.isArray(artifactMainOptionList[artifact.type]) ? (
                   <Combobox
                     className="h-fit bg-gray-700 text-white text-base font-bold border-2 overflow-hidden text-center"
@@ -244,12 +245,12 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
             )}
           </div>
         </div>
-        <div className="flex-1 grid grid-cols-2 gap-2">
+        <div className="flex-1 flex flex-col justify-around mx-auto">
           {sub.map(({ key, value }, i) => {
             return (
-              <div key={`subOption.${i}`} className="flex flex-col">
+              <div key={`subOption.${i}`} className="w-full flex gap-2">
                 <Combobox
-                  className="h-fit bg-gray-700 text-white font-bold border-2 overflow-hidden text-center"
+                  className="w-2/3 h-fit bg-gray-700 text-white text-base font-bold border-2 overflow-hidden text-center"
                   optionClassName="bg-gray-700 text-white"
                   options={artifactSubOptionList.map((o) => ({
                     label: fightPropLabels[o],
@@ -259,7 +260,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
                   onChange={(fightProp) => onSubChange[i]({ [fightProp === undefined ? artifactSubOptionList[0] : fightProp]: value })}
                 />
                 <Input
-                  className="w-full h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-base text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
+                  className="border-b-2 border-t-0 border-x-0 rounded-none !text-base text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
                   name={`subOption.${i}.value`}
                   type="number"
                   step="any"

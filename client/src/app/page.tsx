@@ -47,9 +47,8 @@ const Home = (): React.ReactElement => {
         router.push(`/calculator?${searchParams.toString()}`);
         return "캐릭터 진열장의 정보를 읽어왔습니다.";
       },
-      error: (err) => {
+      error: (_err) => {
         setWaitUserInfoFlag(false);
-        console.log(err);
         return "캐릭터 진열장의 정보를 읽어오는데 실패했습니다.";
       },
     });

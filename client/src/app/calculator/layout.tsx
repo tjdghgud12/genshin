@@ -52,10 +52,9 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
         setWaitUserInfoFlag(false);
         return "캐릭터 진열장의 정보를 읽어왔습니다.";
       },
-      error: (err) => {
-        console.log(err);
+      error: (_err) => {
         setWaitUserInfoFlag(false);
-        return "실패요";
+        return "캐릭터 진열장의 정보를 읽어오는데 실패했습니다.";
       },
     });
   };
@@ -70,8 +69,8 @@ const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>
         <Fragment>
           <div className="w-full flex">
             {/* Header */}
-            <Link className="w-fit h-fit rounded-full py-1 px-3" href={`/`}>
-              <Image src={`/img/homeIcon.png`} alt="" priority width={80} height={80} />
+            <Link className="w-[80px] h-[80px] relative rounded-full py-1 px-3" href={`/`}>
+              <Image src={`/img/homeIcon.png`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
             </Link>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 m-auto">

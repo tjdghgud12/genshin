@@ -1,7 +1,6 @@
 "use client";
 import AdditionalFightProp from "@/app/calculator/components/AdditionalFightProp";
 import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCard";
-import DamageResultCard from "@/app/calculator/components/DamageResultCard";
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/lib/axios";
@@ -76,7 +75,7 @@ const CalculatorPage = (): React.ReactElement => {
           setDamageResult(newDamageResult);
           return "데미지 연산을 완료하였습니다.";
         },
-        error: (err) => {
+        error: (_err) => {
           return "데미지 연산에 실패하였습니다.";
         },
       });
@@ -127,7 +126,6 @@ const CalculatorPage = (): React.ReactElement => {
               return (
                 <TabsContent key={`calculator-tab-content-${index}`} className={`w-full h-fit`} value={name}>
                   <CharacterSettingCard form={form} item={item} index={index} />
-                  <DamageResultCard damageResult={damageResult[index]} element={item.raw.element} />
                 </TabsContent>
               );
             })}

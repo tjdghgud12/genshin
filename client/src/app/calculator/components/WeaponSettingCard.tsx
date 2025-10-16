@@ -3,6 +3,7 @@
 import { Combobox } from "@/app/globalComponents/ComboBox";
 import GradientStar from "@/app/globalComponents/GradientStar";
 import { DotBounsLoading } from "@/app/loading";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +15,7 @@ import { inputNumberWithSpace } from "@/lib/utils";
 import { useCalculatorStore } from "@/store/useCalculatorStore";
 import { IWeaponInfo } from "@/types/weaponType";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
 const weaponSubOption = {
@@ -83,8 +84,8 @@ const WeaponSettingCard = ({
   }, [totalWeaponList, type, weapon.id]);
 
   return (
-    <Card className={`w-full h-full border-0 border-gray-400 p-1 shadow-md bg-transparent ${className}`}>
-      <CardContent className="w-full h-full p-1 text-gray-700">
+    <Card className={`w-full max-h-full bg-gray-700 border-2 rounded-2xl overflow-y-auto scrollbar-custom shadow-none ${className}`} style={{ scrollbarGutter: "stable" }}>
+      <CardContent className="w-full text-white">
         <div className="w-full flex">
           <div className="w-[40%] aspect-square mr-2">
             {!imgLoading && !weaponDetail && <DotBounsLoading className="w-fit h-full m-auto" dotClassName="size-4 stroke-8" />}
@@ -175,27 +176,42 @@ const WeaponSettingCard = ({
             />
           </div>
         </div>
-        <div className="mt-3">
+
+        <Label className="text-base mt-3">{weaponDetail?.description}</Label>
+
+        <Accordion className="w-full" type="single" collapsible defaultValue="description">
+          <AccordionItem value="description">
+            <AccordionTrigger className="pt-1">{weaponDetail && weaponDetail.affix && <Label className="font-bold text-xl">{weaponDetail.affix.name}</Label>}</AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-4 scrollbar-custom whitespace-pre-wrap">
+              {weaponDetail && weaponDetail.affix && (
+                <Label className="text-base">{weaponDetail.affix.upgrade[Number(weapon.refinement) > 1 ? Number(weapon.refinement) - 1 : 0].description}</Label>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <div className="h-fit mt-3">
           {selectedWeapon ? (
-            selectedWeapon.options.map((option, i) => {
-              const optionValue = weapon.options[i];
-              return (
-                <div key={weapon.name + option.label + i}>
-                  {option.type === "toggle" ? (
-                    <div className="w-fit flex mb-1">
-                      <Label className="font-bold mr-3">{option.label}:</Label>
+            <>
+              <Label className="text-2xl font-bold mb-1">옵션</Label>
+              <div className="grid grid-cols-[auto_1fr] gap-x-3">
+                {selectedWeapon.options.map((option, i) => {
+                  const optionValue = weapon.options[i];
+                  return option.type === "toggle" ? (
+                    <Fragment key={`${weapon.name}-${option.label}-${i}`}>
+                      <Label className="text-xl font-bold my-auto">{option.label}:</Label>
                       <Switch
-                        className="w-[50px]"
-                        thumbClassName="data-[state=checked]:translate-x-[calc(50px-(100%+2px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
+                        className="w-[50px] h-[22px] my-auto"
+                        thumbClassName="data-[state=checked]:translate-x-[calc(50px-(100%+4px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
                         checked={optionValue.active}
                         onCheckedChange={(checked) => onOptionsChange[i](checked, "active")}
                       />
-                    </div>
+                    </Fragment>
                   ) : option.type === "stack" ? (
-                    <div className="flex mb-1">
-                      <Label className="font-bold text-lg mr-1">{option.label}:</Label>
+                    <Fragment key={`${weapon.name}-${option.label}-${i}`}>
+                      <Label className="text-xl font-bold my-auto">{option.label}:</Label>
                       <Input
-                        className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+                        className="w-fit !text-lg border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
                         name={`options.${i}`}
                         type="number"
                         value={optionValue.stack.toString()}
@@ -207,13 +223,13 @@ const WeaponSettingCard = ({
                           onOptionsChange[i](value, "stack");
                         }}
                       />
-                    </div>
+                    </Fragment>
                   ) : option.type === "select" ? (
-                    <div className="flex mb-1">
-                      <Label className="font-bold text-lg mr-1">{option.label}:</Label>
-                      <div className="w-[40%]">
+                    <Fragment key={`${weapon.name}-${option.label}-${i}`}>
+                      <Label className="text-xl font-bold my-auto">{option.label}:</Label>
+                      <div className="w-full">
                         <Combobox
-                          className="w-full h-fit bg-gray-700 text-white font-bold border-2 text-md text-center"
+                          className="w-full h-fit bg-gray-700 text-white font-bold border-2 text-xl text-center"
                           optionClassName="bg-gray-700 text-white"
                           options={option.selectList.filter((w) => w).map((w) => ({ label: w, data: w }))}
                           defaultValue={option.select}
@@ -221,13 +237,13 @@ const WeaponSettingCard = ({
                           onChange={(value) => onOptionsChange[i](value === undefined ? null : value, "select")}
                         />
                       </div>
-                    </div>
+                    </Fragment>
                   ) : (
-                    <></>
-                  )}
-                </div>
-              );
-            })
+                    <Fragment key={`${weapon.name}-${option.label}-${i}`} />
+                  );
+                })}
+              </div>
+            </>
           ) : (
             <></>
           )}
