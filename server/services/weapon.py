@@ -548,6 +548,148 @@ async def getTheWidsithFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getFavoniusWarbowFightProp(
+    id: int, level: int, _refinement: int, _options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getAmenomaKageuchiFightProp(
+    id: int, level: int, _refinement: int, _options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getWolfFangFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.16, 0.02],
+        [0.20, 0.025],
+        [0.24, 0.03],
+        [0.28, 0.035],
+        [0.32, 0.04],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL.value, refinementValue[1] * option.stack)
+                    fightProp.add(fightPropMpa.ELEMENT_BURST_CRITICAL.value, refinementValue[1] * option.stack)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getCalamityQuellerFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.12, 0.032],
+        [0.15, 0.04],
+        [0.18, 0.048],
+        [0.21, 0.056],
+        [0.24, 0.064],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.WATER_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.WIND_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.ICE_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1] * option.stack)
+                case 2:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1] * options[1].stack)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getPrimordialJadeWingedSpearFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.032, 0.12],
+        [0.039, 0.15],
+        [0.046, 0.18],
+        [0.053, 0.21],
+        [0.060, 0.24],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0] * option.stack)
+                    if option.stack == option.maxStack:
+                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, refinementValue[1])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getLostPrayerToTheSacredWindsFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [0.08, 0.10, 0.12, 0.14, 0.16]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, refinementValue)
+                    fightProp.add(fightPropMpa.WATER_ADD_HURT.value, refinementValue)
+                    fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, refinementValue)
+                    fightProp.add(fightPropMpa.WIND_ADD_HURT.value, refinementValue)
+                    fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, refinementValue)
+                    fightProp.add(fightPropMpa.ICE_ADD_HURT.value, refinementValue)
+                    fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, refinementValue)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getSacrificialJadeFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.32, 40],
+        [0.4, 50],
+        [0.48, 60],
+        [0.56, 70],
+        [0.64, 80],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.HP_PERCENT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, refinementValue[1])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -570,4 +712,11 @@ getTotalWeaponFightProp = {
     "송뢰가 울릴 무렵": getSongOfBrokenPinesFightProp,
     "카구라의 진의": getKagurasVerityFightProp,
     "음유시인의 악장": getTheWidsithFightProp,
+    "페보니우스 활": getFavoniusWarbowFightProp,
+    "아메노마 카게우치가타나": getAmenomaKageuchiFightProp,
+    "늑대의 송곳니": getWolfFangFightProp,
+    "식재": getCalamityQuellerFightProp,
+    "화박연": getPrimordialJadeWingedSpearFightProp,
+    "사풍 원서": getLostPrayerToTheSacredWindsFightProp,
+    "제사의 옥": getSacrificialJadeFightProp,
 }

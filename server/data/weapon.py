@@ -86,10 +86,29 @@ weaponInfo = {
         weaponOptionSchema(type=weaponOptionType.toggle, label="천년의 대악장·깃발의 노래"),
     ],
     "카구라의 진의": [
-        weaponOptionSchema(type=weaponOptionType.stack, label="카구라의 춤"),
+        weaponOptionSchema(type=weaponOptionType.stack, maxStack=3, label="카구라의 춤"),
     ],
     "음유시인의 악장": [
         weaponOptionSchema(type=weaponOptionType.select, selectList=[None, "서장(공격력)", "영탄곡(모든 원소 피해)", "간주곡(원소 마스터리)"], label="테마송"),
     ],
+    "페보니우스 활": [weaponOptionSchema(description="치명타 시 원소 입자 발생")],
+    "아메노마 카게우치가타나": [
+        weaponOptionSchema(
+            description="원소전투 스킬 발동 후 계승의 씨앗을 1개 획득하고, 원소폭발 발동 후 보유 중인 계승의 씨앗이 모두 소모되며, 2초 후 소모된 계승의 씨앗의 개수에 따라 하나당 해당 캐릭터의 원소 에너지 회복"
+        )
+    ],
+    "식재": [
+        weaponOptionSchema(label="모든 원소 피해 증가"),
+        weaponOptionSchema(type=weaponOptionType.stack, maxStack=6, label="원돈"),
+        weaponOptionSchema(type=weaponOptionType.toggle, label="대기 상태"),
+    ],
+    "늑대의 송곳니": [
+        weaponOptionSchema(label="원소전투 스킬과 원소폭발로 주는 피해 증가"),
+        weaponOptionSchema(type=weaponOptionType.stack, maxStack=4, label="원소 전투 스킬 명중"),
+        weaponOptionSchema(type=weaponOptionType.stack, maxStack=4, label="원소 폭발 명중"),
+    ],
+    "제사의 옥": [weaponOptionSchema(type=weaponOptionType.toggle, label="대기 상태 5초 초과")],
+    "사풍 원서": [weaponOptionSchema(type=weaponOptionType.stack, maxStack=4, label="원소 피해 보너스")],
+    "화박연": [weaponOptionSchema(type=weaponOptionType.stack, maxStack=7, label="적 명중")],
     "학도의 노트": [],
 }
