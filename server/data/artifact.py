@@ -158,4 +158,14 @@ artifactSetOptions = {
             label="거울 속 님프",
         ),
     ],
+    "긴 밤의 맹세": [
+        artifactSetOptionSchema(description="낙하 공격 피해 25% 증가", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            description="장착 캐릭터의 낙하 공격/강공격/원소전투 스킬이 적에게 명중 후, 「영원한 광휘」를 1/2/2스택 획득한다. 해당 효과는 낙하 공격, 강공격 또는 원소전투 스킬로 1초마다 각각 최대 1회 발동된다. 「영원한 광휘」: 낙하공격으로 주는 피해가 15% 증가한다. 지속 시간: 6초, 최대 중첩수: 5스택, 스택마다 지속 시간은 독립적으로 계산한다",
+            maxStack=5,
+            requiredParts=4,
+            label="영원한 광휘",
+        ),
+    ],
 }
