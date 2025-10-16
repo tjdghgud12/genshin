@@ -194,7 +194,3 @@ input.input-removeArrow[type="number"] {
     transform: translateY(0);
   }
 }
-
-img {
-  display: none;
-}
