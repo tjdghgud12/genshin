@@ -57,7 +57,7 @@ info = {
                 name="「앞으로 우리는 새 생명을 누리리라」",
                 description="떠오르는 재액의 달이 주는 피해가 아를레키노 공격력에 현재 생명의 계약의 700%를 곱한 값만큼 증가한다.재가 된 만상 발동 후 20초 동안 아를레키노의 일반 공격과 원소폭발의 치명타 확률이 10%, 치명타 피해가 70% 증가한다.",
                 options=[
-                    skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=145, label="생명의 계약 백문율"),
+                    skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=145, label="생명의 계약 백분율"),
                     skillConstellationOptionSchema(type=skillConstellationType.toggle, label="원소 전투 스킬 발동"),
                 ],
             ),
