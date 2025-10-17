@@ -15,6 +15,7 @@ interface IuserSelectoptions {
     stack: number;
     active: boolean;
     select?: string | null;
+    maxStack?: number;
   }[];
   [key: string]: unknown;
 }
@@ -48,6 +49,7 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
         active: o.active,
         stack: o.stack,
         select: o.select,
+        maxStack: o.maxStack,
       })),
     },
     artifact: {
@@ -64,10 +66,11 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
         name: s.name,
         numberOfParts: s.numberOfParts,
         options: s.options
-          ? s.options.map((o: { active: boolean; stack: number }) => {
+          ? s.options.map((o) => {
               return {
                 active: o.active,
                 stack: o.stack,
+                maxStack: o.maxStack,
               };
             })
           : [],

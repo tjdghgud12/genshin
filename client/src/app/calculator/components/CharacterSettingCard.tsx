@@ -330,7 +330,7 @@ const CharacterSettingCard = ({
                                 name: weapon.name,
                                 level: 90,
                                 refinement: 1,
-                                options: weapon.options.map((_o) => ({ active: false, stack: 0, select: null })),
+                                options: weapon.options.map((o) => ({ ...o, active: true, stack: o.maxStack, select: null })),
                               });
                             }
                           }}
@@ -341,7 +341,7 @@ const CharacterSettingCard = ({
                             field.onChange({ ...field.value, refinement });
                           }}
                           onOptionsChange={field.value.options.map((option, i) => (val, key) => {
-                            if (typeof val !== "boolean" && Number(val) > item.raw.weapon.options[i].maxStack) {
+                            if (typeof val !== "boolean" && Number(val) > option.maxStack) {
                               val = item.raw.weapon.options[i].maxStack;
                             }
                             field.value.options[i] = { ...option, [key]: val };

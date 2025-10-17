@@ -75,6 +75,7 @@ const calculatorCharacterInfoSchema = z.object({
         active: z.boolean(),
         stack: createFloatSchema(),
         select: z.string().nullable(),
+        maxStack: z.number(),
       }),
     ),
   }),
@@ -95,6 +96,7 @@ const calculatorCharacterInfoSchema = z.object({
           z.object({
             active: z.boolean(),
             stack: createFloatSchema(),
+            maxStack: z.number(),
           }),
         ),
       }),
