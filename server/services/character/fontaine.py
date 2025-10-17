@@ -145,7 +145,7 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
                 case "드높은 중재의 규율":
                     option = passive.options[0]
                     if option.active:
-                        newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, 0.6 * option.stack)
+                        newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, (0.6 * option.stack) / 100)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
