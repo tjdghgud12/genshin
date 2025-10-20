@@ -225,9 +225,8 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
                     # 3. 최종 캐릭터 스텟 및 데미지 계산
                     damageCalculationResult = await damageCalculation(characterInfo=requestCharacterInfoSchema(**characterInfo), additionalFightProp=fightPropSchema())
-                    characterInfo["totalStat"] = damageCalculationResult["totalFightProps"]
 
-                parsedCharacters.append({"info": characterInfo, "result": damageCalculationResult["damage"]})
+                parsedCharacters.append(damageCalculationResult)
         return {"characters": parsedCharacters}
 
 

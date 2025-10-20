@@ -132,3 +132,12 @@ class responseDamageResult(BaseModel):
     waterSwirlDamage: float | None = None  # 물확산
     iceSwirlDamage: float | None = None  # 얼음확산
     elecSwirlDamage: float | None = None  # 번개확산
+
+
+class responseCalculationResult(BaseModel):
+    class responseCharacterInfo(requestCharacterInfoSchema):
+        totalStat: responseFightPropSchema
+        pass
+
+    damage: responseDamageResult
+    characterInfo: responseCharacterInfo

@@ -1,6 +1,6 @@
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp
-from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema, damageResultSchema
+from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema, damageResultSchema, responseCalculationResult
 from schemas.fightProp import fightPropSchema
 from data.globalVariable import levelCoefficientMap
 from ambr import AmbrAPI
@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from functools import partial
 from itertools import chain
 from enum import Enum
-import time
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 매우 중요 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -83,7 +82,7 @@ def transformativeReaction(attackPoint: float, elementalMastery: float, transfor
     return attackPoint * coefficient * (1 + masteryBonus + transformativeBonus) * toleranceCoefficient * (1 + finalAddHurt)
 
 
-async def damageCalculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema):
+async def damageCalculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema) -> responseCalculationResult:
     # 몬스터 레벨은 100, 모든 내성은 10%로 고정
     ambrApi: AmbrAPI = await getAmbrApi()
     ambrCharacterDetail = await ambrApi.fetch_character_detail(str(characterInfo.id))
@@ -340,4 +339,4 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
             setattr(damageResult, f"{attr}Critical", lunarDamage.criticalDamage)
             setattr(damageResult, attr, lunarDamage.expectedDamage)
 
-    return {"damage": damageResult, "totalFightProps": fightProp}
+    return responseCalculationResult(damage=damageResult, characterInfo=responseCalculationResult.responseCharacterInfo(**characterInfo.model_dump(), totalStat=fightProp))
