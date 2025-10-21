@@ -38,7 +38,7 @@ const CalculatorPage = (): React.ReactElement => {
     },
     mode: "onBlur",
   });
-  const { fields, append } = useFieldArray({
+  const { fields, append, update } = useFieldArray({
     name: "data",
     control: form.control,
   });
@@ -72,6 +72,8 @@ const CalculatorPage = (): React.ReactElement => {
         loading: "로딩 중",
         success: (res) => {
           newDamageResult[index] = res.data.damage;
+          const test = deepMergeAddOnly(res.data.characterInfo, raw);
+          update(index, { ...value.data[index], raw: res.data.characterInfo });
           setDamageResult(newDamageResult);
           return "데미지 연산을 완료하였습니다.";
         },
@@ -86,9 +88,10 @@ const CalculatorPage = (): React.ReactElement => {
     const calculatorDataRaw = window.sessionStorage.getItem(`calculatorData`);
     if (calculatorDataRaw) {
       const parseData = JSON.parse(calculatorDataRaw);
-      parseData.map((data: { info: object; result: object }) => append(parseCharacterInfo<typeof data>(data)));
-      setDamageResult(parseData.map((data: { info: object; result: object }) => data.result));
-      setSelectedCharacter(parseData[0].info.name);
+      parseData.map((data: { characterInfo: object; damage: object }) => append(parseCharacterInfo<typeof data>(data)));
+
+      setDamageResult(parseData.map((data: { characterInfo: object; damage: object }) => data.damage));
+      setSelectedCharacter(parseData[0].characterInfo.name);
     }
 
     return (): void => {

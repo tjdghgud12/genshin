@@ -16,12 +16,17 @@ interface IuserSelectoptions {
     active: boolean;
     select?: string | null;
     maxStack?: number;
+    type: string;
+    selectList: (string | null)[];
+    description: string;
+    label: string;
+    requiredParts: number;
   }[];
   [key: string]: unknown;
 }
 
-const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculatorData: T): TCalculatorData => {
-  const data = rawCalculatorData.info;
+const parseCharacterInfo = <T extends { characterInfo: Record<string, any> }>(rawCalculatorData: T): TCalculatorData => {
+  const data = rawCalculatorData.characterInfo;
   return {
     raw: data,
     level: data.level,
@@ -43,6 +48,7 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
     weapon: {
       id: data.weapon.id,
       name: data.weapon.name,
+      type: data.weapon.type,
       level: data.weapon.level,
       refinement: data.weapon.refinement,
       options: data.weapon.options.map((o: IuserSelectoptions) => ({
@@ -50,6 +56,10 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
         stack: o.stack,
         select: o.select,
         maxStack: o.maxStack,
+        type: o.type,
+        selectList: o.selectList,
+        description: o.description,
+        label: o.label,
       })),
     },
     artifact: {
@@ -68,9 +78,14 @@ const parseCharacterInfo = <T extends { info: Record<string, any> }>(rawCalculat
         options: s.options
           ? s.options.map((o) => {
               return {
+                requiredParts: o.requiredParts,
                 active: o.active,
                 stack: o.stack,
                 maxStack: o.maxStack,
+                type: o.type,
+                selectList: o.selectList,
+                description: o.description,
+                label: o.label,
               };
             })
           : [],

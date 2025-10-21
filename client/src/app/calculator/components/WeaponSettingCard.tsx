@@ -43,15 +43,13 @@ interface IWeaponDetail {
 
 const WeaponSettingCard = ({
   className = "",
-  type = "WEAPON_SWORD_ONE_HAND",
-  weapon = { id: 0, name: "string", level: 0, refinement: 0, options: [] },
+  weapon = { id: 0, name: "", type: "WEAPON_SWORD_ONE_HAND", level: 0, refinement: 0, options: [] },
   onChange = (): void => {},
   onLevelChange = (): void => {},
   onRefinementChange = (): void => {},
   onOptionsChange = [],
 }: {
   className?: string;
-  type?: string;
   weapon?: TWeaponData;
   onChange?: (weapon: IWeaponInfo | undefined) => void;
   onLevelChange?: (level: number | string) => void;
@@ -78,10 +76,10 @@ const WeaponSettingCard = ({
   }, [weapon.id, getWeaponDetail]);
 
   useEffect(() => {
-    const newWeaponList = Object.values(totalWeaponList).filter((w) => w.type === type);
+    const newWeaponList = Object.values(totalWeaponList).filter((w) => w.type === weapon.type);
     setWeaponList(newWeaponList);
     setSelectedWeapon(newWeaponList.find((w) => w.id === Number(weapon.id)));
-  }, [totalWeaponList, type, weapon.id]);
+  }, [totalWeaponList, weapon.type, weapon.id]);
 
   return (
     <Card className={`w-full max-h-full bg-gray-700 border-2 rounded-2xl overflow-y-auto scrollbar-custom shadow-none ${className}`} style={{ scrollbarGutter: "stable" }}>

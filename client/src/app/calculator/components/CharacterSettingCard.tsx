@@ -321,11 +321,11 @@ const CharacterSettingCard = ({
                       <div className="h-full flex flex-col">
                         <Label className="text-3xl font-bold text-gray-700 mb-2">무기</Label>
                         <WeaponSettingCard
-                          type={item.raw.weaponType}
                           weapon={field.value}
                           onChange={(weapon) => {
                             if (weapon) {
                               field.onChange({
+                                ...weapon,
                                 id: weapon.id,
                                 name: weapon.name,
                                 level: 90,
@@ -342,7 +342,7 @@ const CharacterSettingCard = ({
                           }}
                           onOptionsChange={field.value.options.map((option, i) => (val, key) => {
                             if (typeof val !== "boolean" && Number(val) > option.maxStack) {
-                              val = item.raw.weapon.options[i].maxStack;
+                              val = option.maxStack;
                             }
                             field.value.options[i] = { ...option, [key]: val };
                             field.onChange(field.value);

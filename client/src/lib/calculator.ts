@@ -68,6 +68,7 @@ const calculatorCharacterInfoSchema = z.object({
   weapon: z.object({
     id: z.number(),
     name: z.string(),
+    type: z.string(),
     level: createFloatSchema(1, 90, "무기 레벨을 확인해주세요."),
     refinement: createFloatSchema(1, 5, "재련을 확인해주세요."),
     options: z.array(
@@ -76,6 +77,10 @@ const calculatorCharacterInfoSchema = z.object({
         stack: createFloatSchema(),
         select: z.string().nullable(),
         maxStack: z.number(),
+        type: z.string(),
+        selectList: z.string().nullable().array(),
+        description: z.string(),
+        label: z.string(),
       }),
     ),
   }),
@@ -94,6 +99,10 @@ const calculatorCharacterInfoSchema = z.object({
         numberOfParts: z.number(),
         options: z.array(
           z.object({
+            type: z.string(),
+            description: z.string(),
+            label: z.string(),
+            requiredParts: z.number(),
             active: z.boolean(),
             stack: createFloatSchema(),
             maxStack: z.number(),
