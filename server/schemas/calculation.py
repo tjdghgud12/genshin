@@ -4,6 +4,7 @@ from schemas.character import skillConstellationOptionSchema, passiveSkillSchema
 from schemas.fightProp import fightPropSchema
 from schemas.weapon import weaponDataSchema
 from pydantic import BaseModel
+from enka.gi import Icon
 
 
 class StatusMixin(BaseModel):
@@ -18,23 +19,27 @@ class requestCharacterInfoSchema(BaseModel):
 
     class requestPassiveSkillSchema(passiveSkillSchema):
         name: str
+        icon: Icon | str
         unlocked: bool
         options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema] = []
         model_config = {"extra": "ignore"}
 
     class requestActiveSkillSchema(activeSkillSchema):
         name: str
+        icon: Icon | str
         level: int
         options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema] = []
         model_config = {"extra": "ignore"}
 
     class requestContellationSchema(contellationSchema):
-        name: str
         unlocked: bool
+        icon: Icon | str
         options: list[requestCharacterInfoSchema.requestSkillConstellationOptionSchema] = []
         model_config = {"extra": "ignore"}
 
     name: str
+    icon: Icon | str
+    element: str
     id: int
     level: int
     passiveSkill: list[requestPassiveSkillSchema]
