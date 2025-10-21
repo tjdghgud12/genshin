@@ -144,7 +144,84 @@ async def getMavuikaFightProp(ambrCharacterDetail: CharacterDetail, characterInf
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
+async def getVaresaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- constellations -----------------------
+    # 꺼지지 않는 열정, 빛의 한계 돌파는 fightProp에 영향 없거나 다른 곳에서 처리
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "불굴의 결심":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                case "돌진할 용기":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, 1)
+                        newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["벼락불 강림!·대화산 떨구기"].add(fightPropMpa.ATTACK_ADD_HURT.value, 1)
+                    else:
+                        additionalAttackPoints.append({"key": fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", 5), "max": 20000})
+                case "부드러운 바람의 신념":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "히어로의 승리":
+                    newFightProp.add(fightPropMpa.FALLING_ATTACK_CRITICAL.value, 0.1)
+                    newFightProp.add(fightPropMpa.FALLING_ATTACK_CRITICAL_HURT.value, 1)
+                    newFightProp.add(fightPropMpa.ELEMENT_BURST_CRITICAL.value, 0.1)
+                    newFightProp.add(fightPropMpa.ELEMENT_BURST_CRITICAL_HURT.value, 1)
+
+    # ----------------------- active -----------------------
+    # active: 바레사의 active에는 버프 효과 존재 X
+
+    # ----------------------- passive -----------------------
+    # 연속! 세 번의 도약, 영웅! 두 번의 귀환
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "연속! 세 번의 도약":
+                    if passive.options[0].active:
+                        firstConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "꺼지지 않는 열정"))
+                        if not firstConstellation.unlocked:
+                            additionalAttackPoints.append(
+                                {"name": "벼락불 강림!·대화산 떨구기", "key": fightPropMpa.ATTACK_ADD_POINT.value, "value": ("ATTACK", -0.5), "max": 99999}
+                            )
+
+                        additionalAttackPoints.append({"key": fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", 0.5), "max": 99999})
+                case "영웅! 두 번의 귀환":
+                    option = passive.options[0]
+                    if option.active:
+                        newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.35 * option.stack)
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        max = additionalAttackPoint["max"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        if "name" in additionalAttackPoint:
+            newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[additionalAttackPoint["name"]].add(key, min(finalPoint * value, max))
+        else:
+            newFightProp.add(key, min(finalPoint * value, max))
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "시틀라리": getCitlaliFightProp,
     "마비카": getMavuikaFightProp,
+    "바레사": getVaresaFightProp,
 }

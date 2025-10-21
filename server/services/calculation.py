@@ -231,6 +231,10 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
 
         if finalAttackPoint:
             additionalAttackPoint = fightProp.FIGHT_PROP_ATTACK_ADD_POINT + getattr(fightProp, f"FIGHT_PROP_{key}_ATTACK_ADD_POINT", 0.0)
+            if customName:
+                targetCustomPoint = fightProp.FIGHT_PROP_ADDITIONAL_ATTACK[customName]
+                additionalAttackPoint += getattr(targetCustomPoint, "FIGHT_PROP_ATTACK_ADD_POINT", 0.0)
+
             critical = fightProp.FIGHT_PROP_CRITICAL + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL", 0.0)
             criticalHurt = fightProp.FIGHT_PROP_CRITICAL_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL_HURT", 0.0)
 

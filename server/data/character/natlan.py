@@ -101,4 +101,58 @@ info = {
             ),
         ],
     ),
+    "바레사": characterDataSchema(
+        passiveSkill={
+            "연속! 세 번의 도약": passiveSkillSchema(
+                description="원소전투 스킬 밤무지개 도약 발동 후, 바레사가 「무지개 낙하」를 획득한다. 지속 시간 동안 바레사가 낙하 공격 시, 추락 충격이 추가로 공격력의 50%에 해당하는 피해를 준다. 만약 바레사가 열혈 상태인 경우, 추락 충격이 추가로 공격력의 180%에 해당하는 피해를 주도록 변경된다.",
+                unlockLevel=1,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="무지개 낙하")],
+            ),
+            "영웅! 두 번의 귀환": passiveSkillSchema(
+                description="주변에 있는 파티 내 캐릭터가 「밤혼 발산」 발동 시, 바레사의 공격력이 35% 증가한다. 지속 시간: 12초. 최대 중첩수: 2스택. 스택마다 지속 시간은 독립적으로 계산된다",
+                unlockLevel=4,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=2, label="밤혼 발산")],
+            ),
+        },
+        activeSkill={
+            "레슬링 격투술": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["elec"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["elec"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["elec"]),
+                )
+            ),
+            "밤무지개 도약": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["elec"]))),
+            "벼락불 강림!": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["elec"])),
+                additionalAttack=[
+                    additionalAttackSchema(name="벼락불 강림!·대화산 떨구기", type="falling", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["elec"])),
+                ],
+            ),
+        },
+        constellation=[
+            contellationSchema(
+                name="꺼지지 않는 열정",
+                description="연속! 세 번의 도약 강화. 특수 낙하 공격·대화산 폭발 진행 시에도 바레사가 「무지개 낙하」를 획득. 바레사의 열혈 상태 여부와 상관없이 「무지개 낙하」 지속 시간 동안 낙하 공격 시, 추락 충격이 추가로 공격력의 180%에 해당하는 피해를 주도록 변경",
+            ),
+            contellationSchema(
+                name="빛의 한계 돌파",
+                description="열혈 상태 여부와 상관없이 바레사가 낙하 공격 후, 한계 돌파 상태에 진입한다. 한계 돌파 상태에서 바레사의 경직 저항력이 더 증가한다. 또한 바레사 낙하 공격의 추락 충격이 적에게 명중 시, 바레사의 원소 에너지가 11.5pt 회복된다",
+            ),
+            contellationSchema(name="불굴의 결심", description="원소 폭발 레벨 +3"),
+            contellationSchema(
+                name="돌진할 용기",
+                description=(
+                    "원소폭발 벼락불 강림! 발동 시, 바레사의 상태에 따라 각각 다른 강화 효과가 생성된다: "
+                    "·열혈 상태 또는 한계 돌파 상태가 아닐 경우: 바레사가 「용맹한 돌진」 효과를 획득한다. 지속 시간 15초. "
+                    "바레사가 낙하 공격 시, 추락 충격으로 적에게 주는 피해가 바레사 공격력의 500%에 기반해 최대 20000pt 증가한다. "
+                    "해당 효과는 추락 충격이 적에게 명중하거나 지속 시간이 종료되면 사라진다. "
+                    "·열혈 또는 한계 돌파 상태일 경우: 이번 원소폭발 벼락불 강림!으로 주는 피해가 100% 증가한다 "
+                ),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="열혈 또는 한계 돌파")],
+            ),
+            contellationSchema(name="부드러운 바람의 신념", description="일반 공격 레벨 +3"),
+            contellationSchema(name="히어로의 승리", description="바레사의 낙하 공격과 원소폭발 벼락불 강림!의 치명타 확률이 10%, 치명타 피해가 100% 증가한다."),
+        ],
+    ),
 }
