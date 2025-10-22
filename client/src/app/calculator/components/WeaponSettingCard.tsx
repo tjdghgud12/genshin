@@ -191,7 +191,7 @@ const WeaponSettingCard = ({
         <div className="h-fit mt-3">
           {selectedWeapon ? (
             <>
-              <Label className="text-2xl font-bold mb-1">옵션</Label>
+              {selectedWeapon.options.length ? <Label className="text-2xl font-bold mb-1">옵션</Label> : <></>}
               <div className="grid grid-cols-[auto_1fr] gap-x-3">
                 {selectedWeapon.options.map((option, i) => {
                   const optionValue = weapon.options[i];
