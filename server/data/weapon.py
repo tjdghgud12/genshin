@@ -98,17 +98,34 @@ weaponInfo = {
         )
     ],
     "식재": [
-        weaponOptionSchema(label="모든 원소 피해 증가"),
+        weaponOptionSchema(description="모든 원소 피해 증가"),
         weaponOptionSchema(type=weaponOptionType.stack, maxStack=6, label="원돈"),
         weaponOptionSchema(type=weaponOptionType.toggle, label="대기 상태"),
     ],
     "늑대 송곳니": [
-        weaponOptionSchema(label="원소전투 스킬과 원소폭발로 주는 피해 증가"),
+        weaponOptionSchema(description="원소전투 스킬과 원소폭발로 주는 피해 증가"),
         weaponOptionSchema(type=weaponOptionType.stack, maxStack=4, label="원소 전투 스킬 명중"),
         weaponOptionSchema(type=weaponOptionType.stack, maxStack=4, label="원소 폭발 명중"),
     ],
     "제사의 옥": [weaponOptionSchema(type=weaponOptionType.toggle, label="대기 상태 5초 초과")],
     "사풍 원서": [weaponOptionSchema(type=weaponOptionType.stack, maxStack=4, label="원소 피해 보너스")],
     "화박연": [weaponOptionSchema(type=weaponOptionType.stack, maxStack=7, label="적 명중")],
+    "잎을 가르는 빛": [
+        weaponOptionSchema(description="치명타 확률 증가"),
+        weaponOptionSchema(type=weaponOptionType.toggle, label="가지치기"),
+    ],
+    "늑대의 말로": [
+        weaponOptionSchema(description="공격력 증가"),
+        weaponOptionSchema(type=weaponOptionType.toggle, label="HP 30% 미만 적 명중"),
+    ],
+    "드래곤 슬레이어 영웅담": [],
+    "제례의 악장": [],
+    "결투의 창": [
+        weaponOptionSchema(type=weaponOptionType.toggle, label="적 2기 이상"),
+    ],
+    "약수": [
+        weaponOptionSchema(description="HP 증가"),
+        weaponOptionSchema(type=weaponOptionType.toggle, label="주변 적 존재"),
+    ],
     "학도의 노트": [],
 }

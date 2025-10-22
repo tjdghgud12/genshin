@@ -690,6 +690,121 @@ async def getSacrificialJadeFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getLightofFoliarIncisionFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.04, 1.2],
+        [0.05, 1.5],
+        [0.06, 1.8],
+        [0.07, 2.1],
+        [0.08, 2.4],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.CRITICAL.value, refinementValue[0])
+                case 1:
+                    value = characterFightProp.FIGHT_PROP_ELEMENT_MASTERY * refinementValue[0]
+                    fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, value)
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_POINT.value, value)
+
+    return {"fightProp": fightProp, "afterAddProps": [fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_POINT.value]}
+
+
+async def getWolfsGravestoneFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.2, 0.4],
+        [0.25, 0.5],
+        [0.3, 0.6],
+        [0.35, 0.7],
+        [0.4, 0.8],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getThrillingTalesofDragonSlayersFightProp(
+    id: int, level: int, _refinement: int, _options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getSacrificialFragmentsFightProp(
+    id: int, level: int, _refinement: int, _options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getDeathmatchFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.16, 0.24],
+        [0.20, 0.30],
+        [0.24, 0.36],
+        [0.28, 0.42],
+        [0.32, 0.48],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        match i:
+            case 0:
+                if option.active:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                    fightProp.add(fightPropMpa.DEFENSE_PERCENT.value, refinementValue[0])
+                else:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
+async def getAquaSimulacraFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.16, 0.20],
+        [0.20, 0.25],
+        [0.24, 0.30],
+        [0.28, 0.35],
+        [0.32, 0.40],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.HP_PERCENT.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, refinementValue[1])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -719,4 +834,10 @@ getTotalWeaponFightProp = {
     "화박연": getPrimordialJadeWingedSpearFightProp,
     "사풍 원서": getLostPrayerToTheSacredWindsFightProp,
     "제사의 옥": getSacrificialJadeFightProp,
+    "잎을 가르는 빛": getLightofFoliarIncisionFightProp,
+    "늑대의 말로": getWolfsGravestoneFightProp,
+    "드래곤 슬레이어 영웅담": getThrillingTalesofDragonSlayersFightProp,
+    "제례의 악장": getSacrificialFragmentsFightProp,
+    "결투의 창": getDeathmatchFightProp,
+    "약수": getAquaSimulacraFightProp,
 }
