@@ -71,7 +71,7 @@ const CharacterSettingCard = ({
 
   const formatterTotalFightProp = (v: number, isPercent = false, useFix: boolean): string => {
     const data = isPercent ? v * 100 : v;
-    return useFix ? data.toFixed(2) : data.toString();
+    return useFix ? data.toFixed(2) : Math.round(data).toString();
   };
 
   return (

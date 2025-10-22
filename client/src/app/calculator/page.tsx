@@ -72,7 +72,6 @@ const CalculatorPage = (): React.ReactElement => {
         loading: "로딩 중",
         success: (res) => {
           newDamageResult[index] = res.data.damage;
-          const test = deepMergeAddOnly(res.data.characterInfo, raw);
           update(index, { ...value.data[index], raw: res.data.characterInfo });
           setDamageResult(newDamageResult);
           return "데미지 연산을 완료하였습니다.";
