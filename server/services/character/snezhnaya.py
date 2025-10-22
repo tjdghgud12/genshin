@@ -59,7 +59,7 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
     for passive in characterInfo.passiveSkill:
         if passive.unlocked:
             match passive.name:
-                case "힘만이 지킬 수 있으며":
+                case "재액의 달만이 알 수 있다":
                     newFightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.4)
 
     # ----------------------- 추후 연산 진행부 -----------------------

@@ -17,7 +17,13 @@ info = {
             "고통만이 갚을 수 있고": passiveSkillSchema(
                 description="핏값을 보유한 적 처치 시 생명의 계약 부여. 부여 후 5초 후 핏값·결산으로 승급. 핏값·결산 회수 시 생명의 계약 부여", unlockLevel=1
             ),
-            "힘만이 지킬 수 있으며": passiveSkillSchema(description="전투 상태에서 불 원소 피해 보너스 40% 획득하고, 떠오르는 재약의 달로만 HP를 회복할 수 있다.", unlockLevel=4),
+            "힘만이 지킬 수 있으며": passiveSkillSchema(
+                description="1000pt를 초과하는 아를레키노의 공격력을 기반으로, 공격력 100pt마다 아를레키노에게 모든 원소 내성과 물리 내성을 1% 부여한다. 해당 방식으로 아를레키노의 모든 원소 내성과 물리 내성은 20%까지 증가한다",
+                unlockLevel=4,
+            ),
+            "재액의 달만이 알 수 있다": passiveSkillSchema(
+                description="전투 상태에서 아를레키노는 불 원소 피해 보너스를 40% 획득하고, 떠오르는 재액의 달로만 HP를 회복할 수 있다", unlockLevel=1
+            ),
         },
         activeSkill={
             "사형장으로의 초대": activeSkillSchema(
