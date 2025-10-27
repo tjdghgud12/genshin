@@ -127,5 +127,6 @@ weaponInfo = {
         weaponOptionSchema(description="HP 증가"),
         weaponOptionSchema(type=weaponOptionType.toggle, label="주변 적 존재"),
     ],
+    "페보니우스 장창": [weaponOptionSchema(description="치명타 시 원소 입자 발생")],
     "학도의 노트": [],
 }

@@ -180,4 +180,58 @@ info = {
             ),
         ],
     ),
+    "신학": characterDataSchema(
+        passiveSkill={
+            "대동미라존법법": passiveSkillSchema(
+                description="선녀 강령 비결 영역 내에 있는 필드 위 캐릭터의 얼음 원소 피해 보너스가 15% 증가한다.",
+                unlockLevel=1,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="선녀 강령 비결 영역 내 위치")],
+            ),
+            "박령통진법인": passiveSkillSchema(
+                description="신학이 위령 소환 구사술 발동 시, 주변의 파티 내 모든 캐릭터가 아래의 효과를 획득한다. · 짧은 터치: 원소전투 스킬과 원소폭발로 가하는 피해가 15% 증가한다. 지속 시간: 10초. · 홀드: 일반 공격, 강공격, 낙하 공격으로 가하는 피해가 15% 증가한다. 지속 시간: 15초.",
+                unlockLevel=4,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.select, selectList=["짧은 터치", "홀드"], label="조작")],
+            ),
+        },
+        activeSkill={
+            "별의 포획자": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                )
+            ),
+            "위령 소환 구사술": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["ice"])),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="얼음의 깃")],
+            ),
+            "신녀 강령 비결": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["ice"])),
+                description="선녀 강령 비결 영역 내 적의 얼음 원소 내성과 물리 내성을 감소",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="선녀 강령 비결 영역 내 위치")],
+            ),
+        },
+        constellation=[
+            contellationSchema(name="심재", description="위령 소환 구사술의 사용 가능 횟수가 1회 증가한다."),
+            contellationSchema(
+                name="정몽",
+                description="신녀 강령 비결의 지속 시간이 6초 증가한다. 영역 내에 있는 필드 위 캐릭터의 얼음 원소 피해의 치명타 피해가 15% 증가한다.",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="신녀 강령 비결 영역 내 위치")],
+            ),
+            contellationSchema(name="잠허", description="원소 전투 스킬 레벨 +3"),
+            contellationSchema(
+                name="통관",
+                description=(
+                    "신학이 부여한 「얼음의 깃」 상태인 캐릭터가 「얼음의 깃」의 피해 증가 효과 발동 시, 신학이 「서리의 주문」을 1스택 획득한다."
+                    "· 신학이 위령 소환 구사술 발동 시 모든 「서리의 주문」이 사라지고, 사라진 스택에 따라 1스택당 위령 소환 구사술이 가하는 피해가 5% 증가한다. "
+                    "최대 중첩수: 50회."
+                ),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=50, label="서리의 주문")],
+            ),
+            contellationSchema(name="화신", description="원소 폭발 레벨 +3"),
+            contellationSchema(
+                name="망현", description="캐릭터가 일반 공격 피해와 강공격 피해로 「얼음의 깃」의 피해 증가 효과를 발동하면, 「얼음의 깃」의 효과 발동 횟수가 차감되지 않는다."
+            ),
+        ],
+    ),
 }

@@ -168,4 +168,13 @@ artifactSetOptions = {
             label="영원한 광휘",
         ),
     ],
+    "옛 왕실의 의식": [
+        artifactSetOptionSchema(description="원소 폭발로 주는 피해 +20%", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.toggle,
+            description="원소폭발 발동 후 파티 내 모든 캐릭터의 공격력이 20% 증가한다. 지속 시간: 12초. 해당 효과는 중첩되지 않는다",
+            requiredParts=4,
+            label="원소폭발 발동",
+        ),
+    ],
 }

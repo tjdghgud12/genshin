@@ -9,6 +9,7 @@ class skillConstellationType(Enum):
     always = "always"
     toggle = "toggle"
     stack = "stack"
+    select = "select"
     none = None
 
 
@@ -36,6 +37,7 @@ class skillBaseFightPropSchema(BaseModel):
 
 class skillConstellationOptionSchema(BaseModel):
     type: skillConstellationType = skillConstellationType.always
+    selectList: list[str | None] = []
     maxStack: int = 0
     label: str = ""
 

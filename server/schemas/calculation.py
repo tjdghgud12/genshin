@@ -10,6 +10,7 @@ from enka.gi import Icon
 class StatusMixin(BaseModel):
     active: bool
     stack: int
+    select: str | None
 
 
 class requestCharacterInfoSchema(BaseModel):

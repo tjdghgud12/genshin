@@ -805,6 +805,14 @@ async def getAquaSimulacraFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getFavoniusLanceFightProp(
+    id: int, level: int, _refinement: int, _options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -840,4 +848,5 @@ getTotalWeaponFightProp = {
     "제례의 악장": getSacrificialFragmentsFightProp,
     "결투의 창": getDeathmatchFightProp,
     "약수": getAquaSimulacraFightProp,
+    "페보니우스 장창": getFavoniusLanceFightProp,
 }

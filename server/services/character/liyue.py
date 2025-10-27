@@ -250,9 +250,107 @@ async def getYelanFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
+async def getShenheFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints: list[dict] = []
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "대동미라존법":
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.ICE_ADD_HURT.value, 0.15)
+                case "박령통진법인":
+                    if passive.options[0].active:
+                        if passive.options[0].select == "짧은 터치":
+                            # 원폭 및 원소스킬
+                            newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, 0.15)
+                            newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, 0.15)
+                        elif passive.options[0].select == "홀드":
+                            # 일반공격 및 강공격 및 낙하공격
+                            newFightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_HURT.value, 0.15)
+                            newFightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, 0.15)
+                            newFightProp.add(fightPropMpa.FALLING_ATTACK_ATTACK_ADD_HURT.value, 0.15)
+
+    # ----------------------- constellations -----------------------
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "정몽":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ICE_CRITICAL_HURT.value, 0.15)  # 얼음 원소 전용 치명타 피해 증가
+                case "잠허":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "통관":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, constellation.options[0].stack * 0.05)
+                case "화신":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    # ----------------------- active -----------------------
+    elementSkillLevelMap = {
+        "위령 소환 구사술": [
+            0.457,
+            0.491,
+            0.525,
+            0.571,
+            0.605,
+            0.639,
+            0.685,
+            0.731,
+            0.776,
+            0.822,
+            0.868,
+            0.913,
+            0.970,
+            1.03,
+            1.08,
+        ],
+        "신녀 강령 비결": [0.06, 0.07, 0.08, 0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15],
+    }
+
+    for active in characterInfo.activeSkill:
+        match active.name:
+            case "위령 소환 구사술":
+                if active.options[0].active:
+                    # 얼음의 깃
+                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.name == "잠허"))
+                    addLevel = 3 if addElementalSkillLevel.unlocked else 0
+                    skillValue = elementSkillLevelMap[active.name][active.level + addLevel - 1]
+                    baseAttack = getattr(newFightProp, fightPropMpa.BASE_ATTACK.value)
+                    attackPercent = getattr(newFightProp, fightPropMpa.ATTACK_PERCENT.value)
+                    attack = baseAttack * (attackPercent + 1) + getattr(newFightProp, fightPropMpa.ATTACK.value)
+                    newFightProp.add(fightPropMpa.ICE_ADD_POINT.value, skillValue * attack)
+            case "신녀 강령 비결":
+                if active.options[0].active:
+                    # 내성 감소
+                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.name == "화신"))
+                    addLevel = 3 if addElementalSkillLevel.unlocked else 0
+                    skillValue = elementSkillLevelMap[active.name][active.level + addLevel - 1]
+                    newFightProp.add(fightPropMpa.ICE_RES_MINUS.value, skillValue)
+                    newFightProp.add(fightPropMpa.PHYSICAL_RES_MINUS.value, skillValue)
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "감우": getGanyuFightProp,
     "각청": getKeqingFightProp,
     "호두": getHuTaoFightProp,
     "야란": getYelanFightProp,
+    "신학": getShenheFightProp,
 }

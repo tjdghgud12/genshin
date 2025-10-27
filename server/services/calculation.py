@@ -1,7 +1,7 @@
 from services.ambrApi import getAmbrApi
 from services.character import getFightProp
 from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema, damageResultSchema, responseCalculationResult
-from schemas.fightProp import fightPropSchema
+from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 from data.globalVariable import levelCoefficientMap
 from ambr import AmbrAPI
 from typing import Literal
@@ -232,11 +232,15 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
         if finalAttackPoint:
             additionalAttackPoint = fightProp.FIGHT_PROP_ATTACK_ADD_POINT + getattr(fightProp, f"FIGHT_PROP_{key}_ATTACK_ADD_POINT", 0.0)
             if customName:
-                targetCustomPoint = fightProp.FIGHT_PROP_ADDITIONAL_ATTACK[customName]
+                targetCustomPoint = fightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get(customName, additionalAttackFightPropSchema())
                 additionalAttackPoint += getattr(targetCustomPoint, "FIGHT_PROP_ATTACK_ADD_POINT", 0.0)
 
             critical = fightProp.FIGHT_PROP_CRITICAL + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL", 0.0)
-            criticalHurt = fightProp.FIGHT_PROP_CRITICAL_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL_HURT", 0.0)
+            criticalHurt = (
+                fightProp.FIGHT_PROP_CRITICAL_HURT
+                + getattr(fightProp, f"FIGHT_PROP_{key}_CRITICAL_HURT", 0.0)
+                + getattr(fightProp, f"FIGHT_PROP_{element.upper()}_CRITICAL_HURT", 0.0)
+            )
 
             addHurt = fightProp.FIGHT_PROP_ATTACK_ADD_HURT + getattr(fightProp, f"FIGHT_PROP_{key}_ATTACK_ADD_HURT", 0.0)
             finalAddHurt = 1 + getattr(fightProp, f"FIGHT_PROP_FINAL_{key}_ATTACK_ADD_HURT", 0.0)
@@ -265,9 +269,14 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
 
             if useEelementalAttack:
                 attackElement = next((x for x in baseFightProp["element"] if x != "physical"), "")
-                elementAddPoint = additionalAttackPoint + getattr(fightProp, f"FIGHT_PROP_{key}_{attackElement.upper()}_ADD_POINT", 0.0)
-                elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{element.upper()}_ADD_HURT", 0.0) + getattr(fightProp, f"FIGHT_PROP_{element.upper()}_ADD_HURT")
+                elementAddPoint = (
+                    additionalAttackPoint
+                    + getattr(fightProp, f"FIGHT_PROP_{attackElement.upper()}_ADD_POINT", 0.0)
+                    + getattr(fightProp, f"FIGHT_PROP_{key}_{attackElement.upper()}_ADD_POINT", 0.0)
+                )
+                elementAddHurt = getattr(fightProp, f"FIGHT_PROP_{key}_{attackElement.upper()}_ADD_HURT", 0.0) + getattr(fightProp, f"FIGHT_PROP_{attackElement.upper()}_ADD_HURT")
                 finalElementalAddHurt = (1 + elementAddHurt + addHurt) * elementToleranceCoefficient * defensCoefficient * finalAddHurt
+
                 elementalDamages = getCriticalDamageInfo(
                     damage=finalAttackPoint * finalElementalAddHurt,
                     critical=critical,
@@ -277,7 +286,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 targetCritical.elementalDamage = elementalDamages.criticalDamage
                 targetExpected.elementalDamage = elementalDamages.expectedDamage
 
-                if additionalAttackPoint > 0:  # 추가 계수 영역
+                if elementAddPoint > 0:  # 추가 계수 영역
                     additionalElementalDamages = getCriticalDamageInfo(
                         damage=elementAddPoint * finalElementalAddHurt,
                         critical=critical,

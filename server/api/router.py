@@ -124,11 +124,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                             "unlocked": unlocked,
                             "unlockLevel": skillOption.unlockLevel,
                             "options": [
-                                {
-                                    **vars(option),
-                                    "active": True if unlocked else False,
-                                    "stack": option.maxStack,
-                                }
+                                {**vars(option), "active": True if unlocked else False, "stack": option.maxStack, "select": option.selectList[0] if option.selectList else None}
                                 for option in skillOption.options
                             ],
                         }
@@ -146,11 +142,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                                 "description": skillDetail.description,
                                 "unlocked": unlocked,
                                 "options": [
-                                    {
-                                        **vars(option),
-                                        "active": True,
-                                        "stack": option.maxStack if skillOption else 0,
-                                    }
+                                    {**vars(option), "active": True, "stack": option.maxStack if skillOption else 0, "select": option.selectList[0] if option.selectList else None}
                                     for option in skillOption.options
                                 ],
                                 "baseFightProp": skillOption.baseFightProp,
@@ -168,11 +160,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                             # "unlocked": True,  # 테스트를 위한 모든 캐릭터 풀돌 처리
                             "description": ambrConstellation[name].description,
                             "options": [
-                                {
-                                    **vars(option),
-                                    "active": True,
-                                    "stack": option.maxStack,
-                                }
+                                {**vars(option), "active": True, "stack": option.maxStack, "select": option.selectList[0] if option.selectList else None}
                                 for option in defaultConstellation.options
                             ],
                         }
