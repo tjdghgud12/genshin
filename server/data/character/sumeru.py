@@ -25,17 +25,17 @@ info = {
         activeSkill={
             "마음에 비친 형상": activeSkillSchema(
                 baseFightProp=skillBaseFightPropSchema(
-                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["glass"]),
-                    charge=damageBaseFightPropSchema(ATTACK=1, element=["glass"]),
-                    falling=damageBaseFightPropSchema(ATTACK=1, element=["glass"]),
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["grass"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["grass"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["grass"]),
                 )
             ),
             "너른 헤아림": activeSkillSchema(
                 baseFightProp=skillBaseFightPropSchema(
-                    elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["glass"]),
+                    elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["grass"]),
                 ),
                 additionalAttack=[
-                    additionalAttackSchema(name="삼업의 정화", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=0.33, ELEMENT_MASTERY=0.67, element=["glass"]))
+                    additionalAttackSchema(name="삼업의 정화", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=0.33, ELEMENT_MASTERY=0.67, element=["grass"]))
                 ],
             ),
             "마음이 그리는 환상": activeSkillSchema(
@@ -66,7 +66,7 @@ info = {
                 description="원소 폭발 발동 후 일반공격 또는 강공격이 스칸다 씨앗 상태의 적 명중 시 삼업의 정화·업의 사면을 발동하고 나히다 공격력의 200%, 원소 마스터리의 400%에 기반해 풀 원소 피해",
                 additionalAttack=[
                     additionalAttackSchema(
-                        name="삼업의 정화·업의 사면", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENT_MASTERY=4, element=["glass"])
+                        name="삼업의 정화·업의 사면", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=2, ELEMENT_MASTERY=4, element=["grass"])
                     )
                 ],
             ),

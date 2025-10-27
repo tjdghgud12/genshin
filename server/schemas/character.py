@@ -14,7 +14,7 @@ class skillConstellationType(Enum):
 
 
 class damageBaseFightPropSchema(BaseModel):
-    element: list[Literal["fire", "water", "glass", "elec", "rock", "wind", "ice", "physical"]] | None = None
+    element: list[Literal["fire", "water", "grass", "elec", "rock", "wind", "ice", "physical"]] | None = None
     HP: float | None = None
     ATTACK: float | None = None
     DEFENSE: float | None = None
@@ -23,7 +23,7 @@ class damageBaseFightPropSchema(BaseModel):
 
 class additionalAttackSchema(BaseModel):
     name: str
-    type: Literal["nomal", "charge", "falling", "elementalSkill", "elementalBurst", "fire", "water", "glass", "elec", "rock", "wind", "ice"] | None
+    type: Literal["nomal", "charge", "falling", "elementalSkill", "elementalBurst", "fire", "water", "grass", "elec", "rock", "wind", "ice"] | None
     baseFightProp: damageBaseFightPropSchema
 
 

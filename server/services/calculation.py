@@ -105,7 +105,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
         "elementalSkill": "ELEMENT_SKILL",
         "elementalBurst": "ELEMENT_BURST",
     }
-    elementalList = ["fire", "water", "glass", "elec", "rock", "wind", "ice"]
+    elementalList = ["fire", "water", "grass", "elec", "rock", "wind", "ice"]
     attacks = []
 
     class baseFightPropKeyMap(str, Enum):
