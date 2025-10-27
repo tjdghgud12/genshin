@@ -67,7 +67,6 @@ const eslintConfig = [
       ],
       "@typescript-eslint/explicit-function-return-type": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
-      "prefer-const": "error",
 
       // React 관련
       "react/prop-types": "off",
@@ -80,22 +79,19 @@ const eslintConfig = [
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
 
-      // 일반적인 규칙
-      "prettier/prettier": "error",
-      "no-console": ["warn", { allow: ["warn", "error"] }],
-      "prefer-const": "error",
-      "no-var": "error",
-
-      // 플랫폼별 줄바꿈 설정 (자동 감지)
-      "linebreak-style": "off", // Prettier가 처리하도록 함
-
-      // Prettier 관련 설정
+      // Prettier 설정
       "prettier/prettier": [
         "error",
         {
           endOfLine: "auto",
         },
       ],
+      "linebreak-style": "off",
+
+      // 일반적인 규칙
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "prefer-const": "error",
+      "no-var": "error",
 
       // Next.js 관련
       "@next/next/no-html-link-for-pages": "error",
