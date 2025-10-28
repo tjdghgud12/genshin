@@ -1,4 +1,3 @@
-// import { IFightProps, IFightPropKeys } from "@/types/globalType";
 import { z } from "zod";
 
 const fightPropsSchema = z.object({
@@ -144,6 +143,7 @@ const fightPropLabels: Record<string, string> = {
   FIGHT_PROP_ROCK_RES_MINUS: `바위 원소 내성 감소(%)`,
   FIGHT_PROP_DEFENSE_MINUS: `방어력 감소(%)`,
   FIGHT_PROP_DEFENSE_IGNORE: `방어력 무시(%)`,
+  FIGHT_PROP_HEAL_ADD: `치유 보너스(%)`,
 
   // 일반공격 관련
   FIGHT_PROP_NOMAL_ATTACK_CRITICAL: `일반 공격 치명타 확률(%)`,
