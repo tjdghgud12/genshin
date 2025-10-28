@@ -312,7 +312,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                         setattr(targetCritical, attr, reactionHandler(attackPoints.criticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
                         setattr(targetExpected, attr, reactionHandler(attackPoints.expectedDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
 
-                        if elementAddPoint > 0 and (reaction in "융해" or reaction in "증발"):
+                        if elementAddPoint > 0 and ("융해" in reaction or "증발" in reaction):
                             setattr(targetNonCritical, f"{attr}Additional", reactionHandler(additionalElementalDamages.nonCriticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
                             setattr(targetCritical, f"{attr}Additional", reactionHandler(additionalElementalDamages.criticalDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
                             setattr(targetExpected, f"{attr}Additional", reactionHandler(additionalElementalDamages.expectedDamage, fightProp.FIGHT_PROP_ELEMENT_MASTERY))
