@@ -155,4 +155,83 @@ info = {
             contellationSchema(name="히어로의 승리", description="바레사의 낙하 공격과 원소폭발 벼락불 강림!의 치명타 확률이 10%, 치명타 피해가 100% 증가한다."),
         ],
     ),
+    "실로닌": characterDataSchema(
+        passiveSkill={
+            "네토틸리즈틀리": passiveSkillSchema(
+                description=(
+                    "실로닌이 밤혼 가호 상태에서 「음원 샘플」 타입에 따라 실로닌의 일반 공격과 낙하 공격이 상응하는 강화 효과를 받는다"
+                    "·원소 전환이 발생한 「음원 샘플」 최소 2개 이상 보유: 적에게 명중 시, 밤혼을 35pt 획득한다. 해당 효과는 0.1초마다 최대 1회 발동된다."
+                    "·원소 전환이 발생한 「음원 샘플」 2개 미만 보유: 주는 피해가 30% 증가한다"
+                ),
+                unlockLevel=1,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="원소 전환 가능 음원 샘플 2개 이상")],
+            ),
+            "휴대용 갑옷": passiveSkillSchema(
+                description=(
+                    "밤혼 가호 상태에서 실로닌의 밤혼이 최대치 도달 시, 「밤혼 발산」과 동일한 효과를 1회 발동한다. 해당 효과는 14초마다 최대 1회 발동된다."
+                    "또한 파티 내 주변에 있는 캐릭터가 「밤혼 발산」 발동 시, 실로닌의 방어력이 20% 증가한다. 지속 시간: 15초"
+                ),
+                unlockLevel=4,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="밤혼 발산")],
+            ),
+        },
+        activeSkill={
+            "예리한 사냥": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    falling=damageBaseFightPropSchema(DEFENSE=1, element=["physical", "rock"]),
+                ),
+                additionalAttack=[additionalAttackSchema(name="칼날바퀴 수렵", type="nomal", baseFightProp=damageBaseFightPropSchema(DEFENSE=1, element=["rock"]))],
+            ),
+            "음악 단조": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(DEFENSE=1, element=["rock"])),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="음원 샘플 활성화")],
+            ),
+            "야생의 리듬!": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(DEFENSE=1, element=["rock"]))),
+        },
+        constellation=[
+            contellationSchema(
+                name="잠에 바치는 휴일",
+                description="실로닌의 밤혼 가호 상태가 소모하는 밤혼과 열소가 30% 감소하고 밤혼의 제한 시간이 45% 연장된다."
+                "또한 실로닌의 「음원 샘플」이 활성화 시, 주변에 있는 파티 내 현재 필드 위 캐릭터의 경직 저항력이 증가한다",
+            ),
+            contellationSchema(
+                name="불타는 들판에 바치는 오중주",
+                description="실로닌이 휴대한 바위 원소 「음원 샘플」이 활성화 상태를 계속 유지한다. 또한 실로닌의 「음원 샘플」 활성화 시, 「음원 샘플」의 원소 타입에 따라 주변에 있는 파티 내 모든 동일 원소 타입의 캐릭터가 상응하는 효과를 획득한다:"
+                "·바위 원소: 주는 피해 50% 증가."
+                "·불 원소: 공격력 45% 증가."
+                "·물 원소: HP 최대치 45% 증가."
+                "·얼음 원소: 치명타 피해 60% 증가."
+                "·번개 원소: 원소 에너지 25pt 회복 및 원소폭발의 재사용 대기시간 6초 감소",
+                options=[
+                    skillConstellationOptionSchema(type=skillConstellationType.toggle, label="바위 원소 음원 샘플"),
+                    # skillConstellationOptionSchema(type=skillConstellationType.toggle, label="불 원소 음원 샘플"),
+                    # skillConstellationOptionSchema(type=skillConstellationType.toggle, label="물 원소 음원 샘플"),
+                    # skillConstellationOptionSchema(type=skillConstellationType.toggle, label="얼음 원소 음원 샘플"),
+                    # skillConstellationOptionSchema(type=skillConstellationType.toggle, label="번개 원소 음원 샘플"),
+                ],
+            ),
+            contellationSchema(name="태양에 바치는 순환", description="원소 전투 스킬 레벨 +3"),
+            contellationSchema(
+                name="오후에 바치는 꽃의 꿈",
+                description="실로닌이 음악 단조 발동 후, 주변에 있는 파티 내 모든 캐릭터에게 「영광의 꽃 축복」 효과를 부여한다. 지속 시간: 15초."
+                "「영광의 꽃 축복」을 보유한 캐릭터가 일반 공격, 강공격, 낙하 공격으로 주는 피해가 실로닌의 방어력의 65%만큼 증가한다. 해당 효과는 6회 발동 또는 지속 시간 종료 시 사라진다."
+                "동시에 여러 기의 적에게 명중 시, 명중한 적의 수에 따라 적용 횟수가 소모된다. 파티 내에 「영광의 꽃 축복」을 보유한 캐릭터가 있으면, 해당 캐릭터의 적용 횟수는 단독으로 계산한다",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="영광의 꽃 축복")],
+            ),
+            contellationSchema(name="석양에 바치는 변화", description="원소 폭발 레벨 +3"),
+            contellationSchema(
+                name="영원한 밤에 바치는 춤",
+                description=(
+                    "밤혼 가호 상태에서 실로닌이 대시, 도약, 일반 공격, 낙하 공격 시, 「영원한 밤 축복」을 획득한다. 밤혼 가호 상태의 제한을 무시하고 일반 공격과 낙하 공격으로 주는 피해가 증가한다. 지속 시간: 5초."
+                    "지속 시간 동안 실로닌의 밤혼 제한 시간 카운트가 멈추고, 실로닌의 밤혼, 열소, 스테미너가 감소하지 않는다. 또한 밤혼이 최대치에 도달해도 실로닌의 밤혼 가호 상태가 종료되지 않는다."
+                    "실로닌이 밤혼 가호 상태에서 일반 공격과 낙하 공격으로 주는 피해가 실로닌의 방어력의 300%만큼 증가한다. 1.5초마다 주변에 있는 파티 내 모든 캐릭터의 HP를 회복한다."
+                    "회복량은 실로닌 방어력의 120%에 해당한다."
+                    "「영원한 밤 축복」 효과는 15초마다 최대 1회 획득할 수 있다."
+                ),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="영원한 밤 축복")],
+            ),
+        ],
+    ),
 }

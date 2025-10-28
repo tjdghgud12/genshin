@@ -220,8 +220,94 @@ async def getVaresaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
+async def getXilonenFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- active -----------------------
+    activeSkillLevelMap = {"음악 단조": [0.09, 0.12, 0.15, 0.18, 0.21, 0.24, 0.27, 0.30, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48, 0.51]}
+    for active in characterInfo.activeSkill:
+        match active.name:
+            case "음악 단조":
+                if not active.options[0].active:
+                    addElementalSkillLevel = next((constellation for constellation in characterInfo.constellations if constellation.name == "태양에 바치는 순환"))
+                    addLevel = 3 if addElementalSkillLevel.unlocked else 0
+                    skillValue = activeSkillLevelMap[active.name][active.level + addLevel - 1]
+                    newFightProp.add(fightPropMpa.ROCK_RES_MINUS.value, skillValue)
+                    newFightProp.add(fightPropMpa.FIRE_RES_MINUS.value, skillValue)
+                    newFightProp.add(fightPropMpa.WATER_RES_MINUS.value, skillValue)
+                    newFightProp.add(fightPropMpa.ICE_RES_MINUS.value, skillValue)
+                    newFightProp.add(fightPropMpa.ELEC_RES_MINUS.value, skillValue)
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "네토틸리즈틀리":
+                    if not passive.options[0].active:
+                        newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.30)
+                case "휴대용 갑옷":
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.DEFENSE_PERCENT.value, 0.2)
+
+    # ----------------------- constellations -----------------------
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "불타는 들판에 바치는 오중주":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.ROCK_ADD_HURT.value, 0.5)
+                    # if constellation.options[1].active:
+                    #     newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, 0.45)
+                    # if constellation.options[2].active:
+                    #     newFightProp.add(fightPropMpa.ICE_ADD_HURT.value, 0.6)
+                    # if constellation.options[3].active:
+                    #     newFightProp.add(fightPropMpa.ELEC_ADD_HURT.value, 0.25)
+                    # if constellation.options[4].active:
+                    #     newFightProp.add(fightPropMpa.WIND_ADD_HURT.value, 0.25)
+                case "태양에 바치는 순환":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "오후에 바치는 꽃의 꿈":
+                    if constellation.options[0].active:
+                        additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("DEFENSE", 0.65)})
+                        additionalAttackPoints.append({"key": fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("DEFENSE", 0.65)})
+                        additionalAttackPoints.append({"key": fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("DEFENSE", 0.65)})
+                case "석양에 바치는 변화":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                case "영원한 밤에 바치는 춤":
+                    if constellation.options[0].active:
+                        additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("DEFENSE", 3)})
+                        additionalAttackPoints.append({"key": fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("DEFENSE", 3)})
+                        additionalAttackPoints.append({"key": fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("DEFENSE", 3)})
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        newFightProp.add(key, finalPoint * value)
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "시틀라리": getCitlaliFightProp,
     "마비카": getMavuikaFightProp,
     "바레사": getVaresaFightProp,
+    "실로닌": getXilonenFightProp,
 }
