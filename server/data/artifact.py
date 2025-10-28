@@ -177,4 +177,16 @@ artifactSetOptions = {
             label="원소폭발 발동",
         ),
     ],
+    "유구한 반암": [
+        artifactSetOptionSchema(description="바위 원소 피해 보너스 +15%", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.toggle,
+            description=(
+                "결정 반응으로 만들어진 결정을 획득 시 파티 내 모든 캐릭터는 해당 원소 피해 보너스를 35% 획득한다. 지속 시간: 10초. "
+                "이러한 효과로 1가지의 원소 피해 보너스만 획득할 수 있다"
+            ),
+            requiredParts=4,
+            label="결정 획득",
+        ),
+    ],
 }

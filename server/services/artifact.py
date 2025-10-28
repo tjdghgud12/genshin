@@ -333,6 +333,24 @@ def getNoblesseObligeSetOption(numberOfParts: int, optionInfo: list[artifactSetD
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
+def getArchaicPetraSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, 0.15)
+                case 1:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, 0.35)
+                        fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.35)
+                        fightProp.add(fightPropMpa.WATER_ADD_HURT.value, 0.35)
+                        fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, 0.35)
+                        fightProp.add(fightPropMpa.ICE_ADD_HURT.value, 0.35)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
@@ -354,6 +372,7 @@ getArtifactSetsFightProp = {
     "님프의 꿈": getNymphsDreamSetOption,
     "긴 밤의 맹세": getLongNightsOathSetOption,
     "옛 왕실의 의식": getNoblesseObligeSetOption,
+    "유구한 반암": getArchaicPetraSetOption,
 }
 
 
