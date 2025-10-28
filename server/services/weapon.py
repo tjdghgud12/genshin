@@ -857,7 +857,7 @@ async def getPeakPatrolSongFightProp(
                         characterDefensePercent = characterFightProp.FIGHT_PROP_DEFENSE_PERCENT
                         characterDefenseTotal = baseDefense * (characterDefensePercent + 1)
                         characterDefenseTotal = characterDefenseTotal + characterDefense
-                        additionalElementHurt = int(characterDefenseTotal / 1000) * refinementValue[2]
+                        additionalElementHurt = round(characterDefenseTotal / 1000 * refinementValue[2], 1)
 
                         if additionalElementHurt > refinementValue[3]:
                             additionalElementHurt = refinementValue[3]
