@@ -11,7 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calculatorCharacterInfoSchema, calculatorFormSchema as formSchema } from "@/lib/calculator";
 import { inputNumberWithSpace } from "@/lib/utils";
-import { useCalculatorStore } from "@/store/useCalculatorStore";
+import { useArtifactSetsInfoStore } from "@/store/artifact/useArtifactStore";
+import { useDamageResultStore } from "@/store/damageResult/useDamageResultStore";
 import { IArtifactOptionInfo } from "@/types/artifactType";
 import { motion } from "framer-motion";
 import { Calculator } from "lucide-react";
@@ -34,8 +35,8 @@ const CharacterSettingCard = ({
   index: number;
 }): React.ReactElement => {
   const [infoTab, setInfoTab] = useState<string>("overView");
-  const artifactSets = useCalculatorStore((store) => store.artifactSets);
-  const { damageResult } = useCalculatorStore();
+  const artifactSets = useArtifactSetsInfoStore((state) => state.artifactSets);
+  const damageResult = useDamageResultStore((state) => state.damageResult);
   const elementColors: Record<string, Record<string, string>> = {
     Fire: { bg: `bg-Fire`, shadow: "shadow-shadow-Fire", gradient: "from-Fire to-Fire/0" },
     Water: { bg: `bg-Water`, shadow: "shadow-shadow-Water", gradient: "from-Water to-Water/0" },

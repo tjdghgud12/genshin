@@ -8,7 +8,7 @@ import { calculatorFormSchema as formSchema } from "@/lib/calculator";
 import { fightPropLabels } from "@/lib/fightProps";
 import { parseCharacterInfo } from "@/lib/parseCharacterInfo";
 import { deepMergeAddOnly } from "@/lib/utils";
-import { useCalculatorStore } from "@/store/useCalculatorStore";
+import { useDamageResultStore } from "@/store/damageResult/useDamageResultStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -18,7 +18,7 @@ import { z } from "zod";
 
 const CalculatorPage = (): React.ReactElement => {
   const [selectedCharacter, setSelectedCharacter] = useState<string>("");
-  const { damageResult, setDamageResult } = useCalculatorStore();
+  const { damageResult, setDamageResult } = useDamageResultStore();
 
   const elementBgColors: Record<string, string> = {
     Fire: `bg-Fire`,

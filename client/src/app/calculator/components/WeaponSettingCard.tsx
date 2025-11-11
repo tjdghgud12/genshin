@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import api from "@/lib/axios";
 import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { inputNumberWithSpace } from "@/lib/utils";
-import { useCalculatorStore } from "@/store/useCalculatorStore";
+import { useWeaponInfoStore } from "@/store/weapon/useWeaponStore";
 import { IWeaponInfo } from "@/types/weaponType";
 import Image from "next/image";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
@@ -56,7 +56,7 @@ const WeaponSettingCard = ({
   onRefinementChange?: (refinement: number | string) => void;
   onOptionsChange?: ((value: boolean | number | string | null, key: string) => void)[];
 }): React.ReactElement => {
-  const totalWeaponList = useCalculatorStore((state) => state.weaponList);
+  const totalWeaponList = useWeaponInfoStore((state) => state.weaponList);
   const [weaponDetail, setWeaponDetail] = useState<IWeaponDetail | null>(null);
   const [imgLoading, setImgLoading] = useState<boolean>(false);
   const [weaponList, setWeaponList] = useState<IWeaponInfo[]>([]);

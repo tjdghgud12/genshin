@@ -11,7 +11,7 @@ import api from "@/lib/axios";
 import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { fightPropLabels } from "@/lib/fightProps";
 import { inputNumberWithSpace } from "@/lib/utils";
-import { useCalculatorStore } from "@/store/useCalculatorStore";
+import { useArtifactSetsInfoStore } from "@/store/artifact/useArtifactStore";
 import { IArtifactOptionInfo, IArtifactSetsInfo } from "@/types/artifactType";
 import { TypeMerge } from "@/types/globalType";
 import { CircleOff } from "lucide-react";
@@ -118,7 +118,7 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
 };
 
 const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): void => {}, onMainChange = (): void => {}, onSubChange = [] }: IArtifactPartCard): ReactElement => {
-  const artifactSets = useCalculatorStore((store) => store.artifactSets);
+  const artifactSets = useArtifactSetsInfoStore((state) => state.artifactSets);
   const [ambrArtifact, setAmbrArtifact] = useState<IArtifactPart | undefined>();
   const [imgLoading, setImgLoading] = useState<boolean>(false);
 
