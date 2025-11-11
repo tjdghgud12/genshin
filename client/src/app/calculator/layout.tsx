@@ -1,99 +1,19 @@
-"use client";
-import { DotBounsLoading } from "@/app/loading";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import api from "@/lib/axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Search } from "lucide-react";
+import ClientUidSearchInput from "@/app/globalComponents/ClientUidSearchInput";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { Fragment, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import React from "react";
 
-// **************************** Schema ****************************
-const uidFormSchema = z.object({
-  uid: z.string().min(9, { error: "UID를 확인해주세요." }).max(12, {
-    error: "UID를 확인해주세요.",
-  }),
-});
-// **************************** Schema ****************************
-
-const CalculratorLayout = ({ children }: Readonly<{ children: React.ReactNode }>): React.ReactElement => {
-  const router = useRouter();
-  const [waitUserInfoFlag, setWaitUserInfoFlag] = useState<boolean>(false);
-  const searchParams = useSearchParams();
-
-  const form = useForm<z.infer<typeof uidFormSchema>>({
-    resolver: zodResolver(uidFormSchema),
-    defaultValues: {
-      uid: searchParams.get("uid")?.toString(),
-    },
-  });
-
-  const handleUid = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const uid = e.target.value;
-    if (/^\d*$/.test(uid)) {
-      form.setValue("uid", uid);
-    }
-  };
-
-  const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
-    setWaitUserInfoFlag(true);
-    toast.promise(api.get(`/user/${valus.uid}`), {
-      loading: "로딩 중",
-      success: (res) => {
-        window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
-        const searchParams = new URLSearchParams({ uid: valus.uid });
-        router.push(`/calculator?${searchParams.toString()}`);
-        setWaitUserInfoFlag(false);
-        return "캐릭터 진열장의 정보를 읽어왔습니다.";
-      },
-      error: (_err) => {
-        setWaitUserInfoFlag(false);
-        return "캐릭터 진열장의 정보를 읽어오는데 실패했습니다.";
-      },
-    });
-  };
-
+const CalculratorLayout = async ({ children }: Readonly<{ children: React.ReactNode }>): Promise<React.ReactElement> => {
   return (
     <main className="w-full h-full min-w-[1650px] min-h-[500px] flex flex-col">
-      {waitUserInfoFlag ? (
-        <div className="m-auto">
-          <DotBounsLoading />
-        </div>
-      ) : (
-        <Fragment>
-          <div className="w-full flex">
-            {/* Header */}
-            <Link className="w-[80px] h-[80px] relative rounded-full py-1 px-3" href={`/`}>
-              <Image src={`/img/homeIcon.png`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
-            </Link>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 m-auto">
-                <FormField
-                  control={form.control}
-                  name="uid"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input className="w-full border-none shadow-none focus-visible:ring-0" {...field} onChange={handleUid} maxLength={12} placeholder="UID" />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-auto bg-transparent rounded-full text-stone-500  hover:bg-stone-300 hover:text-white">
-                  <Search />
-                </Button>
-              </form>
-            </Form>
-          </div>
-          <div className="w-full">{children}</div>
-        </Fragment>
-      )}
+      <div className="w-full flex">
+        {/* Header */}
+        <Link className="w-[80px] h-[80px] relative rounded-full py-1 px-3" href={`/`}>
+          <Image src={`/img/homeIcon.png`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
+        </Link>
+        <ClientUidSearchInput className="m-auto" value={null} />
+      </div>
+      <div className="w-full">{children}</div>
     </main>
   );
 };
