@@ -1,7 +1,7 @@
 "use client";
 
-import { initArtifactSetsInfoStore } from "@/store/artifact/artifactStore";
-import { initWeaponInfoStore } from "@/store/weapon/weaponStore";
+import { initArtifactSetsInfoStore } from "@/store/artifactStore";
+import { initWeaponInfoStore } from "@/store/weaponStore";
 import { IArtifactSetsInfo } from "@/types/artifactType";
 import { IWeaponInfo } from "@/types/weaponType";
 import { Fragment, useRef } from "react";
