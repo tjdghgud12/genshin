@@ -3,12 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 
 const uidFormSchema = z.object({
@@ -17,7 +15,7 @@ const uidFormSchema = z.object({
   }),
 });
 
-const ClientUidSearchInput = ({ value, className = "" }: { value: string | null; className?: string }): React.ReactElement => {
+const UidSearchInput = ({ value, className = "" }: { value: string | null; className?: string }): React.ReactElement => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const uid = value ?? searchParams.get("uid")?.toString();
@@ -30,18 +28,7 @@ const ClientUidSearchInput = ({ value, className = "" }: { value: string | null;
   });
 
   const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
-    toast.promise(api.get(`/user/${valus.uid}`), {
-      loading: "로딩 중",
-      success: (res) => {
-        window.sessionStorage.setItem("calculatorData", JSON.stringify(res.data.characters));
-        const searchParams = new URLSearchParams({ uid: valus.uid });
-        router.push(`/calculator?${searchParams.toString()}`);
-        return "캐릭터 진열장의 정보를 읽어왔습니다.";
-      },
-      error: (_err) => {
-        return "캐릭터 진열장의 정보를 읽어오는데 실패했습니다.";
-      },
-    });
+    router.push(`/calculator?${new URLSearchParams({ uid: valus.uid }).toString()}`);
   };
 
   return (
@@ -76,4 +63,4 @@ const ClientUidSearchInput = ({ value, className = "" }: { value: string | null;
   );
 };
 
-export default ClientUidSearchInput;
+export default UidSearchInput;
