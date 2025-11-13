@@ -11,7 +11,7 @@ import api from "@/lib/axios";
 import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { fightPropLabels } from "@/lib/fightProps";
 import { inputNumberWithSpace } from "@/lib/utils";
-import { useArtifactSetsInfoStore } from "@/store/artifact/useArtifactStore";
+import { useArtifactSetsInfoStore } from "@/store/artifactStore";
 import { IArtifactOptionInfo, IArtifactSetsInfo } from "@/types/artifactType";
 import { TypeMerge } from "@/types/globalType";
 import { CircleOff } from "lucide-react";
@@ -178,7 +178,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
   return (
     <Card className={`w-full border-0 border-gray-400 text-base p-1 shadow-md bg-transparent ${className}`}>
       <CardContent className="w-full h-full p-1 text-white flex flex-col gap-4 overflow-hidden">
-        <div className="w-full flex">
+        <div className="flex">
           <div className="w-[45%] aspect-square flex flex-col relative">
             {!imgLoading && <DotBounsLoading className="w-auto h-auto m-auto" dotClassName="size-4 stroke-8" />}
             {ambrArtifact === undefined ? (
@@ -195,7 +195,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
               />
             )}
           </div>
-          <div className="w-[55%] h-full flex flex-col justify-between">
+          <div className="w-[55%] h-full grid grid-cols-1 gap-2">
             <Combobox
               className="h-fit bg-gray-700 text-white text-base font-bold border-2"
               optionClassName="bg-gray-700 text-white"
@@ -214,7 +214,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
             />
 
             {artifact && (
-              <div className="min-w-0 flex flex-col">
+              <div className="flex flex-col">
                 {Array.isArray(artifactMainOptionList[artifact.type]) ? (
                   <Combobox
                     className="h-fit bg-gray-700 text-white text-base font-bold border-2 overflow-hidden text-center"
