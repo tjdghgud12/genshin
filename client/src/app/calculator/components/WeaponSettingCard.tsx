@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import api from "@/lib/axios";
 import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { inputNumberWithSpace } from "@/lib/utils";
-import { useWeaponInfoStore } from "@/store/weapon/useWeaponStore";
+import { useWeaponInfoStore } from "@/store/weaponStore";
 import { IWeaponInfo } from "@/types/weaponType";
 import Image from "next/image";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
