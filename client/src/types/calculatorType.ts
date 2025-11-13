@@ -1,3 +1,8 @@
+import { IArtifactInfo } from "@/types/artifactType";
+import { IWeaponInfo } from "@/types/weaponType";
+
+export type TElement = "Fire" | "Water" | "Wind" | "Electric" | "Ice" | "Rock" | "Grass";
+
 export interface IattackDamage {
   // 기본
   physicalDamage: number;
@@ -78,4 +83,57 @@ export interface IdamageCalculationResult {
   waterSwirlDamage: number; // 물확산
   iceSwirlDamage: number; // 얼음확산
   elecSwirlDamage: number; // 번개확산
+}
+
+export interface IUidSearchResult {
+  characterInfo: {
+    level: number;
+    name: string;
+    element: TElement;
+    icon: Record<string, string> & { is_costume: boolean };
+    activeSkill: (Record<string, string | number | boolean | object> & {
+      icon: string;
+      level: number;
+      name: string;
+      description: string;
+      options: (Record<string, string | number | boolean | object> & {
+        type: string;
+        label: string;
+        maxStack: number;
+        active: boolean;
+        stack: number;
+      })[];
+    })[];
+    passiveSkill: (Record<string, string | number | boolean | object> & {
+      unlocked: boolean;
+      icon: string;
+      name: string;
+      description: string;
+      options: (Record<string, string | number | boolean | object> & {
+        type: string;
+        label: string;
+        maxStack: number;
+        active: boolean;
+        stack: number;
+      })[];
+    })[];
+    constellations: (Record<string, string | number | boolean | object> & {
+      unlocked: boolean;
+      icon: string;
+      name: string;
+      description: string;
+      options: (Record<string, string | number | boolean | object> & {
+        type: string;
+        label: string;
+        maxStack: number;
+        active: boolean;
+        stack: number;
+      })[];
+    })[];
+    artifact: IArtifactInfo;
+
+    weapon: IWeaponInfo;
+    totalStat: Record<string, number>;
+  };
+  damage: IdamageCalculationResult | null;
 }

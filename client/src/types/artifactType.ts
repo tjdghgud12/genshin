@@ -8,8 +8,8 @@ export interface IArtifactPartInfo {
   setName: string;
   id: number;
   type: string;
-  mainStat: IArtifactOptionInfo;
-  subStat: IArtifactOptionInfo[];
+  mainStat: Record<string, number>;
+  subStat: Record<string, number>[];
   icon: string;
 }
 
@@ -17,6 +17,7 @@ export interface IArtifactSetsInfo {
   name: string;
   id: number;
   icon: string;
+  numberOfParts: number;
   affix_list: { id: string; effect: string }[];
   options: {
     type: string;
@@ -24,6 +25,10 @@ export interface IArtifactSetsInfo {
     description: string;
     label: string;
     requiredParts: number;
+    active: boolean;
+    stack: number;
+    select: string | null;
+    selectList: string[];
   }[];
 }
 
