@@ -883,6 +883,23 @@ async def getPeakPatrolSongFightProp(
     }
 
 
+async def getTheBlackSwordFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [0.20, 0.25, 0.30, 0.35, 0.40]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.NOMAL_ATTACK_CRITICAL.value, refinementValue)
+                    fightProp.add(fightPropMpa.CHARGED_ATTACK_CRITICAL.value, refinementValue)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 getTotalWeaponFightProp = {
     "아모스의 활": getAmosBowFightProp,
     "안개를 가르는 회광": getMistsplitterReforgedFightProp,
@@ -921,4 +938,5 @@ getTotalWeaponFightProp = {
     "페보니우스 장창": getFavoniusLanceFightProp,
     "페보니우스 검": getFavoniusSwordFightProp,
     "바위산을 맴도는 노래": getPeakPatrolSongFightProp,
+    "칠흑검": getTheBlackSwordFightProp,
 }
