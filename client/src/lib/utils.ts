@@ -25,7 +25,7 @@ const inputNumberWithSpace = (val: string, useFloat?: boolean, decimalPlaces?: n
   return useFloat ? Number(cleaned) : Number.parseInt(cleaned);
 };
 
-const deepMergeAddOnly = <T extends AnyObject, S extends AnyObject>(target: T, source: S): T & S => {
+const deepMergeAddOnly = <T extends AnyObject, S extends AnyObject>(target: T, source: S): Omit<S, keyof T> & T => {
   const result: AnyObject = { ...target };
 
   for (const key in source) {

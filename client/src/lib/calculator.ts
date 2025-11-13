@@ -30,7 +30,6 @@ const createFloatSchema = (min?: number, max?: number, errorMessage?: string) =>
 };
 
 const calculatorCharacterInfoSchema = z.object({
-  raw: z.record(z.string(), z.any()),
   level: createFloatSchema(1, 90, "캐릭터 레벨을 확인해주세요."),
   constellations: z.array(
     z.object({
@@ -114,7 +113,7 @@ const calculatorCharacterInfoSchema = z.object({
 });
 
 const calculatorFormSchema = z.object({
-  data: z.array(calculatorCharacterInfoSchema),
+  data: calculatorCharacterInfoSchema,
   additionalFightProp: z.object(Object.fromEntries(Object.keys(fightPropLabels).map((key) => [key, createFloatSchema()]))),
 });
 

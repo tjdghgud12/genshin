@@ -135,5 +135,5 @@ export interface IUidSearchResult {
     weapon: IWeaponInfo;
     totalStat: Record<string, number>;
   };
-  damage: IdamageCalculationResult | null;
+  damage: IdamageCalculationResult;
 }
