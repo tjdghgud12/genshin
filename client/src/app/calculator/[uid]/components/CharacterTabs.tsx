@@ -1,11 +1,13 @@
-import CharacterSettingCard from "@/app/calculator/components/CharacterSettingCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/lib/axios";
 import { IUidSearchResult } from "@/types/calculatorType";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
-const CalculatorPage = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<React.ReactElement> => {
+import CharacterSettingCard from "./CharacterSettingCard";
+
+const CharacterTabs = async ({ params }: { params: Promise<{ uid: string }> }): Promise<React.ReactElement> => {
+  const { uid } = await params;
   const elementBgColors: Record<string, string> = {
     Fire: `bg-Fire`,
     Water: `bg-Water`,
@@ -15,13 +17,13 @@ const CalculatorPage = async ({ searchParams }: { searchParams: Promise<{ [key: 
     Rock: `bg-Rock`,
     Grass: `bg-Grass`,
   };
-  const uid = (await searchParams).uid;
+
   const res = await api.get(`/user/${uid}`);
   if (res.status !== 200) redirect(`/`);
   const characters: IUidSearchResult[] = res.data.characters;
 
   return (
-    <Tabs defaultValue={characters[0].characterInfo.name as string} className="w-[90%] mx-auto gap-0">
+    <Tabs defaultValue={characters[0].characterInfo.name as string} className="w-[90%] min-w-[1120px] mx-auto gap-0">
       <TabsList className="w-full h-fit justify-around pt-3 px-3 rounded-2xl mx-auto">
         {characters.map((character) => {
           const element = character.characterInfo.element;
@@ -51,4 +53,4 @@ const CalculatorPage = async ({ searchParams }: { searchParams: Promise<{ [key: 
   );
 };
 
-export default CalculatorPage;
+export default CharacterTabs;

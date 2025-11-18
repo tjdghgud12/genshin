@@ -1,9 +1,9 @@
 "use client";
 
-import AdditionalFightProp from "@/app/calculator/components/AdditionalFightProp";
-import { ArtifactPartCard, ArtifactSetOptionCard } from "@/app/calculator/components/ArtifactCard";
-import DamageResultCard from "@/app/calculator/components/DamageResultCard";
-import WeaponSettingCard from "@/app/calculator/components/WeaponSettingCard";
+import AdditionalFightProp from "@/app/calculator/[uid]/components/AdditionalFightProp";
+import { ArtifactPartCard, ArtifactSetOptionCard } from "@/app/calculator/[uid]/components/ArtifactCard";
+import DamageResultCard from "@/app/calculator/[uid]/components/DamageResultCard";
+import WeaponSettingCard from "@/app/calculator/[uid]/components/WeaponSettingCard";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -133,7 +133,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
           </motion.button>
           <div className="w-full">
             <TabsContent value="overView">
-              <Card className={`aspect-[2/1.1] ${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
+              <Card className={`${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
                 <CardContent className={`w-full h-full flex relative ${elementColors[element].bg} rounded-2xl rounded-tr-none`}>
                   <div className="absolute z-0 flex gap-10 inset-6">
                     <div className="w-[40%] relative">
@@ -203,8 +203,8 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
               </Card>
             </TabsContent>
             <TabsContent value="skill-constellation-weapon">
-              <Card className={`aspect-[2/1.1] ${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
-                <CardContent className={`h-full flex gap-6 ${elementColors[element].bg}`}>
+              <Card className={`${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
+                <CardContent className={`w-full h-full flex gap-6 ${elementColors[element].bg}`}>
                   <Tabs className="flex-1 h-[90%]" defaultValue={`passiveSkill-0`}>
                     <Label className="text-3xl font-bold text-gray-700">특성 & 운명의 자리</Label>
                     <TabsList className="w-full h-auto flex flex-col bg-gray-700 border-2 rounded-2xl">
@@ -303,7 +303,6 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                                           <Label className="text-2xl font-bold mb-1">옵션</Label>
                                           <div className="w-full flex gap-7">
                                             {field.value.options.map((option, i) => {
-                                              // 여기서 필요한게 뭐지? type, label, maxStack. 저 3가지는 option에 없고 dataInfo.options에 있음.
                                               const optionInfo = dataInfo.options[i];
                                               return (
                                                 <div key={`${tabValue}-option-${i}`} className="flex">
@@ -400,12 +399,12 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
               </Card>
             </TabsContent>
             <TabsContent value="artifact">
-              <Card className={`aspect-[2/1.1] ${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
-                <CardContent className={`h-full flex flex-col gap-6 ${elementColors[element].bg} text-white `}>
+              <Card className={`${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
+                <CardContent className={`h-full min-h-[650px] flex flex-col gap-6 ${elementColors[element].bg} text-white `}>
                   {/* 성유물 파츠 영역 */}
                   <div className="w-full flex-1 flex flex-col gap-2">
                     <Label className="text-3xl font-bold text-gray-700">성유물</Label>
-                    <div className="w-full flex-1 grid grid-cols-5 gap-1">
+                    <div className="w-full flex-1 grid gap-1 grid-cols-[repeat(auto-fit,minmax(230px,1fr))]">
                       {info.artifact.parts.map((artifact, i) => {
                         return (
                           <FormField
@@ -420,7 +419,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                               });
 
                               return (
-                                <FormItem className="w-full">
+                                <FormItem>
                                   <ArtifactPartCard
                                     key={`artifact-part-${i}`}
                                     className={`bg-gray-700`}

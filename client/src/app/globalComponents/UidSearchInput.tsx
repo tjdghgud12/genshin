@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Search } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,8 +17,7 @@ const uidFormSchema = z.object({
 
 const UidSearchInput = ({ value, className = "" }: { value: string | null; className?: string }): React.ReactElement => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const uid = value ?? searchParams.get("uid")?.toString();
+  const uid = value ?? "";
 
   const form = useForm<z.infer<typeof uidFormSchema>>({
     resolver: zodResolver(uidFormSchema),
@@ -28,7 +27,7 @@ const UidSearchInput = ({ value, className = "" }: { value: string | null; class
   });
 
   const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
-    router.push(`/calculator?${new URLSearchParams({ uid: valus.uid }).toString()}`);
+    router.push(`/calculator/${valus.uid}`);
   };
 
   return (
@@ -51,7 +50,6 @@ const UidSearchInput = ({ value, className = "" }: { value: string | null; class
                   placeholder="UID"
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />

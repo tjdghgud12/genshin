@@ -6,7 +6,7 @@ import { IArtifactSetsInfo } from "@/types/artifactType";
 import { IWeaponInfo } from "@/types/weaponType";
 import { Fragment, useRef } from "react";
 
-const Store = ({ weaponList, artifactSets }: { weaponList: { [id: string]: IWeaponInfo }; artifactSets: { [name: string]: IArtifactSetsInfo } }) => {
+const Store = ({ weaponList, artifactSets }: { weaponList: { [id: string]: IWeaponInfo }; artifactSets: { [name: string]: IArtifactSetsInfo } }): React.ReactElement => {
   const initialized = useRef(false);
 
   if (!initialized.current) {
