@@ -234,4 +234,43 @@ info = {
             ),
         ],
     ),
+    "향릉": characterDataSchema(
+        passiveSkill={
+            "교차 화력": passiveSkillSchema(description="누룽지가 불을 뿜는 거리가 20% 증가한다.", unlockLevel=1),
+            "절운차오톈자오": passiveSkillSchema(
+                description="누룽지 출격 효과 종료 후 누룽지는 사라진 위치에 고추를 하나 남긴다. 고추를 주우면 공격력이 10% 증가한다.", unlockLevel=4
+            ),
+        },
+        activeSkill={
+            "밀가루 음식 솜씨": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                )
+            ),
+            "누룽지 출격": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["fire"]))),
+            "화륜": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["fire"]))),
+        },
+        constellation=[
+            contellationSchema(
+                name="겉은 바삭, 속은 촉촉",
+                description="누룽지의 공격에 피격된 적은 불 원소 내성이 15% 감소한다. 지속 시간: 6초",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="누룽지 공격")],
+            ),
+            contellationSchema(
+                name="큰불에 기름 붓기",
+                description="일반 공격의 최후의 일격은 적에게 2초 동안 지속적인 내폭 효과를 부여한다. 효과 종료 시 폭발하여 주변의 적에게 공격력 75%의 불 원소 범위 피해를 준다.",
+                additionalAttack=[additionalAttackSchema(name="내폭(2돌파)", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=0.75, element=["fire"]))],
+            ),
+            contellationSchema(name="센 불로 조리하기", description="원소 폭발 레벨 +3"),
+            contellationSchema(name="약불로 천천히 삶기", description="화륜의 지속 시간을 40% 연장한다."),
+            contellationSchema(name="흉포한 누룽지", description="원소 전투 스킬 레벨 +3"),
+            contellationSchema(
+                name="토네이도 화륜",
+                description="화륜이 지속되는 동안 파티 내 모든 캐릭터는 불 원소 피해 보너스를 15% 획득한다.",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="화륜 지속")],
+            ),
+        ],
+    ),
 }

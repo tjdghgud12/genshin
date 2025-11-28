@@ -347,10 +347,56 @@ async def getShenheFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
+async def getXianglingFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+
+    # ----------------------- active -----------------------
+    # 향릉의 active 스킬은 fightProp 영향 X
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "절운차오톈자오":
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.1)
+
+    # ----------------------- constellations -----------------------
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "겉은 바삭, 속은 촉촉":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.FIRE_RES_MINUS.value, 0.15)
+                case "센 불로 조리하기":
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                case "흉포한 누룽지":
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "토네이도 화륜":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.15)
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "감우": getGanyuFightProp,
     "각청": getKeqingFightProp,
     "호두": getHuTaoFightProp,
     "야란": getYelanFightProp,
     "신학": getShenheFightProp,
+    "향릉": getXianglingFightProp,
 }
