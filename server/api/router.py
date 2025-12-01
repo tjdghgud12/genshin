@@ -74,6 +74,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
     async with enka.GenshinClient(lang="ko") as client:
         rawRes = await client.fetch_showcase(uid, raw=True)
         characterInfoList = client.parse_showcase(rawRes).characters
+        await client.update_assets()
 
         parsedCharacters = []
         for i, avatar in enumerate(characterInfoList):
