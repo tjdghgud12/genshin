@@ -1,6 +1,13 @@
 from pydantic import BaseModel, model_validator
 from enum import Enum
 from ambr import WeaponType
+from typing import TypedDict
+from schemas.fightProp import fightPropSchema
+
+
+class WeaponDataReturnSchema(TypedDict, total=True):
+    fightProp: fightPropSchema
+    afterAddProps: list[str] | None
 
 
 class weaponOptionType(Enum):
