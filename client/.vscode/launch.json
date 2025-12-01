@@ -11,19 +11,18 @@
       "sourceMaps": true
     },
     {
-      "name": "Attach to Chrome",
+      "name": "launch to Chrome",
       "type": "chrome",
-      "request": "attach",
-      "port": 9222,
-      "webRoot": "${workspaceFolder}",
-      "urlFilter": "http://localhost:9000/*",
-      "trace": true
+      "request": "launch",
+      "url": "http://localhost:9000",
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true
     }
   ],
   "compounds": [
     {
       "name": "Next Process",
-      "configurations": ["Next Server", "Attach to Chrome"]
+      "configurations": ["Next Server", "launch to Chrome"]
     }
   ]
 }
