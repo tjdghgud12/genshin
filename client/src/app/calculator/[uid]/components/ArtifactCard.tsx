@@ -60,7 +60,14 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
         <div className="w-[40%] aspect-square mr-2 my-auto relative">
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
-              <Image className={`${imgLoading ? "" : "hidden"}`} src={setInfo.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
+              <div className="w-full h-full absolute overflow-hidden">
+                <div className={`w-[95%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l from-gray-700 to-gray-700/0`} />
+                <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r from-gray-700 to-gray-700/0`} />
+                <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-gray-700 to-gray-700/0`} />
+                <div className="w-[15vw] h-[15vw] min-w-[190px] min-h-[190px] absolute z-0 -left-[25%] -top-[15%]">
+                  <Image className={`object-cover`} src={setInfo.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
+                </div>
+              </div>
             </TooltipTrigger>
             <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
               {setInfo.affix_list.map((affix, i) => {
@@ -75,7 +82,7 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
         </div>
 
         <div className="flex-1 flex flex-col gap-5">
-          <Label className="text-2xl font-bold mx-auto">
+          <Label className="text-[clamp(1.5rem,2vw,2.25rem)] font-bold mx-auto">
             {setInfo.name}({setInfo.numberOfParts})
           </Label>
           <div className="flex flex-col gap-2 my-auto overflow-auto" style={{ scrollbarGutter: "stable" }}>
@@ -84,13 +91,13 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
                 return <Fragment key={`${option.label}-${i}`} />;
               }
               return (
-                <div key={`${option.label}-${i}`} className="w-full flex gap-2">
-                  <Label className="w-[50%] text-base font-bold my-auto">
-                    {option.label}({option.requiredParts}):
+                <div key={`${option.label}-${i}`} className="flex gap-2 mx-auto">
+                  <Label className="w-auto text-[clamp(1rem,1vw,1.5rem)] font-bold my-auto">
+                    {option.label}({option.requiredParts})
                   </Label>
                   {option.type === "stack" ? (
                     <Input
-                      className="h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0 flex-1"
+                      className="h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0 flex-1"
                       name={`options.${i}.stack`}
                       type="number"
                       value={option.stack.toString()}
