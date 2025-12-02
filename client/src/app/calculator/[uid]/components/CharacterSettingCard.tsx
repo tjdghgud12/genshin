@@ -134,20 +134,22 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
           <div className="w-full">
             <TabsContent value="overView">
               <Card className={`${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
-                <CardContent className={`w-full h-full flex relative ${elementColors[element].bg} rounded-2xl rounded-tr-none`}>
+                <CardContent className={`w-full flex relative ${elementColors[element].bg} rounded-2xl rounded-tr-none`}>
                   <div className="absolute z-0 flex gap-10 inset-6">
-                    <div className="w-[40%] relative">
+                    <div className="w-[40%] h-fit relative overflow-hidden">
                       <div className={`w-[10%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r ${elementColors[element].gradient}`} />
                       <div className={`w-[10%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l ${elementColors[element].gradient}`} />
                       <div className={`h-[15%] pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b ${elementColors[element].gradient}`} />
                       <div className={`h-[15%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t ${elementColors[element].gradient}`} />
-                      <Image src={info.icon.gacha} className={`object-cover object-[center] opacity-90`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
+                      <div className="w-[35vw] h-[35vw] min-w-[500px] min-h-[500px] relative z-0">
+                        <Image src={info.icon.gacha} className={`object-cover object-[center] opacity-90`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
+                      </div>
                     </div>
                     <div className="flex-1 relative opacity-35">
                       <Image src={`/img/Element_${element}_White.svg`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
                     </div>
                   </div>
-                  <div className="w-full flex gap-10 z-10 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">
+                  <div className="w-full h-[35vw] min-h-[500px] flex gap-10 z-10 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">
                     <div className={`w-[40%] flex flex-col pl-8 pt-3 z-10`}>
                       <Label className="text-5xl font-bold ">{info.name}</Label>
                       <FormField
@@ -175,7 +177,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                       />
                     </div>
                     <div className="flex-1 mt-auto">
-                      <div className="w-[70%] grid grid-cols-[1fr_auto] gap-y-5 gap-x-10 bg-gray-700/10 rounded-2xl p-8 mx-auto">
+                      <div className="w-[70%] grid grid-cols-[1fr_auto] gap-y-[clamp(0.8rem,0.9vw,1.25rem)] gap-x-10 bg-gray-700/10 rounded-2xl p-8 mx-auto">
                         {[
                           { label: "체력", value: info.totalStat.FIGHT_PROP_HP_FINAL },
                           { label: "공격력", value: info.totalStat.FIGHT_PROP_ATTACK_FINAL },
@@ -192,8 +194,10 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                           { label: "피해증가(%)", value: info.totalStat.FIGHT_PROP_ATTACK_ADD_HURT },
                         ].map(({ label, value }, i) => (
                           <React.Fragment key={i}>
-                            <Label className="w-fit h-fit text-2xl font-bold">{label}</Label>
-                            <Label className="w-fit h-fit text-2xl font-bold">{formatterTotalFightProp(value, label.includes("%"), label !== "원소마스터리")}</Label>
+                            <Label className="w-fit h-fit text-[clamp(1rem,1.5vw,1.5rem)] font-bold">{label}</Label>
+                            <Label className="w-fit h-fit text-[clamp(1rem,1.5vw,1.5rem)] font-bold">
+                              {formatterTotalFightProp(value, label.includes("%"), label !== "원소마스터리")}
+                            </Label>
                           </React.Fragment>
                         ))}
                       </div>
