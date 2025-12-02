@@ -85,13 +85,18 @@ const WeaponSettingCard = ({
     <Card className={`w-full max-h-full bg-gray-700 border-2 rounded-2xl overflow-y-auto scrollbar-custom shadow-none ${className}`} style={{ scrollbarGutter: "stable" }}>
       <CardContent className="w-full text-white">
         <div className="w-full flex">
-          <div className="w-[40%] aspect-square mr-2">
+          <div className="h-[8.5vw] min-h-[130px] aspect-square relative z-0 overflow-hidden">
             {!imgLoading && !weaponDetail && <DotBounsLoading className="w-fit h-full m-auto" dotClassName="size-4 stroke-8" />}
             {weaponDetail ? (
               <Tooltip delayDuration={500}>
                 <TooltipTrigger asChild>
-                  <div className="w-full h-full relative">
-                    <Image src={weaponDetail.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
+                  <div className="w-full h-full relative overflow-hidden">
+                    <div className={`w-[40%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l from-gray-700 to-gray-700/0`} />
+                    <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r from-gray-700 to-gray-700/0`} />
+                    <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-gray-700 to-gray-700/0`} />
+                    <div className="w-[10vw] h-[10vw] min-w-[150px] min-h-[150px] absolute z-0 -left-[20%] -top-[7%]">
+                      <Image className={`object-cover`} src={weaponDetail.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
+                    </div>
                   </div>
                 </TooltipTrigger>
                 {weaponDetail.affix ? (
