@@ -176,28 +176,34 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
   }, [artifactSets, artifact.setName, getArtifactDetail]);
 
   return (
-    <Card className={`w-full border-0 border-gray-400 text-base p-1 shadow-md bg-transparent ${className}`}>
-      <CardContent className="w-full h-full p-1 text-white flex flex-col gap-4 overflow-hidden">
-        <div className="flex">
-          <div className="w-[45%] aspect-square flex flex-col relative">
+    <Card className={`border-0 border-gray-400 text-base p-4 shadow-md bg-transparent ${className}`}>
+      <CardContent className="p-0 text-white flex flex-col gap-4 overflow-hidden">
+        <div className="w-full flex">
+          <div className="w-[45%] h-[8.5vw] min-h-[130px] relative z-0 overflow-hidden">
             {!imgLoading && <DotBounsLoading className="w-auto h-auto m-auto" dotClassName="size-4 stroke-8" />}
             {ambrArtifact === undefined ? (
-              <CircleOff className="size-10 m-auto" />
+              <CircleOff className="size-[7vw] min-w-[120px] m-auto" />
             ) : (
-              <Image
-                className={imgLoading ? "" : "hidden"}
-                src={ambrArtifact?.icon || ""}
-                alt=""
-                priority
-                fill
-                sizes="(max-width: 1200px) 7vw"
-                onLoad={() => setImgLoading(true)}
-              />
+              <>
+                <div className={`w-[95%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l from-gray-700 to-gray-700/0`} />
+                <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r from-gray-700 to-gray-700/0`} />
+                <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-gray-700 to-gray-700/0`} />
+                <div className="w-[10vw] h-[10vw] min-w-[150px] min-h-[150px] absolute z-0 -left-[25%] -top-[7%]">
+                  <Image
+                    className={`object-cover scale-110 ${imgLoading ? "" : "hidden"}`}
+                    src={ambrArtifact?.icon || ""}
+                    alt=""
+                    priority
+                    fill
+                    onLoad={() => setImgLoading(true)}
+                  />
+                </div>
+              </>
             )}
           </div>
-          <div className="w-[55%] h-full grid grid-cols-1 gap-2">
+          <div className="w-[55%] grid grid-cols-1 gap-2">
             <Combobox
-              className="h-fit bg-gray-700 text-white text-base font-bold border-2"
+              className="bg-gray-700 text-white text-xl font-bold border-2 my-auto"
               optionClassName="bg-gray-700 text-white"
               options={Object.keys(artifactSets).map((name) => ({ label: name, data: name }))}
               defaultValue={artifactSets[artifact.setName]?.name.toString() || ""}
@@ -214,10 +220,10 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
             />
 
             {artifact && (
-              <div className="flex flex-col">
+              <div>
                 {Array.isArray(artifactMainOptionList[artifact.type]) ? (
                   <Combobox
-                    className="h-fit bg-gray-700 text-white text-base font-bold border-2 overflow-hidden text-center"
+                    className="bg-gray-700 text-white text-xl font-bold border-2 overflow-hidden text-center"
                     optionClassName="bg-gray-700 text-white"
                     options={(artifactMainOptionList[artifact.type] as string[]).map((o) => ({
                       label: fightPropLabels[o],
@@ -227,10 +233,12 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
                     onChange={(fightProp) => onMainChange({ [fightProp === undefined ? artifactMainOptionList[artifact.type][0] : fightProp]: main.value })}
                   />
                 ) : (
-                  <div className="w-full rounded-sm bg-gray-700 text-white font-bold border-2 text-center py-1 truncate">{fightPropLabels[main.key]}</div>
+                  <div className="w-full h-fit flex rounded-md bg-gray-700 border-2 py-1">
+                    <Label className="text-white text-xl font-bold m-auto truncate">{fightPropLabels[main.key]}</Label>
+                  </div>
                 )}
                 <Input
-                  className="w-full h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-base text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-1 p-0"
+                  className="w-full border-b-2 border-t-0 border-x-0 rounded-none !text-xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-1 p-0"
                   name={`mainOption.value`}
                   type="number"
                   step="any"
@@ -245,12 +253,12 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
             )}
           </div>
         </div>
-        <div className="flex-1 flex flex-col justify-around mx-auto">
+        <div className="flex-1 grid grid-cols-1 gap-2 justify-around mx-auto">
           {sub.map(({ key, value }, i) => {
             return (
               <div key={`subOption.${i}`} className="w-full flex gap-2">
                 <Combobox
-                  className="w-2/3 h-fit bg-gray-700 text-white text-base font-bold border-2 overflow-hidden text-center"
+                  className="w-2/3 h-fit bg-gray-700 text-white text-lg font-bold border-2 overflow-hidden text-center"
                   optionClassName="bg-gray-700 text-white"
                   options={artifactSubOptionList.map((o) => ({
                     label: fightPropLabels[o],
@@ -260,7 +268,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
                   onChange={(fightProp) => onSubChange[i]({ [fightProp === undefined ? artifactSubOptionList[0] : fightProp]: value })}
                 />
                 <Input
-                  className="border-b-2 border-t-0 border-x-0 rounded-none !text-base text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
+                  className="border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
                   name={`subOption.${i}.value`}
                   type="number"
                   step="any"
