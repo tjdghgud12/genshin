@@ -172,7 +172,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
         })
         .catch((err) => {
           setImgLoading(true);
-          console.log(err);
+          console.error(err);
         });
     },
     [artifact.type],

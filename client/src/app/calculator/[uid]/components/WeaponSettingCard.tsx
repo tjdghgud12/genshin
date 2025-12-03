@@ -68,7 +68,7 @@ const WeaponSettingCard = ({
       .then((res) => {
         setWeaponDetail(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   }, []);
 
   useEffect(() => {
