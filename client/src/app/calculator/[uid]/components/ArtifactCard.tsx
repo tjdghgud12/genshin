@@ -201,6 +201,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
                     src={ambrArtifact?.icon || ""}
                     alt=""
                     priority
+                    sizes="(max-width: 1200px) 7vw, 10vw"
                     fill
                     onLoad={() => setImgLoading(true)}
                   />

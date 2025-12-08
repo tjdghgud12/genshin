@@ -142,7 +142,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                       <div className={`h-[15%] pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b ${elementColors[element].gradient}`} />
                       <div className={`h-[15%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t ${elementColors[element].gradient}`} />
                       <div className="w-[35vw] h-[35vw] min-w-[500px] min-h-[500px] relative z-0">
-                        <Image src={info.icon.gacha} className={`object-cover object-[center] opacity-90`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
+                        <Image src={info.icon.gacha} className={`object-cover object-[center] opacity-90`} alt="" fill priority sizes="(max-width: 1200px) 7vw, 35vw" />
                       </div>
                     </div>
                     <div className="flex-1 relative opacity-35">
@@ -224,7 +224,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                                 key={tabValue}
                                 value={tabValue}
                               >
-                                <Image src={skillInfo.icon} alt="" fill sizes="(max-width: 1200px) 7vw" />
+                                <Image src={skillInfo.icon} alt="" fill sizes="(max-width: 1200px) 7vw, 20vw" />
                               </TabsTrigger>
                             );
                           });
@@ -240,7 +240,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                               key={tabValue}
                               value={tabValue}
                             >
-                              <Image src={constellation.icon} alt="" fill sizes="(max-width: 1200px) 7vw" />
+                              <Image src={constellation.icon} alt="" fill sizes="(max-width: 1200px) 7vw, 20vw" />
                             </TabsTrigger>
                           );
                         })}
@@ -496,17 +496,17 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
           <TabsList className={`h-fit justify-around pt-3 rounded-l-none ${elementColors[element].bg} mx-auto flex-col`}>
             <TabsTrigger className="w-full data-[state=active]:bg-transparent" value="overView">
               <div className={`size-10 relative ${infoTab === "overView" ? "bg-white" : ""}  rounded-full`}>
-                <Image className="opacity-80" src={"/img/Icon_Inventory_Character_Development_Items.webp"} alt="" fill sizes="(max-width: 1200px) 7vw" />
+                <Image className="opacity-80" src={"/img/Icon_Inventory_Character_Development_Items.webp"} alt="" fill sizes="(max-width: 1200px) 7vw, 10vw" />
               </div>
             </TabsTrigger>
             <TabsTrigger className="w-full bg-transparent data-[state=active]:bg-transparent" value="skill-constellation-weapon">
               <div className={`size-10 relative ${infoTab === "skill-constellation-weapon" ? "bg-white" : ""}  rounded-full`}>
-                <Image className="opacity-80" src={"/img/Icon_Inventory_Weapons.png"} alt="" fill sizes="(max-width: 1200px) 7vw" />
+                <Image className="opacity-80" src={"/img/Icon_Inventory_Weapons.png"} alt="" fill sizes="(max-width: 1200px) 7vw, 10vw" />
               </div>
             </TabsTrigger>
             <TabsTrigger className="w-full bg-transparent data-[state=active]:bg-transparent" value="artifact">
               <div className={`size-10 relative ${infoTab === "artifact" ? "bg-white" : ""}  rounded-full`}>
-                <Image className="opacity-80" src={"/img/Icon_Inventory_Artifacts.png"} alt="" fill sizes="(max-width: 1200px) 7vw" />
+                <Image className="opacity-80" src={"/img/Icon_Inventory_Artifacts.png"} alt="" fill sizes="(max-width: 1200px) 7vw, 10vw" />
               </div>
             </TabsTrigger>
           </TabsList>
