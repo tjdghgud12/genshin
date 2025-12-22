@@ -96,9 +96,34 @@ async def getWolfsGravestoneFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getVerdictFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.20, 0.18],
+        [0.25, 0.225],
+        [0.30, 0.27],
+        [0.35, 0.315],
+        [0.40, 0.36],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[1] * option.stack)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 info = {
     "타오르는 천 개의 태양": getAThousandBlazingSunsFightProp,
     "무공의 검": getTheUnforgedFightProp,
     "송뢰가 울릴 무렵": getSongOfBrokenPinesFightProp,
     "늑대의 말로": getWolfsGravestoneFightProp,
+    "판정": getVerdictFightProp,
 }
