@@ -15,7 +15,7 @@ const CalculatorPage = async ({ params }: { params: Promise<{ uid: string }> }):
           <Link className="w-[80px] h-[80px] relative rounded-full py-1 px-3" href={`/`}>
             <Image src={`/img/homeIcon.png`} alt="" fill priority sizes="(max-width: 1200px) 7vw, 80px" />
           </Link>
-          <UidSearchInput className="m-auto" defaultValue={uid} />;
+          <UidSearchInput className="m-auto" defaultValue={uid} />
         </div>
         <CalculatorContent uid={uid} />
       </Suspense>
