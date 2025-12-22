@@ -72,9 +72,9 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
         raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
 
     async with enka.GenshinClient(lang="ko") as client:
+        await client.update_assets()
         rawRes = await client.fetch_showcase(uid, raw=True)
         characterInfoList = client.parse_showcase(rawRes).characters
-        await client.update_assets()
 
         parsedCharacters = []
         for i, avatar in enumerate(characterInfoList):

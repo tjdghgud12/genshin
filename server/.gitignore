@@ -76,6 +76,7 @@ docker-compose.override.yml
 api/**/__pycache__/
 data/**/__pycache__/
 services/**/__pycache__/
+.enka_py/
 
 # 특정 폴더들에서 빌드 산출물 무시 (필요 시 추가)
 api/build/
