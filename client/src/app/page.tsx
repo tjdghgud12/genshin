@@ -6,7 +6,7 @@ const Home = (): React.ReactElement => {
     <main className="w-full h-full flex flex-col justify-center">
       <div className="flex flex-col items-center">
         <h1 className="text-8xl font-bold text-violet-800 mx-auto">Calculator</h1>
-        <UidSearchInput className="w-1/3 mt-10 text-center" value={""} />
+        <UidSearchInput className="w-1/3 mt-10 text-center" defaultValue={""} />
       </div>
     </main>
   );

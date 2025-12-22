@@ -15,9 +15,10 @@ const uidFormSchema = z.object({
   }),
 });
 
-const UidSearchInput = ({ value, className = "" }: { value: string | null; className?: string }): React.ReactElement => {
+const UidSearchInput = ({ defaultValue, className = "" }: { defaultValue: string | null; className?: string }): React.ReactElement => {
   const router = useRouter();
-  const uid = value ?? "";
+
+  const uid = defaultValue ?? "";
 
   const form = useForm<z.infer<typeof uidFormSchema>>({
     resolver: zodResolver(uidFormSchema),
@@ -26,8 +27,8 @@ const UidSearchInput = ({ value, className = "" }: { value: string | null; class
     },
   });
 
-  const onSubmit = (valus: z.infer<typeof uidFormSchema>): void => {
-    router.push(`/calculator/${valus.uid}`);
+  const onSubmit = async (values: z.infer<typeof uidFormSchema>) => {
+    router.push(`/calculator/${values.uid}`);
   };
 
   return (
