@@ -208,6 +208,38 @@ async def getSacrificialFragmentsFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getReliquaryOfTruthFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.08, 80, 0.24],
+        [0.10, 100, 0.30],
+        [0.12, 120, 0.36],
+        [0.14, 140, 0.42],
+        [0.16, 160, 0.48],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.CRITICAL.value, refinementValue[0])
+                case 1:
+                    value = refinementValue[1]
+                    if options[2].active:
+                        value = refinementValue[1] * 1.5
+                    fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, value)
+                case 2:
+                    value = refinementValue[2]
+                    if options[1].active:
+                        value = refinementValue[2] * 1.5
+                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, value)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 info = {
     "떠오르는 천일 밤의 꿈": getAThousandFloatingDreamsFightProp,
     "별지기의 시선": getStarcallersWatchFightProp,
@@ -219,4 +251,5 @@ info = {
     "제사의 옥": getSacrificialJadeFightProp,
     "드래곤 슬레이어 영웅담": getThrillingTalesofDragonSlayersFightProp,
     "제례의 악장": getSacrificialFragmentsFightProp,
+    "진실의 함": getReliquaryOfTruthFightProp,
 }

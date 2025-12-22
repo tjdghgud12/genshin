@@ -20,4 +20,17 @@ weaponInfo = {
     "제사의 옥": [weaponOptionSchema(type=weaponOptionType.toggle, label="대기 상태 5초 초과")],
     "드래곤 슬레이어 영웅담": [],
     "제례의 악장": [],
+    "진실의 함": [
+        weaponOptionSchema(description="치명타 확률 증가"),
+        weaponOptionSchema(
+            type=weaponOptionType.toggle,
+            description=" 원소전투 스킬 발동 시, 장착 캐릭터가 「거짓의 비밀」 효과를 획득한다: 원소 마스터리가 80/100/120/140/160pt 증가한다",
+            label="거짓의 비밀",
+        ),
+        weaponOptionSchema(
+            type=weaponOptionType.toggle,
+            description="착 캐릭터가 적에게 달 개화 반응 피해를 줄 시, 장착 캐릭터가 「진실의 달」 효과를 획득한다: 치명타 피해가 24%/30%/36%/42%/48% 증가한다",
+            label="진실의 달",
+        ),
+    ],
 }
