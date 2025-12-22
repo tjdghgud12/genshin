@@ -34,8 +34,8 @@ type TArtifactPartInfo = z.infer<typeof calculatorCharacterInfoSchema>["artifact
 const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): React.ReactElement => {
   const [infoTab, setInfoTab] = useState<string>("overView");
   const [damageResult, setDamageResult] = useState<IdamageCalculationResult>(character.damage);
+  const [info, setInfo] = useState<IUidSearchResult["characterInfo"]>(character.characterInfo);
   const artifactSets = useArtifactSetsInfoStore((state: IArtifactSetsInfoStore) => state.artifactSets);
-  const info = character.characterInfo;
   const element = character.characterInfo.element;
   const elementColors: Record<string, Record<string, string>> = {
     Fire: { bg: `bg-Fire`, shadow: "shadow-shadow-Fire", gradient: "from-Fire to-Fire/0" },
@@ -106,6 +106,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
       loading: "로딩 중",
       success: (res: AxiosResponse<IUidSearchResult>) => {
         form.reset({ data: parseCharacterInfo(res.data), additionalFightProp: form.getValues("additionalFightProp") });
+        setInfo(res.data.characterInfo);
         setDamageResult(res.data.damage);
         return "데미지 연산을 완료하였습니다.";
       },

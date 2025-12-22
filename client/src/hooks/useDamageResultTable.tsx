@@ -2,9 +2,9 @@
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { calculatorLabel } from "@/lib/calculator";
+import { typedKeys } from "@/lib/utils";
 import { IattackDamage, IdamageCalculationResult } from "@/types/calculatorType";
 import { useEffect, useState } from "react";
-import { typedKeys } from "../lib/utils";
 
 type Tattack = "nomal" | "charge" | "falling" | "elementalSkill" | "elementalBurst";
 
