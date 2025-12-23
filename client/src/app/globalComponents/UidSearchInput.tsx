@@ -27,7 +27,7 @@ const UidSearchInput = ({ defaultValue, className = "" }: { defaultValue: string
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof uidFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof uidFormSchema>): Promise<void> => {
     router.push(`/calculator/${values.uid}`);
   };
 
