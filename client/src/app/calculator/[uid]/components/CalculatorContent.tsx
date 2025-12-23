@@ -7,26 +7,26 @@ import { IWeaponInfo } from "@/types/weaponType";
 import { redirect } from "next/navigation";
 import React from "react";
 
-/**
- * 데이터를 조회하고 하위 컴포넌트에 전달하는 서버 컴포넌트
- * Suspense 내부에서 사용되어 데이터 조회 중 fallback을 표시합니다.
- */
 const CalculatorContent = async ({ uid }: { uid: string }): Promise<React.ReactElement> => {
-  try {
-    const weaponList = Object.fromEntries((await api.get(`/weapons`)).data.map((weapon: IWeaponInfo) => [weapon.id, weapon]));
-    const artifactSets = Object.fromEntries((await api.get(`/artifactsets`)).data.map((set: IArtifactSetsInfo) => [set.name, set]));
-    const characters: IUidSearchResult[] = (await api.get(`/user/${uid}`)).data.characters;
+  let weaponList: { [id: string]: IWeaponInfo };
+  let artifactSets: { [name: string]: IArtifactSetsInfo };
+  let characters: IUidSearchResult[];
 
-    return (
-      <>
-        <Store weaponList={weaponList} artifactSets={artifactSets} />
-        <CharacterTabs characters={characters} />
-      </>
-    );
+  try {
+    weaponList = Object.fromEntries((await api.get(`/weapons`)).data.map((weapon: IWeaponInfo) => [weapon.id, weapon]));
+    artifactSets = Object.fromEntries((await api.get(`/artifactsets`)).data.map((set: IArtifactSetsInfo) => [set.name, set]));
+    characters = (await api.get(`/user/${uid}`)).data.characters;
   } catch (error) {
-    console.error(error);
+    console.error("Failed to fetch calculator data:", error);
     redirect(`/`);
   }
+
+  return (
+    <>
+      <Store weaponList={weaponList} artifactSets={artifactSets} />
+      <CharacterTabs characters={characters} />
+    </>
+  );
 };
 
 export default CalculatorContent;
