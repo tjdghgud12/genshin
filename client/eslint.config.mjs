@@ -1,25 +1,15 @@
-import { FlatCompat } from "@eslint/eslintrc";
+import coreWebVitals from "eslint-config-next/core-web-vitals";
+import typescript from "eslint-config-next/typescript";
+import prettier from "eslint-config-prettier";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  resolvePluginsRelativeTo: __dirname,
-});
-
 const eslintConfig = [
-  ...compat.extends(
-    "next/core-web-vitals",
-    "next/typescript",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:prettier/recommended",
-  ),
+  ...coreWebVitals,
+  ...typescript,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     ignores: [
@@ -47,13 +37,6 @@ const eslintConfig = [
         project: "./tsconfig.json",
       },
     },
-    plugins: {
-      "@typescript-eslint": (await import("@typescript-eslint/eslint-plugin")).default,
-      react: (await import("eslint-plugin-react")).default,
-      "react-hooks": (await import("eslint-plugin-react-hooks")).default,
-      "jsx-a11y": (await import("eslint-plugin-jsx-a11y")).default,
-      prettier: (await import("eslint-plugin-prettier")).default,
-    },
     rules: {
       // TypeScript 관련
       "no-unused-vars": "off",
@@ -79,13 +62,6 @@ const eslintConfig = [
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
 
-      // Prettier 설정
-      "prettier/prettier": [
-        "error",
-        {
-          endOfLine: "auto",
-        },
-      ],
       "linebreak-style": "off",
 
       // 일반적인 규칙
@@ -102,6 +78,7 @@ const eslintConfig = [
       },
     },
   },
+  prettier,
 ];
 
 export default eslintConfig;
