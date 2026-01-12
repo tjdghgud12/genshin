@@ -7,11 +7,13 @@ class artifactSetOptionType(Enum):
     always = "always"
     toggle = "toggle"
     stack = "stack"
+    select = "select"
 
 
 class StatusMixin(BaseModel):
     active: bool = False
     stack: int = 0
+    select: str | None = None
 
 
 class artifactSetOptionSchema(BaseModel):
@@ -19,6 +21,7 @@ class artifactSetOptionSchema(BaseModel):
     maxStack: int = 1
     description: str = ""
     label: str = ""
+    selectList: list[str | None] = []
     requiredParts: int = 0
 
 

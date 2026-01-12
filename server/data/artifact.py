@@ -189,4 +189,21 @@ artifactSetOptions = {
             label="결정 획득",
         ),
     ],
+    "달을 엮는 밤노래": [
+        artifactSetOptionSchema(description="원소 충전 효율 20% 증가", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.select,
+            selectList=["보름", "초승"],
+            description="원소 피해를 줄 시, 8초 동안 지속되는 「월광·신앙」 효과를 획득한다: 파티의 달빛 징조가 초승/보름인 경우, 파티 내 모든 캐릭터의 원소 마스터리가 60pt/120pt 증가한다",
+            requiredParts=4,
+            label="월광·신앙",
+        ),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            maxStack=10,
+            description="달빛 반응 피해 증가",
+            requiredParts=4,
+            label="월광 효과 수",
+        ),
+    ],
 }

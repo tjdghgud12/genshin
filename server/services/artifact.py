@@ -351,6 +351,27 @@ def getArchaicPetraSetOption(numberOfParts: int, optionInfo: list[artifactSetDat
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
+def getSilkenMoonsSerenadeSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.CHARGE_EFFICIENCY.value, 0.2)
+                case 1:
+                    if info.active:
+                        if info.select == "초승":
+                            fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 60)
+                        elif info.select == "보름":
+                            fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 120)
+                case 2:
+                    if info.active:
+                        # 달빛 반응으로 주는 피해
+                        fightProp.add(fightPropMpa.LUNAR_ADD_HURT.value, info.stack * 0.1)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
@@ -373,6 +394,7 @@ getArtifactSetsFightProp = {
     "긴 밤의 맹세": getLongNightsOathSetOption,
     "옛 왕실의 의식": getNoblesseObligeSetOption,
     "유구한 반암": getArchaicPetraSetOption,
+    "달을 엮는 밤노래": getSilkenMoonsSerenadeSetOption,
 }
 
 
