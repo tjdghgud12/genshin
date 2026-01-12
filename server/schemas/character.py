@@ -23,7 +23,7 @@ class damageBaseFightPropSchema(BaseModel):
 
 class additionalAttackSchema(BaseModel):
     name: str
-    type: Literal["nomal", "charge", "falling", "elementalSkill", "elementalBurst", "fire", "water", "grass", "elec", "rock", "wind", "ice"] | None
+    type: Literal["nomal", "charge", "falling", "elementalSkill", "elementalBurst", "fire", "water", "grass", "elec", "rock", "wind", "ice", "lunarCharged", "lunarBloom"] | None
     baseFightProp: damageBaseFightPropSchema
 
 

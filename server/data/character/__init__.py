@@ -6,6 +6,7 @@ from .fontaine import info as fontaineInfo
 from .natlan import info as natlanInfo
 from .omniScourge import info as omniScourgeInfo
 from .snezhnaya import info as snezhnayaInfo
+from .nodKrai import info as nodKraiInfo
 from schemas.fightProp import fightPropSchema
 
 
@@ -21,6 +22,7 @@ characterData = {
     **natlanInfo,
     **omniScourgeInfo,
     **snezhnayaInfo,
+    **nodKraiInfo,
 }
 
 __all__ = ["characterData", "ambrCharacterCurve", "fightPropTemplate"]

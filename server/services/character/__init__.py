@@ -6,6 +6,7 @@ from .fontaine import getFightProp as fontaineGetFightProp
 from .natlan import getFightProp as natlanGetFightProp
 from .omniScourge import getFightProp as omniScourgeGetFightProp
 from .snezhnaya import getFightProp as snezhnayaGetFightProp
+from .nodKrai import getFightProp as nodKraiGetFightProp
 
 getFightProp = {
     **mondstadtGetFightProp,
@@ -16,6 +17,7 @@ getFightProp = {
     **natlanGetFightProp,
     **omniScourgeGetFightProp,
     **snezhnayaGetFightProp,
+    **nodKraiGetFightProp,
 }
 
 __all__ = ["getFightProp"]
