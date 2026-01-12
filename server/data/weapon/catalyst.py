@@ -33,4 +33,16 @@ weaponInfo = {
             label="진실의 달",
         ),
     ],
+    "밤을 엮는 거울": [
+        weaponOptionSchema(
+            type=weaponOptionType.toggle,
+            description="원소전투 스킬로 물 원소 또는 풀 원소 피해를 줄 경우, 장착 캐릭터가 「극북의 성언」 효과를 획득한다: 원소 마스터리가 60/75/90/105/120 pt 증가한다.",
+            label="극북의 성언",
+        ),
+        weaponOptionSchema(
+            type=weaponOptionType.toggle,
+            description="주변에 있는 파티 내 캐릭터가 달 개화 반응 발동 시, 장착 캐릭터가 「삭월의 시」 효과를 획득한다: 원소 마스터리가 60/75/90/105/120pt 증가한다.",
+            label="삭월의 시",
+        ),
+    ],
 }

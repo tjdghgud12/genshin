@@ -240,6 +240,37 @@ async def getReliquaryOfTruthFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getNightweaversLookingGlassFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [60, 60, 1.2, 0.8, 0.4],
+        [75, 75, 1.5, 1.0, 0.5],
+        [90, 90, 1.8, 1.2, 0.6],
+        [105, 105, 2.1, 1.4, 0.7],
+        [120, 120, 2.4, 1.6, 0.8],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        if option.active:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, refinementValue[0])
+                case 1:
+                    fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, refinementValue[1])
+
+    # 둘 다 켜져있는 경우. 개화, 만개, 발화 달개화 피해증가 추가
+    if options[0].active and options[1].active:
+        fightProp.add(fightPropMpa.BLOOM_ADD_HURT.value, refinementValue[2])
+        fightProp.add(fightPropMpa.HYPERBLOOM_ADD_HURT.value, refinementValue[3])
+        fightProp.add(fightPropMpa.BURGEON_ADD_HURT.value, refinementValue[3])
+        fightProp.add(fightPropMpa.LUNARBLOOM_ADD_HURT.value, refinementValue[4])
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 info = {
     "떠오르는 천일 밤의 꿈": getAThousandFloatingDreamsFightProp,
     "별지기의 시선": getStarcallersWatchFightProp,
@@ -252,4 +283,5 @@ info = {
     "드래곤 슬레이어 영웅담": getThrillingTalesofDragonSlayersFightProp,
     "제례의 악장": getSacrificialFragmentsFightProp,
     "진실의 함": getReliquaryOfTruthFightProp,
+    "밤을 엮는 거울": getNightweaversLookingGlassFightProp,
 }
