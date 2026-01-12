@@ -85,6 +85,7 @@ class damageResultSchema(BaseModel):
 
     # 달반응
     lunarChargedDamage: float | None = None  # 달감전 기대값
+    lunarBloomDamage: float | None = None  # 달개화 기대값
 
     # 확산
     fireSwirlDamage: float | None = None  # 불확산

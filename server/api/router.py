@@ -202,7 +202,14 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                 artifactSetInfo = getArtifactSetInfo(characterInfo["artifact"]["parts"])
                 for setInfo in artifactSetInfo:
                     options = setInfo.get("options") if setInfo.get("options") else []
-                    characterInfo["artifact"]["setInfo"].append({**setInfo, "options": [{**vars(option), "active": True, "stack": option.maxStack} for option in options]})
+                    characterInfo["artifact"]["setInfo"].append(
+                        {
+                            **setInfo,
+                            "options": [
+                                {**vars(option), "active": True, "stack": option.maxStack, "select": option.selectList[0] if option.selectList else None} for option in options
+                            ],
+                        }
+                    )
                 # ---------------------------------------------------------------------
 
                 # 2. 최종 Fight Prop 데이터 계산

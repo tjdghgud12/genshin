@@ -18,6 +18,7 @@ from services.calculation.reaction import (
     getAggravateDamage,
     getSpreadDamage,
     getShatterDamage,
+    getLunarBloomDamage,
 )
 from services.character import getFightProp
 from services.character.commonData import CharacterFightPropReturnData
@@ -152,6 +153,30 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 )
                 finalDamageAddHurt = 1 + getattr(fightProp, f"FIGHT_PROP_FINAL_{attackTypeKey}_ATTACK_ADD_HURT", 0.0)  # 최종 피해 증가(곱연산, 피해증가 옵션 X)
 
+                # 직접 달 반응 연산
+                if attackType == "lunarBloom":
+                    # (계수 * 달 개화 피증 * 달 개화 기본 피증) + 달 개화 계수 추가(라우마 버프)
+                    lunarBloomBaseDamge = (
+                        finalAttackPoint * (1 + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT) * (1 + fightProp.FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT)
+                        + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_POINT
+                    )
+                    lunarBloomDamage = getLunarBloomDamage(
+                        attackPoint=lunarBloomBaseDamge,
+                        elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                        lunarBloomAddHurt=fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT,
+                        grassResMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS,
+                        lunarAddHurt=fightProp.FIGHT_PROP_LUNAR_ADD_HURT,
+                    )
+                    lunarBloomCriticalDamage = getCriticalDamageInfo(
+                        damage=lunarBloomDamage,
+                        critical=critical + getattr(fightProp, "FIGHT_PROP_LUNARBLOOM_CRITICAL", 0.0),
+                        criticalHurt=criticalHurt + getattr(fightProp, "FIGHT_PROP_LUNARBLOOM_CRITICAL_HURT", 0.0),
+                    )
+                    setattr(targetCritical, "lunarBloomDamage", lunarBloomCriticalDamage.criticalDamage)
+                    setattr(targetNonCritical, "lunarBloomDamage", lunarBloomCriticalDamage.nonCriticalDamage)
+                    setattr(targetExpected, "lunarBloomDamage", lunarBloomCriticalDamage.expectedDamage)
+                    continue
+
                 # 데미지 연산
                 totalMultiplyDamage = (1 + addHurt) * toleranceCoefficient * defensCoefficient * finalDamageAddHurt
                 damages = finalAttackPoint * totalMultiplyDamage
@@ -214,6 +239,8 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                                     reverse=True,
                                 )
                                 setattr(target, "reverseMeltDamage", reverseMeltDamages)
+
+                            # 격화 반응
                             case "촉진":
                                 aggravateDamages = getAggravateDamage(
                                     level=characterInfo.level,
@@ -309,8 +336,5 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                             setattr(targetExpected, "waterSwirlDamage", swirlDamages.water)
                             setattr(targetExpected, "iceSwirlDamage", swirlDamages.ice)
                             setattr(targetExpected, "elecSwirlDamage", swirlDamages.elec)
-
-                        # 달반응
-                        # 달반응은 각각 전부 다르기 때문에 여기서 별도로 진행
 
     return responseCalculationResult(damage=damageResult, characterInfo=responseCalculationResult.responseCharacterInfo(**characterInfo.model_dump(), totalStat=fightProp))

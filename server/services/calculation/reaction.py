@@ -100,3 +100,11 @@ def getShatterDamage(level: int, elementMastery: float, shatterAddHurt: float, p
     toleranceCoefficient = getToleranceCoefficient(decrease=physicalResMinus)
 
     return levelCoefficientMap[level] * 1.5 * (1 + masteryBonus + shatterAddHurt) * toleranceCoefficient
+
+
+# 달개화
+def getLunarBloomDamage(attackPoint: float, elementMastery: float, lunarBloomAddHurt: float, grassResMinus: float, lunarAddHurt: float):
+    masteryBonus = 6 * elementMastery / (elementMastery + 2000)
+    toleranceCoefficient = getToleranceCoefficient(decrease=grassResMinus)
+
+    return attackPoint * (1 + masteryBonus + lunarBloomAddHurt + lunarAddHurt) * toleranceCoefficient
