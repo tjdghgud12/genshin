@@ -78,6 +78,10 @@ export interface IdamageCalculationResult {
   lunarChargedDamageCritical: number; // 달감전 치명타
   lunarChargedDamageNonCritical: number; // 달감전 논치명타
 
+  lunarBloomDamage: number; // 달개화 기대값
+  lunarBloomDamageCritical: number; // 달개화 치명타
+  lunarBloomDamageNonCritical: number; // 달개화 논치명타
+
   // 확산
   fireSwirlDamage: number; // 불확산
   waterSwirlDamage: number; // 물확산

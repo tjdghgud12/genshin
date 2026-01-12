@@ -151,6 +151,7 @@ const calculatorLabel = {
   elecSwirl: "확산(번개)", // 번개확산
 
   lunarCharged: "달감전", // 달감전 기대값
+  lunarBloom: "달개화", // 달개화 기대값
 };
 
 const getCalculationResultData = <T extends keyof IdamageCalculationResult>(obj: IdamageCalculationResult, key: T): IdamageCalculationResult[T] => obj[key];
