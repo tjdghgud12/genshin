@@ -75,7 +75,7 @@ const useDamageResultTable = (
         bodyData[rowIdx].push(
           criticalValue ? (
             <Tooltip delayDuration={500}>
-              <TooltipTrigger>{expectedValue}</TooltipTrigger>
+              <TooltipTrigger type="button">{expectedValue}</TooltipTrigger>
               <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
                 <p>치명: {criticalValue}</p>
                 <p>비치명: {nonCriticalValue}</p>
@@ -98,7 +98,7 @@ const useDamageResultTable = (
         bodyData[rowIdx].push(
           criticalValue ? (
             <Tooltip delayDuration={500}>
-              <TooltipTrigger>{expectedValue}</TooltipTrigger>
+              <TooltipTrigger type="button">{expectedValue}</TooltipTrigger>
               <TooltipContent className="max-w-[200px] bg-gray-500 fill-gray-500" side="right">
                 <p>치명: {criticalValue}</p>
                 <p>비치명: {nonCriticalValue}</p>
