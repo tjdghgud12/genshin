@@ -156,10 +156,9 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 # 직접 달 반응 연산
                 if attackType == "lunarBloom":
                     # (계수 * 달 개화 피증 * 달 개화 기본 피증) + 달 개화 계수 추가(라우마 버프)
-                    lunarBloomBaseDamge = (
-                        finalAttackPoint * (1 + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT) * (1 + fightProp.FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT)
-                        + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_POINT
-                    )
+                    lunarBloomAdditionalPoint = fightProp.FIGHT_PROP_LUNARBLOOM_ADD_POINT
+                    lunarBloomTotalAddHurt = (1 + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT) * (1 + fightProp.FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT)
+                    lunarBloomBaseDamge = finalAttackPoint * lunarBloomTotalAddHurt
                     lunarBloomDamage = getLunarBloomDamage(
                         attackPoint=lunarBloomBaseDamge,
                         elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
@@ -175,6 +174,24 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                     setattr(targetCritical, "lunarBloomDamage", lunarBloomCriticalDamage.criticalDamage)
                     setattr(targetNonCritical, "lunarBloomDamage", lunarBloomCriticalDamage.nonCriticalDamage)
                     setattr(targetExpected, "lunarBloomDamage", lunarBloomCriticalDamage.expectedDamage)
+
+                    if lunarBloomAdditionalPoint > 0:  # 추가 계수 영역
+                        lunarBloomAdditionalDamages = getLunarBloomDamage(
+                            attackPoint=lunarBloomAdditionalPoint * lunarBloomTotalAddHurt,
+                            elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                            lunarBloomAddHurt=fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT,
+                            grassResMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS,
+                            lunarAddHurt=fightProp.FIGHT_PROP_LUNAR_ADD_HURT,
+                        )
+                        lunarBloomAdditionalCriticalDamages = getCriticalDamageInfo(
+                            damage=lunarBloomAdditionalDamages,
+                            critical=critical,
+                            criticalHurt=criticalHurt,
+                        )
+                        setattr(targetNonCritical, "lunarBloomDamageAdditional", lunarBloomAdditionalCriticalDamages.nonCriticalDamage)
+                        setattr(targetCritical, "lunarBloomDamageAdditional", lunarBloomAdditionalCriticalDamages.criticalDamage)
+                        setattr(targetExpected, "lunarBloomDamageAdditional", lunarBloomAdditionalCriticalDamages.expectedDamage)
+
                     continue
 
                 # 데미지 연산
