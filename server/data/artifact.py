@@ -206,4 +206,21 @@ artifactSetOptions = {
             label="월광 효과 수",
         ),
     ],
+    "하늘 경계가 드러난 밤": [
+        artifactSetOptionSchema(description="원소 마스터리 80증가", requiredParts=2),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.select,
+            selectList=["보름", "초승"],
+            description="달빛 반응 발동 시, 장착 캐릭터가 필드 위에 있을 경우 4초 동안 지속되는 「월광·음모」 효과를 획득한다: 파티의 달빛 징조가 초승/보름인 경우, 치명타 확률이 15%/30% 증가한다.",
+            requiredParts=4,
+            label="월광·음모",
+        ),
+        artifactSetOptionSchema(
+            type=artifactSetOptionType.stack,
+            maxStack=10,
+            description="달빛 반응 피해 증가",
+            requiredParts=4,
+            label="월광 효과 수",
+        ),
+    ],
 }
