@@ -117,6 +117,80 @@ async def getLaumaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
+async def getNeferFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalAttackPoints = []
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    newFightProp = weaponArtifactData["fightProp"]
+
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- constellations -----------------------
+    # 관찰은 계획의 초석은 passive에서 처리
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "계획은 성공의 시작":
+                    if constellation.options[0].active:
+                        # 환영극 총 5타에 전부 각각 60%씩 계수 추가되기 때문에 최종 300%의 계수 추가 발생
+                        additionalAttackPoints.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("elementMastery", 3), "additionalAttack": "환영극"})
+                case "진실을 가리는 거짓":
+                    # 원소전투 스킬 레벨 +3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                case "마음을 홀리는 함정":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.GRASS_RES_MINUS.value, 0.2)
+                case "기회를 포착한 순간":
+                    # 원소폭발 레벨 +3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                case "거머쥔 역전의 승리":
+                    if constellation.options[0].active:
+                        additionalAttackPoints.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("elementMastery", 0.85), "additionalAttack": "환영극"})
+
+    # ----------------------- passive -----------------------
+    # 모래의 딸은 fightProp에 영향 X
+    elementBurstVeilOfDeceptionMap = [0.13, 0.16, 0.19, 0.22, 0.25, 0.28, 0.31, 0.34, 0.37, 0.40, 0.43, 0.46, 0.49, 0.52, 0.55]
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "달빛 승부사":
+                    option = passive.options[0]
+                    if option:
+                        secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "관찰은 계획의 초석"))
+                        if secondConstellation.unlocked:
+                            option.maxStack = 5
+                            if enkaDataFlag:
+                                option.stack = 5
+                        if option.stack >= option.maxStack:
+                            newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 200 if option.stack >= option.maxStack else 100)
+                        newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["환영극"].add(fightPropMpa.LUNARBLOOM_ADD_HURT.value, 0.08 * option.stack)
+                        skillLevel = characterInfo.activeSkill[2].level
+                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, elementBurstVeilOfDeceptionMap[skillLevel] * option.stack)
+
+                case "달빛 징조의 축복·황혼의 그림자":
+                    lunarBloomAdd = min(newFightProp.FIGHT_PROP_ELEMENT_MASTERY * 0.000175, 0.14)
+                    newFightProp.add(fightPropMpa.LUNARBLOOM_BASE_ADD_HURT.value, lunarBloomAdd)
+
+    # ----------------------- active -----------------------
+    # active는 fightProp에 영향 X
+
+    for additionalAttackPoint in additionalAttackPoints:
+        key = additionalAttackPoint["key"]
+        pointKey, value = additionalAttackPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        newFightProp.add(key, finalPoint * value)
+        if additionalAttackPoint["additionalAttack"]:
+            newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[additionalAttackPoint["additionalAttack"]] = additionalAttackFightPropSchema()
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "라우마": getLaumaFightProp,
+    "네페르": getNeferFightProp,
 }
