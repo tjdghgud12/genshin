@@ -38,7 +38,7 @@ async def getLaumaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "「내 피와 눈물을 달빛에 바치리라」":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.LUNARBLOOM_ADD_HURT.value, 0.25)
+                        newFightProp.add(fightPropMpa.LUNAR_ADD_HURT.value, 0.25)
 
     # ----------------------- active -----------------------
     # 별도 버프 없음. 추가 공격/피해는 이미 위에서 처리됨.
@@ -136,21 +136,20 @@ async def getNeferFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         if constellation.unlocked:
             match constellation.name:
                 case "계획은 성공의 시작":
-                    if constellation.options[0].active:
-                        # 환영극 총 5타에 전부 각각 60%씩 계수 추가되기 때문에 최종 300%의 계수 추가 발생
-                        additionalAttackPoints.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("elementMastery", 3), "additionalAttack": "환영극"})
+                    # 환영극 총 5타에 전부 각각 60%씩 계수 추가되기 때문에 최종 300%의 계수 추가 발생
+                    additionalAttackPoints.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("ELEMENT_MASTERY", 3), "additionalAttack": "환영극"})
                 case "진실을 가리는 거짓":
                     # 원소전투 스킬 레벨 +3
                     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "마음을 홀리는 함정":
-                    if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.GRASS_RES_MINUS.value, 0.2)
+                    newFightProp.add(fightPropMpa.GRASS_RES_MINUS.value, 0.2)
                 case "기회를 포착한 순간":
                     # 원소폭발 레벨 +3
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "거머쥔 역전의 승리":
+                    additionalAttackPoints.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("ELEMENT_MASTERY", 0.85), "additionalAttack": "환영극"})
                     if constellation.options[0].active:
-                        additionalAttackPoints.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("elementMastery", 0.85), "additionalAttack": "환영극"})
+                        newFightProp.add(fightPropMpa.LUNARBLOOM_PROMOTION.value, 0.15)
 
     # ----------------------- passive -----------------------
     # 모래의 딸은 fightProp에 영향 X

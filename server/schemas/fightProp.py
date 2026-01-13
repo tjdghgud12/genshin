@@ -199,12 +199,14 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_LUNARCHARGED_ADD_HURT: float = 0.0  # 달감전
     FIGHT_PROP_LUNARCHARGED_BASE_ADD_HURT: float = 0.0  # 달감전 기본 피증
     FIGHT_PROP_LUNARCHARGED_ADD_POINT: float = 0.0  # 달감전 계수 추가
+    FIGHT_PROP_LUNARCHARGED_PROMOTION: float = 0.0  # 달감전 승격
 
     FIGHT_PROP_LUNARBLOOM_CRITICAL: float = 0.0
     FIGHT_PROP_LUNARBLOOM_CRITICAL_HURT: float = 0.0
     FIGHT_PROP_LUNARBLOOM_ADD_HURT: float = 0.0  # 달개화
     FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT: float = 0.0  # 달개화 기본 피증
     FIGHT_PROP_LUNARBLOOM_ADD_POINT: float = 0.0  # 달개화 계수 추가
+    FIGHT_PROP_LUNARBLOOM_PROMOTION: float = 0.0  # 달개화 승격
 
     # 최종데미지 곱연산
     FIGHT_PROP_FINAL_LUNARCHARGED_ADD_HURT: float = 0.0
