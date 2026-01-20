@@ -6,6 +6,7 @@ from schemas.fightProp import fightPropSchema
 from typing import cast, TypedDict
 from copy import deepcopy
 from ambr import WeaponType
+from schemas.calculation import requestCharacterInfoSchema
 import inspect
 
 
@@ -351,7 +352,9 @@ def getArchaicPetraSetOption(numberOfParts: int, optionInfo: list[artifactSetDat
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
-def getSilkenMoonsSerenadeSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+def getSilkenMoonsSerenadeSetOption(
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], characterInfo: requestCharacterInfoSchema
+) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
         if numberOfParts >= info.requiredParts:
@@ -359,10 +362,10 @@ def getSilkenMoonsSerenadeSetOption(numberOfParts: int, optionInfo: list[artifac
                 case 0:
                     fightProp.add(fightPropMpa.CHARGE_EFFICIENCY.value, 0.2)
                 case 1:
-                    if info.active:
-                        if info.select == "초승":
+                    if characterInfo:
+                        if characterInfo.moonsign == "초승":
                             fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 60)
-                        elif info.select == "보름":
+                        elif characterInfo.moonsign == "보름":
                             fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 120)
                 case 2:
                     if info.active:
@@ -372,7 +375,9 @@ def getSilkenMoonsSerenadeSetOption(numberOfParts: int, optionInfo: list[artifac
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
-def getNightOfTheSkysUnveilingSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+def getNightOfTheSkysUnveilingSetOption(
+    numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema], characterInfo: requestCharacterInfoSchema
+) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     for i, info in enumerate(optionInfo):
         if numberOfParts >= info.requiredParts:
@@ -380,10 +385,10 @@ def getNightOfTheSkysUnveilingSetOption(numberOfParts: int, optionInfo: list[art
                 case 0:
                     fightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 80)
                 case 1:
-                    if info.active:
-                        if info.select == "초승":
+                    if characterInfo:
+                        if characterInfo.moonsign == "초승":
                             fightProp.add(fightPropMpa.CRITICAL.value, 0.15)
-                        elif info.select == "보름":
+                        elif characterInfo.moonsign == "보름":
                             fightProp.add(fightPropMpa.CRITICAL.value, 0.30)
                 case 2:
                     if info.active:
@@ -440,13 +445,15 @@ def getArtifactFightProp(artifactInfo: artifactDataSchema) -> fightPropSchema:
     return fightProp
 
 
-def getArtifactSetData(setInfos: list[artifactSetDataSchema], characterFightProp: fightPropSchema, weaponType: WeaponType) -> ArtifactDataReturnSchema:
+def getArtifactSetData(
+    setInfos: list[artifactSetDataSchema], characterFightProp: fightPropSchema, weaponType: WeaponType, characterInfo: requestCharacterInfoSchema | None = None
+) -> ArtifactDataReturnSchema:
     fightProp = deepcopy(fightPropTemplate)
     afterAddProps = None
     for setInfo in setInfos:
         getSetFightProp = getArtifactSetsFightProp[setInfo.name]
         variableList = inspect.signature(getSetFightProp).parameters
-        variables = {"numberOfParts": setInfo.numberOfParts, "optionInfo": setInfo.options}
+        variables = {"numberOfParts": setInfo.numberOfParts, "optionInfo": setInfo.options, "characterInfo": characterInfo}
         if "characterFightProp" in variableList:
             variables["characterFightProp"] = characterFightProp
         if "weaponType" in variableList:

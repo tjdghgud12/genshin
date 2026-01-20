@@ -12,7 +12,7 @@ async def getLaumaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     additionalAttackPoints = []
 
     # -----------------------weapon & Artifact -----------------------
-    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact, characterInfo)
     newFightProp = weaponArtifactData["fightProp"]
 
     for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
@@ -37,7 +37,7 @@ async def getLaumaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     # 원소폭발 레벨 +3
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "「내 피와 눈물을 달빛에 바치리라」":
-                    if constellation.options[0].active:
+                    if characterInfo.moonsign == "초승":
                         newFightProp.add(fightPropMpa.LUNAR_ADD_HURT.value, 0.25)
 
     # ----------------------- active -----------------------
@@ -93,7 +93,7 @@ async def getLaumaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
             match passive.name:
                 case "서리밤에 바치는 빛":
                     # 달빛 징조 옵션별 효과
-                    if passive.options and passive.options[0].select == "초승":
+                    if characterInfo.moonsign == "초승":
                         # 달빛 징조·초승 효과 - 치확15, 치피100, 부여
                         newFightProp.add(fightPropMpa.BLOOM_CRITICAL.value, 0.15)
                         newFightProp.add(fightPropMpa.HYPERBLOOM_CRITICAL.value, 0.15)
@@ -101,7 +101,7 @@ async def getLaumaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                         newFightProp.FIGHT_PROP_BLOOM_CRITICAL_HURT = max(1.0, newFightProp.FIGHT_PROP_BLOOM_CRITICAL_HURT)
                         newFightProp.FIGHT_PROP_HYPERBLOOM_CRITICAL_HURT = max(1.0, newFightProp.FIGHT_PROP_HYPERBLOOM_CRITICAL_HURT)
                         newFightProp.FIGHT_PROP_BURGEON_CRITICAL_HURT = max(1.0, newFightProp.FIGHT_PROP_BURGEON_CRITICAL_HURT)
-                    elif passive.options and passive.options[0].select == "보름":
+                    elif characterInfo.moonsign == "보름":
                         # 달빛 징조·보름 효과 - 달개화 치확10 치피20%
                         newFightProp.add(fightPropMpa.LUNARBLOOM_CRITICAL.value, 0.1)
                         newFightProp.add(fightPropMpa.LUNARBLOOM_CRITICAL_HURT.value, 0.2)
@@ -122,7 +122,7 @@ async def getNeferFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
     additionalAttackPoints = []
 
     # -----------------------weapon & Artifact -----------------------
-    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact)
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact, characterInfo)
     newFightProp = weaponArtifactData["fightProp"]
 
     for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
@@ -148,7 +148,7 @@ async def getNeferFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "거머쥔 역전의 승리":
                     additionalAttackPoints.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("ELEMENT_MASTERY", 0.85), "additionalAttack": "환영극"})
-                    if constellation.options[0].active:
+                    if characterInfo.moonsign == "보름":
                         newFightProp.add(fightPropMpa.LUNARBLOOM_PROMOTION.value, 0.15)
 
     # ----------------------- passive -----------------------
@@ -158,18 +158,19 @@ async def getNeferFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         if passive.unlocked:
             match passive.name:
                 case "달빛 승부사":
-                    option = passive.options[0]
-                    if option:
-                        secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "관찰은 계획의 초석"))
-                        if secondConstellation.unlocked:
-                            option.maxStack = 5
-                            if enkaDataFlag:
-                                option.stack = 5
-                        if option.stack >= option.maxStack:
-                            newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 200 if option.stack >= option.maxStack else 100)
-                        newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["환영극"].add(fightPropMpa.LUNARBLOOM_ADD_HURT.value, 0.08 * option.stack)
-                        skillLevel = characterInfo.activeSkill[2].level
-                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, elementBurstVeilOfDeceptionMap[skillLevel] * option.stack)
+                    if characterInfo.moonsign == "보름":
+                        option = passive.options[0]
+                        if option:
+                            secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "관찰은 계획의 초석"))
+                            if secondConstellation.unlocked:
+                                option.maxStack = 5
+                                if enkaDataFlag:
+                                    option.stack = 5
+                            if option.stack >= option.maxStack:
+                                newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, 200 if option.stack >= option.maxStack else 100)
+                            newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["환영극"].add(fightPropMpa.LUNARBLOOM_ADD_HURT.value, 0.08 * option.stack)
+                            skillLevel = characterInfo.activeSkill[2].level
+                            newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, elementBurstVeilOfDeceptionMap[skillLevel] * option.stack)
 
                 case "달빛 징조의 축복·황혼의 그림자":
                     lunarBloomAdd = min(newFightProp.FIGHT_PROP_ELEMENT_MASTERY * 0.000175, 0.14)

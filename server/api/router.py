@@ -93,6 +93,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                     "name": avatar.name,
                     "element": avatar.element.value,
                     "level": avatar.level,
+                    "moonsign": characterData[avatar.name].moonsign,
                     "ascension": avatar.ascension,
                     "icon": avatar.costume.icon if getattr(avatar, "costume", None) else avatar.icon,  # type: ignore
                     "weaponType": ambrCharacterDetail.weapon_type,
@@ -214,7 +215,6 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
                 # 2. 최종 Fight Prop 데이터 계산
                 getTotalFightProp = getFightProp.get(avatar.name)
-                avatarRawData = rawRes["avatarInfoList"][i]
                 if getTotalFightProp is not None:
                     newFightProp = await getTotalFightProp(ambrCharacterDetail, requestCharacterInfoSchema(**characterInfo), enkaDataFlag=True)
                     characterInfo["activeSkill"] = [{**active, "level": newFightProp.characterInfo.activeSkill[i].level} for i, active in enumerate(characterInfo["activeSkill"])]

@@ -5,6 +5,7 @@ from schemas.fightProp import fightPropSchema
 from schemas.weapon import weaponDataSchema
 from pydantic import BaseModel
 from enka.gi import Icon
+from typing import Literal
 
 
 class StatusMixin(BaseModel):
@@ -43,6 +44,7 @@ class requestCharacterInfoSchema(BaseModel):
     element: str
     id: int
     level: int
+    moonsign: None | Literal["초승", "보름"] = None
     passiveSkill: list[requestPassiveSkillSchema]
     activeSkill: list[requestActiveSkillSchema]
     constellations: list[requestContellationSchema]

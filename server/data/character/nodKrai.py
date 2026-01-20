@@ -12,6 +12,7 @@ from schemas.character import (
 
 info = {
     "라우마": characterDataSchema(
+        moonsign="보름",
         passiveSkill={
             "서리밤에 바치는 빛": passiveSkillSchema(
                 description=(
@@ -22,7 +23,6 @@ info = {
                     "주변에 있는 파티 내 모든 캐릭터가 주는 달 개화 반응 피해의 치명타 확률이 10%, 치명타 피해가 20% 증가한다"
                 ),
                 unlockLevel=1,
-                options=[skillConstellationOptionSchema(type=skillConstellationType.select, selectList=["초승", "보름"], label="달빛 징조")],
             ),
             "샘물에 바치는 정화": passiveSkillSchema(
                 description=(
@@ -82,7 +82,6 @@ info = {
                     "주변에 있는 파티 내 모든 캐릭터가 주는 달 개화 반응 피해가 추가로 라우마 원소 마스터리의 400%만큼 증가한다."
                     "달빛 징조·보름: 주변에 있는 파티 내 모든 캐릭터가 주는 달 개화 반응 피해가 40% 증가한다"
                 ),
-                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="달빛 징조·보름")],
             ),
             contellationSchema(name="「그대여, 교활한 여우의 길을 탐하지 말라」", description="원소폭발 레벨 +3"),
             contellationSchema(
@@ -99,7 +98,6 @@ info = {
                     "또한, 라우마가 「푸른 찬송가」를 보유한 상태로 일반 공격 진행 시 「푸른 찬송가」를 1스택 소모해 라우마 원소 마스터리의 150%에 해당하는 풀 원소 피해를 준다. 해당 피해는 달 개화 반응으로 간주한다."
                     "달빛 징조 · 보름: 주변에 있는 파티 내 모든 캐릭터가 주는 달 개화 반응 피해가 25% 승격한다"
                 ),
-                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="달빛 징조·보름")],
                 additionalAttack=[
                     additionalAttackSchema(name="서리숲 성역 추가피해", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(ELEMENT_MASTERY=1.85, element=["grass"])),
                     additionalAttackSchema(name="일반 공격 추가피해", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(ELEMENT_MASTERY=1.5, element=["grass"])),
@@ -108,12 +106,13 @@ info = {
         ],
     ),
     "네페르": characterDataSchema(
+        moonsign="보름",
         passiveSkill={
             "달빛 승부사": passiveSkillSchema(
                 description=(
                     "파티의 달빛 징조에 따라 네페르가 상응하는 강화 효과를 획득한다."
-                    "달빛 징조 "
-                    "· 보름: 원소전투 스킬 대국 · 천일 밤의 춤 발동 시, 현재 필드 위의 풀 원핵이 「기만의 핵」으로 전환되고, "
+                    "달빛 징조· 보름:"
+                    "원소전투 스킬 대국 · 천일 밤의 춤 발동 시, 현재 필드 위의 풀 원핵이 「기만의 핵」으로 전환되고, "
                     "그 후 15초 동안 주변에 있는 모든 캐릭터가 달 개화 반응 발동 시 풀 원핵과 풍요의 핵 대신 기만의 핵이 생성된다. "
                     "기만의 핵은 만개와 발화 반응을 발동할 수 없으며, 폭발하지도 않는다."
                     "네페르가 강공격 또는 환영극 발동 시, 주변 일정 범위 내의 기만의 핵을 흡수하고, 흡수한 기만의 핵 1개당 네페르가 「기만의 장막」 효과를 1스택 획득한다."
@@ -173,7 +172,6 @@ info = {
                     "「기만의 장막」이 5스택을 달성하거나 5스택의 지속 시간이 갱신되면 네페르의 원소 마스터리 증가 효과가 200pt로 변경된다. 지속 시간: 8초"
                     "돌파 특성 「달빛 승부사」을 해금해야 한다"
                 ),
-                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="달빛 징조·보름")],
             ),
             contellationSchema(name="진실을 가리는 거짓", description="원소전투 스킬 레벨 +3"),
             contellationSchema(
@@ -193,7 +191,6 @@ info = {
                     "달빛 징조 · 보름"
                     "네페르가 주는 달빛 개화 반응 피해가 15% 승격된다"
                 ),
-                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="달빛 징조·보름")],
                 additionalAttack=[
                     additionalAttackSchema(name="환영격 추가피해", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(ELEMENT_MASTERY=1.2, element=["grass"])),
                 ],
