@@ -94,6 +94,7 @@ export interface IUidSearchResult {
     level: number;
     name: string;
     element: TElement;
+    moonsign: null | "초승" | "보름";
     icon: Record<string, string> & { is_costume: boolean };
     activeSkill: (Record<string, string | number | boolean | object> & {
       icon: string;

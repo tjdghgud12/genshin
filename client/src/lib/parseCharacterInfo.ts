@@ -9,6 +9,7 @@ const parseCharacterInfo = (rawCalculatorData: IUidSearchResult): TCalculatorDat
   const data = rawCalculatorData.characterInfo;
   return {
     level: data.level,
+    moonsign: data.moonsign,
     constellations: data.constellations.map((constellation) => ({
       unlocked: constellation.unlocked ?? false,
       options: constellation.options.map((o) => ({

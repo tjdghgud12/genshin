@@ -31,6 +31,7 @@ const createFloatSchema = (min?: number, max?: number, errorMessage?: string) =>
 
 const calculatorCharacterInfoSchema = z.object({
   level: createFloatSchema(1, 90, "캐릭터 레벨을 확인해주세요."),
+  moonsign: z.enum(["초승", "보름"]).nullable(),
   constellations: z.array(
     z.object({
       unlocked: z.boolean(),

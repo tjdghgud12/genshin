@@ -127,7 +127,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             type="submit"
           >
-            <Calculator className="w-6 h-6 text-white flex-shrink-0" />
+            <Calculator className="w-6 h-6 text-white shrink-0" />
             <span className="text-lg whitespace-nowrap overflow-hidden max-w-0 opacity-0 group-hover:max-w-[200px] group-hover:opacity-100 transition-all duration-300">
               피해량 계산
             </span>
@@ -135,34 +135,61 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
           <div className="w-full">
             <TabsContent value="overView">
               <Card className={`${elementColors[element].bg} shadow-lg ${elementColors[element].shadow} border-none pb-6 rounded-tr-none`}>
-                <CardContent className={`w-full flex relative ${elementColors[element].bg} rounded-2xl rounded-tr-none`}>
-                  <div className="absolute z-0 flex gap-10 inset-6">
-                    <div className="w-[40%] h-fit relative overflow-hidden">
-                      <div className={`w-[10%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r ${elementColors[element].gradient}`} />
-                      <div className={`w-[10%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l ${elementColors[element].gradient}`} />
-                      <div className={`h-[15%] pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b ${elementColors[element].gradient}`} />
-                      <div className={`h-[15%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t ${elementColors[element].gradient}`} />
-                      <div className="w-[35vw] h-[35vw] min-w-[500px] min-h-[500px] relative z-0">
-                        <Image src={info.icon.gacha} className={`object-cover object-[center] opacity-90`} alt="" fill priority sizes="(max-width: 1200px) 7vw, 35vw" />
+                <CardContent className={`w-full h-[40vw] min-h-[650px] flex relative ${elementColors[element].bg} rounded-2xl rounded-tr-none`}>
+                  <div className="absolute h-full z-0 flex inset-x-6">
+                    <div className="w-1/2 h-[90%] relative overflow-hidden mt-auto">
+                      <div className={`w-[10%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-linear-to-r ${elementColors[element].gradient}`} />
+                      <div className={`w-[10%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-linear-to-l ${elementColors[element].gradient}`} />
+                      <div className={`h-[15%] pointer-events-none absolute inset-x-0 top-0 z-20 bg-linear-to-b ${elementColors[element].gradient}`} />
+                      <div className={`h-[15%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t ${elementColors[element].gradient}`} />
+                      <div className="h-[120%] relative z-0 -top-[10%]">
+                        <Image src={info.icon.gacha} className={`object-cover object-center opacity-90`} alt="" fill priority sizes="(max-width: 1200px) 7vw, 35vw" />
                       </div>
                     </div>
-                    <div className="flex-1 relative opacity-35">
+                    <div className="h-[80%] flex-1 relative opacity-35 mt-auto">
                       <Image src={`/img/Element_${element}_White.svg`} alt="" fill priority sizes="(max-width: 1200px) 7vw" />
                     </div>
                   </div>
-                  <div className="w-full h-[35vw] min-h-[500px] flex gap-10 z-10 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">
-                    <div className={`w-[40%] flex flex-col pl-8 pt-3 z-10`}>
-                      <Label className="text-5xl font-bold ">{info.name}</Label>
+                  <div className="w-full flex z-10 text-white">
+                    <div className={`w-[50%] flex flex-col pl-8 pt-3 z-10`}>
+                      <div className="w-full flex gap-2">
+                        <Label className="text-5xl font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">{info.name}</Label>
+                        {info.moonsign && (
+                          <FormField
+                          control={form.control}
+                          name={`data.moonsign`}
+                          render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                  <motion.button
+                                    className={`w-15 h-15 relative border-0 rounded-full ${field.value === "보름" ? "bg-radial from-white from-50% to-${element} to-75%" : ""}`}
+                                    type="button"
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    transition={{ duration: 0.1 }}
+                                    onClick={() => field.onChange(field.value === "초승" ? "보름" : "초승")}
+                                  >
+                                    <Image src={"/img/Song_of_the_Welkin_Moon_Chapter.webp"} className={`opacity-80 object-cover object-center`} alt="" fill priority sizes="(max-width: 1200px) 7vw, 35vw" />
+                                  </motion.button>
+                                </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        )}
+
+                      </div>
                       <FormField
                         control={form.control}
                         name={`data.level`}
                         render={({ field }) => (
-                          <FormItem className="w-fit h-fit mb-auto justify-start flex-1">
+                          <FormItem className="w-fit h-fit mb-auto justify-start flex-1 drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">
                             <div className="flex pt-[10%] mb-auto">
                               <FormLabel className="w-fit h-fit text-3xl font-bold mr-3">Lv: </FormLabel>
                               <FormControl>
                                 <Input
-                                  className="h-fit border-b-3 border-t-0 border-x-0 rounded-none !text-3xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+                                  className="h-fit border-b-3 border-t-0 border-x-0 rounded-none text-3xl! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
                                   value={field.value}
                                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(inputNumberWithSpace(e.target.value))}
                                   type="number"
@@ -177,8 +204,9 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                         )}
                       />
                     </div>
-                    <div className="flex-1 mt-auto">
-                      <div className="w-[70%] grid grid-cols-[1fr_auto] gap-y-[clamp(0.8rem,0.9vw,1.25rem)] gap-x-10 bg-gray-700/10 rounded-2xl p-8 mx-auto">
+                    <div className="flex-1 flex flex-col">
+                      <div className="h-[20%]" />
+                      <div className="flex-1 w-[90%] grid grid-cols-[1fr_auto] gap-y-[clamp(0.8rem,0.9vw,1.25rem)] gap-x-10 bg-gray-700/10 rounded-2xl p-8 mx-auto drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">
                         {[
                           { label: "체력", value: info.totalStat.FIGHT_PROP_HP_FINAL },
                           { label: "공격력", value: info.totalStat.FIGHT_PROP_ATTACK_FINAL },
