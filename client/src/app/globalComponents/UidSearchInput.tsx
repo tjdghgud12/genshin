@@ -15,6 +15,8 @@ const uidFormSchema = z.object({
   }),
 });
 
+const getTimestamp = (): number => Date.now();
+
 const UidSearchInput = ({ defaultValue, className = "" }: { defaultValue: string | null; className?: string }): React.ReactElement => {
   const router = useRouter();
 
@@ -28,7 +30,7 @@ const UidSearchInput = ({ defaultValue, className = "" }: { defaultValue: string
   });
 
   const onSubmit = async (values: z.infer<typeof uidFormSchema>): Promise<void> => {
-    router.push(`/calculator/${values.uid}`);
+    router.push(`/calculator/${values.uid}?t=${getTimestamp()}`);
   };
 
   return (
