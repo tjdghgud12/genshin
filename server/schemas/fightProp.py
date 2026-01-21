@@ -193,6 +193,8 @@ class fightPropSchema(BaseModel):
 
     # 달 반응 관련
     FIGHT_PROP_LUNAR_ADD_HURT: float = 0.0  # 달빛 반응 피해
+    FIGHT_PROP_LUNAR_BASE_ADD_HURT: float = 0.0  # 달빛 반응 기본 피증
+    FIGHT_PROP_LUNAR_PROMOTION: float = 0.0  # 달빛 반응 승격
 
     FIGHT_PROP_LUNARCHARGED_CRITICAL: float = 0.0
     FIGHT_PROP_LUNARCHARGED_CRITICAL_HURT: float = 0.0

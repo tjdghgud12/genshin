@@ -155,16 +155,18 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
 
                 # 직접 달 반응 연산
                 if attackType == "lunarBloom":
-                    # (계수 * 달 개화 피증 * 달 개화 기본 피증) + 달 개화 계수 추가(라우마 버프)
+                    # ((계수 * 달 개화 피증 * 달 개화 기본 피증) + 달 개화 계수 추가(라우마 버프)) * 승격 * 치명 * 내성
                     lunarBloomAdditionalPoint = fightProp.FIGHT_PROP_LUNARBLOOM_ADD_POINT
-                    lunarBloomTotalAddHurt = (1 + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT) * (1 + fightProp.FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT)
-                    lunarBloomBaseDamge = finalAttackPoint * lunarBloomTotalAddHurt
+                    lunarBloomBaseAddHurt = 1 + fightProp.FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT + fightProp.FIGHT_PROP_LUNAR_BASE_ADD_HURT
+                    lunarBloomAddHurt = 1 + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT + fightProp.FIGHT_PROP_LUNAR_ADD_HURT
+                    lunarBloomPromotion = 1 + fightProp.FIGHT_PROP_LUNAR_PROMOTION + fightProp.FIGHT_PROP_LUNARBLOOM_PROMOTION
                     lunarBloomDamage = getLunarBloomDamage(
-                        attackPoint=lunarBloomBaseDamge,
+                        attackPoint=finalAttackPoint,
                         elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                        lunarBloomAddHurt=fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT,
+                        lunarBaseAddHurt=lunarBloomBaseAddHurt,
+                        lunarPromotion=lunarBloomPromotion,
                         grassResMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS,
-                        lunarAddHurt=fightProp.FIGHT_PROP_LUNAR_ADD_HURT,
+                        lunarAddHurt=lunarBloomAddHurt,
                     )
                     lunarBloomCriticalDamage = getCriticalDamageInfo(
                         damage=lunarBloomDamage,
@@ -176,12 +178,15 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                     setattr(targetExpected, "lunarBloomDamage", lunarBloomCriticalDamage.expectedDamage)
 
                     if lunarBloomAdditionalPoint > 0:  # 추가 계수 영역
+                        # 라우마의 Q 스텍은 각종 피증 및 원마보너스가 적용되지 않음.
+                        # ex) 라우마 Q 스텍
                         lunarBloomAdditionalDamages = getLunarBloomDamage(
-                            attackPoint=lunarBloomAdditionalPoint * lunarBloomTotalAddHurt,
-                            elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                            lunarBloomAddHurt=fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT,
+                            attackPoint=lunarBloomAdditionalPoint,
+                            elementMastery=0,
+                            lunarBaseAddHurt=0,
+                            lunarPromotion=lunarBloomPromotion,
                             grassResMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS,
-                            lunarAddHurt=fightProp.FIGHT_PROP_LUNAR_ADD_HURT,
+                            lunarAddHurt=0,
                         )
                         lunarBloomAdditionalCriticalDamages = getCriticalDamageInfo(
                             damage=lunarBloomAdditionalDamages,

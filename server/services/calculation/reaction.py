@@ -103,8 +103,9 @@ def getShatterDamage(level: int, elementMastery: float, shatterAddHurt: float, p
 
 
 # 달개화
-def getLunarBloomDamage(attackPoint: float, elementMastery: float, lunarBloomAddHurt: float, grassResMinus: float, lunarAddHurt: float):
+def getLunarBloomDamage(attackPoint: float, elementMastery: float, grassResMinus: float, lunarAddHurt: float, lunarBaseAddHurt: float, lunarPromotion: float):
+    # ((계수 * (원마보너스 + 달피증) * 달 개화 기본 피증) + 달 개화 계수 추가(라우마 버프)) * 승격 * 치명 * 내성
     masteryBonus = 6 * elementMastery / (elementMastery + 2000)
     toleranceCoefficient = getToleranceCoefficient(decrease=grassResMinus)
 
-    return attackPoint * (1 + masteryBonus + lunarBloomAddHurt + lunarAddHurt) * toleranceCoefficient
+    return (attackPoint * (1 + masteryBonus + lunarAddHurt) * (1 + lunarBaseAddHurt)) * toleranceCoefficient * lunarPromotion
