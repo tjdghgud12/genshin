@@ -45,4 +45,15 @@ weaponInfo = {
             label="삭월의 시",
         ),
     ],
+    "막간의 야상곡": [
+        weaponOptionSchema(description="HP 최대치가 10%/12%/14%/16%/18% 증가"),
+        weaponOptionSchema(
+            description=(
+                "장착 캐릭터가 달빛 반응 발동 또는 적에게 달빛 반응 피해를 줄 시,「풍요로운 바다의 술」 효과를 획득한다:"
+                "HP 최대치가 14%/16%/18%/20%/22% 더 증가하고, 달빛 반응의 치명타 피해가 60%/80%/100%/120%/140% 증가"
+            ),
+            type=weaponOptionType.toggle,
+            label="풍요로운 바다의 술",
+        ),
+    ],
 }

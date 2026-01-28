@@ -171,7 +171,7 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                     lunarBloomCriticalDamage = getCriticalDamageInfo(
                         damage=lunarBloomDamage,
                         critical=critical + getattr(fightProp, "FIGHT_PROP_LUNARBLOOM_CRITICAL", 0.0),
-                        criticalHurt=criticalHurt + getattr(fightProp, "FIGHT_PROP_LUNARBLOOM_CRITICAL_HURT", 0.0),
+                        criticalHurt=criticalHurt + getattr(fightProp, "FIGHT_PROP_LUNARBLOOM_CRITICAL_HURT", 0.0) + getattr(fightProp, "FIGHT_PROP_LUNAR_CRITICAL_HURT", 0.0),
                     )
                     setattr(targetCritical, "lunarBloomDamage", lunarBloomCriticalDamage.criticalDamage)
                     setattr(targetNonCritical, "lunarBloomDamage", lunarBloomCriticalDamage.nonCriticalDamage)

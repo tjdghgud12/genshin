@@ -271,6 +271,32 @@ async def getNightweaversLookingGlassFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getNocturneCurtainCallFightProp(
+    id: int, level: int, refinement: int, options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+    optionRefinementMap = [
+        [0.10, (0.14, 0.6)],
+        [0.12, (0.16, 0.8)],
+        [0.14, (0.18, 1.0)],
+        [0.16, (0.20, 1.2)],
+        [0.18, (0.22, 1.4)],
+    ]
+    refinementValue = optionRefinementMap[refinement - 1]
+
+    for i, option in enumerate(options):
+        match i:
+            case 0:
+                fightProp.add(fightPropMpa.HP_PERCENT.value, refinementValue[0])
+            case 1:
+                if option.active:
+                    hpPercent, lunarCriticalHurt = refinementValue[1]
+                    fightProp.add(fightPropMpa.HP_PERCENT.value, hpPercent)
+                    fightProp.add(fightPropMpa.LUNAR_CRITICAL_HURT.value, lunarCriticalHurt)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 info = {
     "떠오르는 천일 밤의 꿈": getAThousandFloatingDreamsFightProp,
     "별지기의 시선": getStarcallersWatchFightProp,
@@ -284,4 +310,5 @@ info = {
     "제례의 악장": getSacrificialFragmentsFightProp,
     "진실의 함": getReliquaryOfTruthFightProp,
     "밤을 엮는 거울": getNightweaversLookingGlassFightProp,
+    "막간의 야상곡": getNocturneCurtainCallFightProp,
 }
