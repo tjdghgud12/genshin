@@ -234,19 +234,18 @@ async def getColumbinaFightProp(ambrCharacterDetail: CharacterDetail, characterI
     }
 
     for active in characterInfo.activeSkill:
-        if active.unlocked:
-            match active.name:
-                case "향수에 잠긴 달":
-                    if active.options[0].active:
-                        newFightProp.add(fightPropMpa.LUNAR_ADD_HURT.value, activeSkillLevelMap[active.name][active.level])
+        match active.name:
+            case "향수에 잠긴 달":
+                if active.options[0].active:
+                    newFightProp.add(fightPropMpa.LUNAR_ADD_HURT.value, activeSkillLevelMap[active.name][active.level])
 
     # ----------------------- passive -----------------------
     for passive in characterInfo.passiveSkill:
         if passive.unlocked:
             match passive.name:
                 case "달의 유혹":
-                    if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.CRITICAL.value, constellation.options[0].stack * 0.05)
+                    if passive.options[0].active:
+                        newFightProp.add(fightPropMpa.CRITICAL.value, passive.options[0].stack * 0.05)
                 case "달빛 징조의 축복·월광":
                     additionalFightProp.append({"key": fightPropMpa.LUNARBLOOM_BASE_ADD_HURT.value, "value": ("HP", 0.002), "max": 0.07})
 
@@ -301,10 +300,10 @@ async def getColumbinaFightProp(ambrCharacterDetail: CharacterDetail, characterI
         finalPoint = getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
         finalValue = finalPoint * value if additionalFightPropPoint["max"] is None else min(finalPoint * value, additionalFightPropPoint["max"])
 
-        if additionalFightPropPoint["additionalAttack"] is None:
-            newFightProp.add(key, finalValue)
-        else:
+        if "additionalAttack" in additionalFightPropPoint:
             newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[additionalFightPropPoint["additionalAttack"]].add(key, finalValue)
+        else:
+            newFightProp.add(key, finalValue)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
