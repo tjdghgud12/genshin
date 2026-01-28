@@ -197,4 +197,101 @@ info = {
             ),
         ],
     ),
+    "콜롬비나": characterDataSchema(
+        moonsign="보름",
+        passiveSkill={
+            "달의 유혹": passiveSkillSchema(
+                description=("인력 간섭 발동 시, 콜롬비나는 유혹 효과를 획득해 자신의 치명타 확률이 5% 증가한다, 지속 시간: 10초, 최대 중첩수: 3스택"),
+                unlockLevel=1,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=3, label="유혹")],
+            ),
+            "새로운 달의 법칙": passiveSkillSchema(
+                description=(
+                    "달 영역 안에 있는 캐릭터가 달빛 반응 발동 시, 다음과 같은 효과를 각각 획득한다:"
+                    "· 달 감전 반응: 번개구름이 조건에 부합하는 목표에게 뇌격 진행 시, 33%의 확률로 추가 뇌격이 1회 발동된다."
+                    "· 달 개화 반응: 달 개화 반응 발동 시, 파티에 특수한 달빛 풀 이슬을 제공한다. 18초마다 해당 방식으로 달빛 풀 이슬을 최대 3개 획득할 수 있다."
+                    "· 달 결정 반응: 달빛 조각 화음 발동 시, 달빛 조각 울림마다 33% 확률로 추가 공격을 한다"
+                ),
+                unlockLevel=4,
+            ),
+            "달빛 징조의 축복·월광": passiveSkillSchema(
+                description=(
+                    "파티 내 캐릭터가 감전/개화/물 원소 결정 반응 발동 시, 달 감전/달 개화/달 결정 반응으로 전환되며, "
+                    "콜롬비나의 HP 최대치에 기반해 파티 내 캐릭터가 주는 달빛 반응의 기본 피해가 증가한다: "
+                    "HP 최대치 1000pt마다 달빛 반응의 기본 피해가 0.2% 증가한다. 해당 방식으로 피해가 최대 7% 증가한다."
+                ),
+                unlockLevel=0,
+            ),
+        },
+        activeSkill={
+            "달 이슬비": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["water"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["water"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["water"]),
+                ),
+                additionalAttack=[additionalAttackSchema(name="달 이슬 세례", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(HP=1, element=["grass"]))],
+            ),
+            "아득한 조석": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(HP=1, element=["water"])),
+                additionalAttack=[
+                    # additionalAttackSchema(name="보름달·달 감전", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(HP=1, element=["elec"])),
+                    additionalAttackSchema(name="보름달·달 개화", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(HP=1, element=["grass"])),
+                    # additionalAttackSchema(name="보름달·달 결정", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(HP=1, element=["rock"]))
+                ],
+            ),
+            "향수에 잠긴 달": activeSkillSchema(
+                description="무구한 새로운 달의 이름으로 산과 바다를 잇고, 주변의 대지를 잠시 순결한 달 영역으로 바꾸어 물 원소 범위 피해를 준다.",
+                baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(HP=1, element=["water"])),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="달 영역")],
+            ),
+        },
+        constellation=[
+            contellationSchema(
+                name="꽃바다를 품은 산속의 달",
+                description=(
+                    "원소전투 스킬 아득한 조석 발동 시, 인력 간섭과 동일한 효과가 즉시 1회 발동된다. 해당 효과는 15초 마다 최대 1회 발동된다."
+                    "달빛 징조 · 보름:"
+                    "인력 간섭 발동 시, 콜롬비나에게 가장 많은 인력이 축적된 달빛 반응 타입이:"
+                    "· 달 감전 반응일 경우: 파티 내 자신의 현재 필드 위 캐릭터의 원소 에너지를 6pt 회복한다;"
+                    "· 달 개화 반응일 경우: 현재 필드 위에 있는 파티 내 자신의 캐릭터의 경직 저항력이 8초 동안 증가한다;"
+                    "· 달 결정 반응일 경우: 비바다 보호막을 소환한다. 피해 흡수량은 콜롬비나 HP 최대치의 12%의 영향을 받고, 물 원소 피해에 대해 250%의 흡수 효과가 있다. 지속 시간: 8초."
+                    "주변에 있는 파티 내 모든 캐릭터가 주는 달빛 반응 피해가 1.5% 승격된다"
+                ),
+            ),
+            contellationSchema(
+                name="밤의 달빛과 그대의 동행",
+                description=(
+                    "인력 간섭 발동 시, 콜롬비나는 광휘 효과를 획득해 HP 최대치가 40% 증가한다, 지속 시간: 8초."
+                    "달빛 징조 · 보름:"
+                    "광휘 효과 지속 시간 동안 이번 인력 간섭 발동 시, 콜롬비나에게 가장 많은 인력을 축적한 달빛 반응 타입이:"
+                    "· 달 감전 반응일 경우: 파티 내 자신의 현재 필드 위 캐릭터의 공격력이 콜롬비나 HP 최대치의 1%만큼 증가한다."
+                    "· 달 개화 반응일 경우: 파티 내 자신의 현재 필드 위 캐릭터의 원소 마스터리가 콜롬비나의 HP 최대치의 0.35%만큼 증가한다."
+                    "· 달 결정 반응일 경우: 파티 내 자신의 현재 필드 위 캐릭터의 방어력이 콜롬비나의 HP 최대치의 1%만큼 증가한다."
+                    "주변에 있는 파티 내 모든 캐릭터가 주는 달빛 반응 피해가 7% 승격된다"
+                ),
+                options=[skillConstellationOptionSchema(type=skillConstellationType.select, selectList=["달 감전", "달 개화", "달 결정"], label="달빛 반응")],
+            ),
+            contellationSchema(name="빛의 결정과 꿈의 물결", description="원소전투 스킬 레벨 +3 주변에 있는 파티 내 모든 캐릭터가 주는 달빛 반응 피해가 1.5% 승격된다"),
+            contellationSchema(
+                name="꽃과 산에 드리운 그림자",
+                description=(
+                    "인력 간섭 발동 시, 콜롬비나가 원소 에너지를 4pt 회복한다."
+                    "또한, 콜롬비나에게 가장 많은 인력을 축적한 달빛 반응 타입에 따라(달 감전/달 개화/달 결정 반응),"
+                    "이번 간섭파로 주는 달빛 반응의 피해가 콜롬비나 HP 최대치의 12.5%/2.5%/12.5%만큼 증가한다."
+                    "상술한 효과는 15초마다 최대 1회 발동된다."
+                    "주변에 있는 파티 내 모든 캐릭터가 주는 달빛 반응 피해가 1.5% 승격된다"
+                ),
+            ),
+            contellationSchema(name="적막 속 그대의 노랫소리", description="원소폭발 레벨 +3 주변에 있는 파티 내 모든 캐릭터가 주는 달빛 반응 피해가 1.5% 승격된다"),
+            contellationSchema(
+                name="어두운 밤 달빛의 인도",
+                description=(
+                    "달 영역 내에 있는 모든 캐릭터가 달빛 반응 발동 후 8초 동안, 반응에 참여한 원소 타입에 따라 파티 내 모든 캐릭터의 해당 원소 타입 치명타 피해가 80% 증가한다."
+                    "같은 원소 타입의 치명타 피해 증가 효과는 중첩되지 않는다."
+                    "주변에 있는 파티 내 모든 캐릭터가 주는 달빛 반응 피해가 7% 승격된다"
+                ),
+            ),
+        ],
+    ),
 }

@@ -80,6 +80,10 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_ELEC_ADD_POINT: float = 0.0  # 계수 추가
     FIGHT_PROP_ICE_CRITICAL_HURT: float = 0.0  # 얼음 원소 전용 치명타 피해 증가
     FIGHT_PROP_ICE_ADD_POINT: float = 0.0  # 얼음 원소 전용 계수 추가
+    FIGHT_PROP_WATER_CRITICAL_HURT: float = 0.0  # 물 원소 전용 치명타 피해 증가
+    FIGHT_PROP_ELEC_CRITICAL_HURT: float = 0.0  # 번개 원소 전용 치명타 피해 증가
+    FIGHT_PROP_GRASS_CRITICAL_HURT: float = 0.0  # 풀 원소 전용 치명타 피해 증가
+    FIGHT_PROP_ROCK_CRITICAL_HURT: float = 0.0  # 바위 원소 전용 치명타 피해 증가
 
     # 일반공격 관련
     FIGHT_PROP_NOMAL_ATTACK_CRITICAL: float = 0.0

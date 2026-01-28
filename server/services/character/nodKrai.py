@@ -114,6 +114,11 @@ async def getLaumaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     lunarBloomAdd = min(newFightProp.FIGHT_PROP_ELEMENT_MASTERY * 0.000175, 0.14)
                     newFightProp.add(fightPropMpa.LUNARBLOOM_BASE_ADD_HURT.value, lunarBloomAdd)
 
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
@@ -187,10 +192,125 @@ async def getNeferFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         if additionalAttackPoint["additionalAttack"]:
             newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[additionalAttackPoint["additionalAttack"]] = additionalAttackFightPropSchema()
 
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
+
+
+async def getColumbinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: requestCharacterInfoSchema, enkaDataFlag: bool = False) -> CharacterFightPropReturnData:
+    newFightProp: fightPropSchema = genCharacterBaseStat(ambrCharacterDetail, int(characterInfo.level))
+    additionalFightProp = []
+
+    # -----------------------weapon & Artifact -----------------------
+    weaponArtifactData = await getWeaponArtifactFightProp(deepcopy(newFightProp), characterInfo.weapon, characterInfo.artifact, characterInfo)
+    newFightProp = weaponArtifactData["fightProp"]
+    for info in [*characterInfo.constellations, *characterInfo.activeSkill, *characterInfo.passiveSkill]:
+        if info.additionalAttack:
+            for attack in info.additionalAttack:
+                newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[attack.name] = additionalAttackFightPropSchema()
+
+    # ----------------------- active -----------------------
+    activeSkillLevelMap = {
+        "향수에 잠긴 달": [
+            0.13,  # Level 1
+            0.16,  # Level 2
+            0.19,  # Level 3
+            0.22,  # Level 4
+            0.25,  # Level 5
+            0.28,  # Level 6
+            0.31,  # Level 7
+            0.34,  # Level 8
+            0.37,  # Level 9
+            0.40,  # Level 10
+            0.43,  # Level 11
+            0.46,  # Level 12
+            0.49,  # Level 13
+            0.52,  # Level 14
+            0.55,  # Level 15
+        ]
+    }
+
+    for active in characterInfo.activeSkill:
+        if active.unlocked:
+            match active.name:
+                case "향수에 잠긴 달":
+                    if active.options[0].active:
+                        newFightProp.add(fightPropMpa.LUNAR_ADD_HURT.value, activeSkillLevelMap[active.name][active.level])
+
+    # ----------------------- passive -----------------------
+    for passive in characterInfo.passiveSkill:
+        if passive.unlocked:
+            match passive.name:
+                case "달의 유혹":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMpa.CRITICAL.value, constellation.options[0].stack * 0.05)
+                case "달빛 징조의 축복·월광":
+                    additionalFightProp.append({"key": fightPropMpa.LUNARBLOOM_BASE_ADD_HURT.value, "value": ("HP", 0.002), "max": 0.07})
+
+    # ----------------------- constellations -----------------------
+    for constellation in characterInfo.constellations:
+        if constellation.unlocked:
+            match constellation.name:
+                case "꽃바다를 품은 산속의 달":
+                    newFightProp.add(fightPropMpa.LUNAR_PROMOTION.value, 0.015)
+
+                case "밤의 달빛과 그대의 동행":
+                    newFightProp.add(fightPropMpa.LUNAR_PROMOTION.value, 0.07)
+                    newFightProp.add(fightPropMpa.HP_PERCENT.value, 0.4)
+
+                    if characterInfo.moonsign == "보름":
+                        match constellation.options[0].select:
+                            case "달 감전":
+                                additionalFightProp.append({"key": fightPropMpa.ATTACK_ADD_POINT.value, "value": ("HP", 0.01)})  # 달감전 계수 추가
+                            case "달 개화":
+                                additionalFightProp.append({"key": fightPropMpa.ELEMENT_MASTERY.value, "value": ("HP", 0.0035)})  # 달개화 계수 추가
+                            case "달 결정":
+                                additionalFightProp.append({"key": fightPropMpa.DEFENSE_PERCENT.value, "value": ("HP", 0.01)})  # 달결정 계수 추가
+
+                case "빛의 결정과 꿈의 물결":
+                    # 원소전투 스킬 레벨 +3
+                    characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
+                    newFightProp.add(fightPropMpa.LUNAR_PROMOTION.value, 0.015)
+                case "꽃과 산에 드리운 그림자":
+                    additionalFightProp.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("HP", 0.0035), "additionalAttack": "보름달·달 개화"})  # 달개화 계수 추가
+                    additionalFightProp.append({"key": fightPropMpa.LUNARCHARGED_ADD_POINT.value, "value": ("HP", 0.01), "additionalAttack": "보름달·달 감전"})  # 달감전 계수 추가
+                    # additionalFightProp.append({"key": fightPropMpa.LUNARBLOOM_ADD_POINT.value, "value": ("HP", 0.002), "additionalAttack": "보름달·달 결정"})  # 달결정 계수 추가
+                    newFightProp.add(fightPropMpa.LUNAR_PROMOTION.value, 0.015)
+                case "적막 속 그대의 노랫소리":
+                    # 원소폭발 레벨 +3
+                    characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
+                    newFightProp.add(fightPropMpa.LUNAR_PROMOTION.value, 0.015)
+                case "어두운 밤 달빛의 인도":
+                    newFightProp.add(fightPropMpa.WATER_CRITICAL_HURT.value, 0.8)
+                    newFightProp.add(fightPropMpa.ELEC_CRITICAL_HURT.value, 0.8)
+                    newFightProp.add(fightPropMpa.GRASS_CRITICAL_HURT.value, 0.8)
+                    newFightProp.add(fightPropMpa.ROCK_CRITICAL_HURT.value, 0.8)
+                    newFightProp.add(fightPropMpa.LUNAR_PROMOTION.value, 0.07)
+
+    # ----------------------- 추후 연산 진행부 -----------------------
+    newFightProp = await getAfterWeaponArtifactFightProp(
+        weaponArtifactData["fightProp"], characterInfo.weapon, characterInfo.artifact, weaponArtifactData["weaponAfterProps"], weaponArtifactData["artifactAfterProps"]
+    )
+
+    for additionalFightPropPoint in additionalFightProp:
+        key = additionalFightPropPoint["key"]
+        pointKey, value = additionalFightPropPoint["value"]
+        finalPoint = getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        finalValue = finalPoint * value if additionalFightPropPoint["max"] is None else min(finalPoint * value, additionalFightPropPoint["max"])
+
+        if additionalFightPropPoint["additionalAttack"] is None:
+            newFightProp.add(key, finalValue)
+        else:
+            newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK[additionalFightPropPoint["additionalAttack"]].add(key, finalValue)
+
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
 
 
 getFightProp: dict[str, CharacterFightPropGetter] = {
     "라우마": getLaumaFightProp,
     "네페르": getNeferFightProp,
+    "콜롬비나": getColumbinaFightProp,
 }
