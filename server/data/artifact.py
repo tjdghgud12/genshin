@@ -217,4 +217,29 @@ artifactSetOptions = {
             label="월광 효과 수",
         ),
     ],
+    "감로빛 꽃바다": [
+        artifactSetOptionSchema(description="HP+20%", requiredParts=2),
+        artifactSetOptionSchema(
+            description=(
+                "원소전투 스킬 및 원소폭발로 주는 피해가 10% 증가한다. 장착 캐릭터가 피해를 입은 후 5초 동안 해당 피해 증가 효과가 80% 증가한다."
+                "최대 중첩수: 5스택. 스택마다 지속 시간은 독립적으로 계산한다. 해당 효과는 장착 캐릭터가 대기 상태일 때도 발동된다."
+            ),
+            requiredParts=4,
+            type=artifactSetOptionType.stack,
+            maxStack=5,
+            label="피해 횟수",
+        ),
+    ],
+    "견고한 천암": [
+        artifactSetOptionSchema(description="HP+20%", requiredParts=2),
+        artifactSetOptionSchema(
+            description=(
+                "원소전투 스킬이 적을 명중하면 파티 내 주변 모든 캐릭터의 공격력이 20% 증가하고, 보호막 강화 효과가 30% 증가한다. 지속 시간: 3초."
+                "해당 효과는 0.5초마다 최대 1회 발동되며, 해당 성유물을 장착 한 캐릭터가 대기 상태 일 때도 발동된다"
+            ),
+            requiredParts=4,
+            type=artifactSetOptionType.toggle,
+            label="원소전투 스킬 명중",
+        ),
+    ],
 }

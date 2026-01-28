@@ -398,6 +398,36 @@ def getNightOfTheSkysUnveilingSetOption(
     return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
 
 
+def getVourukashasGlowSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.HP_PERCENT.value, 0.20)
+                case 1:
+                    if info.active:
+                        value = (0.10 * (info.stack * 0.8)) + 0.10
+                        fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, value)
+                        fightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, value)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
+def getTenacityOfTheMillelithSetOption(numberOfParts: int, optionInfo: list[artifactSetDataSchema.extendedArtifactSetOptionSchema]) -> ArtifactDataReturnSchema:
+    fightProp = deepcopy(fightPropTemplate)
+    for i, info in enumerate(optionInfo):
+        if numberOfParts >= info.requiredParts:
+            match i:
+                case 0:
+                    fightProp.add(fightPropMpa.HP_PERCENT.value, 0.20)
+                case 1:
+                    if info.active:
+                        fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, 0.20)
+
+    return ArtifactDataReturnSchema(fightProp=fightProp, afterAddProps=None)
+
+
 getArtifactSetsFightProp = {
     "그림자 사냥꾼": getMarechausseeHunterSetOption,
     "얼음바람 속에서 길잃은 용사": getBlizzardStrayerSetOption,
@@ -422,6 +452,8 @@ getArtifactSetsFightProp = {
     "유구한 반암": getArchaicPetraSetOption,
     "달을 엮는 밤노래": getSilkenMoonsSerenadeSetOption,
     "하늘 경계가 드러난 밤": getNightOfTheSkysUnveilingSetOption,
+    "감로빛 꽃바다": getVourukashasGlowSetOption,
+    "견고한 천암": getTenacityOfTheMillelithSetOption,
 }
 
 
@@ -453,11 +485,13 @@ def getArtifactSetData(
     for setInfo in setInfos:
         getSetFightProp = getArtifactSetsFightProp[setInfo.name]
         variableList = inspect.signature(getSetFightProp).parameters
-        variables = {"numberOfParts": setInfo.numberOfParts, "optionInfo": setInfo.options, "characterInfo": characterInfo}
+        variables = {"numberOfParts": setInfo.numberOfParts, "optionInfo": setInfo.options}
         if "characterFightProp" in variableList:
             variables["characterFightProp"] = characterFightProp
         if "weaponType" in variableList:
             variables["weaponType"] = weaponType
+        if "characterInfo" in variableList:
+            variables["characterInfo"] = characterInfo
 
         setOptionFightProp = getSetFightProp(**variables)
         afterAddProps = setOptionFightProp["afterAddProps"]
