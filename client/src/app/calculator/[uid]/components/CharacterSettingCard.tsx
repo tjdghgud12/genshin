@@ -13,10 +13,10 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/lib/axios";
 import { calculatorCharacterInfoSchema, calculatorFormSchema } from "@/lib/calculator";
-import { fightPropLabels } from "@/lib/fightProps";
 import { parseCharacterInfo } from "@/lib/parseCharacterInfo";
 import { deepMergeAddOnly, inputNumberWithSpace } from "@/lib/utils";
 import { IArtifactSetsInfoStore, useArtifactSetsInfoStore } from "@/store/artifactStore";
+import { useFightPropLabelStore } from "@/store/figthtPropLabelStore";
 import { IdamageCalculationResult, IUidSearchResult } from "@/types/calculatorType";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosResponse } from "axios";
@@ -35,6 +35,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
   const [infoTab, setInfoTab] = useState<string>("overView");
   const [damageResult, setDamageResult] = useState<IdamageCalculationResult>(character.damage);
   const [info, setInfo] = useState<IUidSearchResult["characterInfo"]>(character.characterInfo);
+  const fightPropLabels = useFightPropLabelStore((state) => state.fightPropLabels);
   const artifactSets = useArtifactSetsInfoStore((state: IArtifactSetsInfoStore) => state.artifactSets);
   const element = character.characterInfo.element;
   const elementColors: Record<string, Record<string, string>> = {
@@ -156,10 +157,10 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                         <Label className="text-5xl font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">{info.name}</Label>
                         {info.moonsign && (
                           <FormField
-                          control={form.control}
-                          name={`data.moonsign`}
-                          render={({ field }) => (
-                            <FormItem>
+                            control={form.control}
+                            name={`data.moonsign`}
+                            render={({ field }) => (
+                              <FormItem>
                                 <FormControl>
                                   <motion.button
                                     className={`w-15 h-15 relative border-0 rounded-full ${field.value === "보름" ? "bg-radial from-white from-50% to-${element} to-75%" : ""}`}
@@ -169,16 +170,21 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                                     transition={{ duration: 0.1 }}
                                     onClick={() => field.onChange(field.value === "초승" ? "보름" : "초승")}
                                   >
-                                    <Image src={"/img/Song_of_the_Welkin_Moon_Chapter.webp"} className={`opacity-80 object-cover object-center`} alt="" fill priority sizes="(max-width: 1200px) 7vw, 35vw" />
+                                    <Image
+                                      src={"/img/Song_of_the_Welkin_Moon_Chapter.webp"}
+                                      className={`opacity-80 object-cover object-center`}
+                                      alt=""
+                                      fill
+                                      priority
+                                      sizes="(max-width: 1200px) 7vw, 35vw"
+                                    />
                                   </motion.button>
                                 </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         )}
-
                       </div>
                       <FormField
                         control={form.control}

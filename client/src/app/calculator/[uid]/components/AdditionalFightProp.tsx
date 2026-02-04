@@ -5,13 +5,14 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { calculatorFormSchema as formSchema } from "@/lib/calculator";
-import { fightPropLabels } from "@/lib/fightProps";
+import { useFightPropLabelStore } from "@/store/figthtPropLabelStore";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
 const AdditionalFightProp = ({ form }: { form: UseFormReturn<z.infer<typeof formSchema>> }): React.ReactElement => {
   const [open, setOpen] = useState<boolean>(false);
+  const fightPropLabels = useFightPropLabelStore((state) => state.fightPropLabels);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -34,7 +35,7 @@ const AdditionalFightProp = ({ form }: { form: UseFormReturn<z.infer<typeof form
                   <FormLabel className="break-normal font-bold">{label}</FormLabel>
                   <FormControl>
                     <Input
-                      className="w-2/5 h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+                      className="w-2/5 h-fit border-b-2 border-t-0 border-x-0 rounded-none text-lg! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
                       placeholder={label}
                       {...field}
                     />

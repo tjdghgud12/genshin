@@ -11,10 +11,12 @@ const CalculatorContent = async ({ uid }: { uid: string }): Promise<React.ReactE
   let weaponList: { [id: string]: IWeaponInfo };
   let artifactSets: { [name: string]: IArtifactSetsInfo };
   let characters: IUidSearchResult[];
+  let fightPropLabels: { [fightProp: string]: string };
 
   try {
     weaponList = Object.fromEntries((await api.get(`/weapons`)).data.map((weapon: IWeaponInfo) => [weapon.id, weapon]));
     artifactSets = Object.fromEntries((await api.get(`/artifactsets`)).data.map((set: IArtifactSetsInfo) => [set.name, set]));
+    fightPropLabels = (await api.get(`/fightPropLabels`)).data;
     characters = (await api.get(`/user/${uid}`)).data.characters;
   } catch (error) {
     console.error("Failed to fetch calculator data:", error);
@@ -23,7 +25,7 @@ const CalculatorContent = async ({ uid }: { uid: string }): Promise<React.ReactE
 
   return (
     <>
-      <Store weaponList={weaponList} artifactSets={artifactSets} />
+      <Store weaponList={weaponList} artifactSets={artifactSets} fightPropLabels={fightPropLabels} />
       <CharacterTabs characters={characters} />
     </>
   );

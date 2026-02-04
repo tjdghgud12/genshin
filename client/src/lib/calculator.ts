@@ -1,4 +1,4 @@
-import { fightPropLabels } from "@/lib/fightProps";
+import { getFightPropLabels } from "@/store/figthtPropLabelStore";
 import { IdamageCalculationResult } from "@/types/calculatorType";
 import { z } from "zod";
 
@@ -115,7 +115,7 @@ const calculatorCharacterInfoSchema = z.object({
 
 const calculatorFormSchema = z.object({
   data: calculatorCharacterInfoSchema,
-  additionalFightProp: z.object(Object.fromEntries(Object.keys(fightPropLabels).map((key) => [key, createFloatSchema()]))),
+  additionalFightProp: z.lazy(() => z.object(Object.fromEntries(Object.keys(getFightPropLabels()).map((key) => [key, createFloatSchema()])))),
 });
 
 const calculatorLabel = {
