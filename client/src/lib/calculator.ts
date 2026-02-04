@@ -153,6 +153,7 @@ const calculatorLabel = {
 
   lunarCharged: "달감전", // 달감전 기대값
   lunarBloom: "달개화", // 달개화 기대값
+  lunarCrystallize: "달결정", // 달결정 기대값
 };
 
 const getCalculationResultData = <T extends keyof IdamageCalculationResult>(obj: IdamageCalculationResult, key: T): IdamageCalculationResult[T] => obj[key];
