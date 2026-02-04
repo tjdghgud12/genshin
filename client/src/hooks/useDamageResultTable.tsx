@@ -11,9 +11,12 @@ type Tattack = "nomal" | "charge" | "falling" | "elementalSkill" | "elementalBur
 const useDamageResultTable = (
   damageResult: IdamageCalculationResult | null,
 ): { head: string[]; body: { props: object; data: string | number | null | React.ReactElement }[][] } => {
-  const genAttackTableData = (raw: number | null, additional: number | null = null): string | null => {
+  const genAttackTableData = (raw: number | null, additional: number | null = null, extra: number | null = null): string | null => {
     if (raw == null) return null;
-    return additional != null ? `${raw.toFixed(2)} (+${additional.toFixed(2)})` : `${raw.toFixed(2)}`;
+    let valueStr = `${raw.toFixed(2)}`;
+    if (additional != null) valueStr += ` (+${additional.toFixed(2)})`;
+    if (extra != null) valueStr += ` (Extra: +${extra.toFixed(2)})`;
+    return valueStr;
   };
 
   const hasKey = <K extends keyof IattackDamage | keyof IdamageCalculationResult, Suffix extends string>(
@@ -32,7 +35,7 @@ const useDamageResultTable = (
     const header = ["반응", "nomal", "charge", "falling", "elementalSkill", "elementalBurst"];
     const bodyData: (string | number | null | React.ReactElement)[][] = [];
     const excludeList = ["Additional", "Critical", "NonCritical"];
-    const damageList = typedKeys(damageResult.nomal).filter((label) => !label.includes("Additional"));
+    const damageList = typedKeys(damageResult.nomal).filter((label) => !label.includes("Additional") && !label.includes("Extra"));
     const reactionList = typedKeys(damageResult).filter((label) => label.includes("Damage") && !excludeList.some((exclude) => label.includes(exclude)));
 
     damageList.map((type) => bodyData.push([type]));
@@ -44,9 +47,21 @@ const useDamageResultTable = (
       const expected = damageResult[attack];
 
       damageList.map((key, rowIdx) => {
-        const nonCriticalValue = genAttackTableData(nonCritical[key], hasKey(nonCritical, key, "Additional") ? nonCritical[`${key}Additional`] : null);
-        const criticalValue = genAttackTableData(critical[key], hasKey(critical, key, "Additional") ? critical[`${key}Additional`] : null);
-        const expectedValue = genAttackTableData(expected[key], hasKey(expected, key, "Additional") ? expected[`${key}Additional`] : null);
+        const nonCriticalValue = genAttackTableData(
+          nonCritical[key],
+          hasKey(nonCritical, key, "Additional") ? nonCritical[`${key}Additional`] : null,
+          hasKey(nonCritical, key, "Extra") ? nonCritical[`${key}Extra`] : null,
+        );
+        const criticalValue = genAttackTableData(
+          critical[key],
+          hasKey(critical, key, "Additional") ? critical[`${key}Additional`] : null,
+          hasKey(critical, key, "Extra") ? critical[`${key}Extra`] : null,
+        );
+        const expectedValue = genAttackTableData(
+          expected[key],
+          hasKey(expected, key, "Additional") ? expected[`${key}Additional`] : null,
+          hasKey(expected, key, "Extra") ? expected[`${key}Extra`] : null,
+        );
         bodyData[rowIdx].push(
           criticalValue ? (
             <Tooltip delayDuration={500}>
@@ -68,9 +83,21 @@ const useDamageResultTable = (
       const nonCritical = damageResult.customNonCritical[name];
       const critical = damageResult.customCritical[name];
       damageList.map((key, rowIdx) => {
-        const nonCriticalValue = genAttackTableData(nonCritical[key], hasKey(nonCritical, key, "Additional") ? nonCritical[`${key}Additional`] : null);
-        const criticalValue = genAttackTableData(critical[key], hasKey(critical, key, "Additional") ? critical[`${key}Additional`] : null);
-        const expectedValue = genAttackTableData(values[key], hasKey(values, key, "Additional") ? values[`${key}Additional`] : null);
+        const nonCriticalValue = genAttackTableData(
+          nonCritical[key],
+          hasKey(nonCritical, key, "Additional") ? nonCritical[`${key}Additional`] : null,
+          hasKey(nonCritical, key, "Extra") ? nonCritical[`${key}Extra`] : null,
+        );
+        const criticalValue = genAttackTableData(
+          critical[key],
+          hasKey(critical, key, "Additional") ? critical[`${key}Additional`] : null,
+          hasKey(critical, key, "Extra") ? critical[`${key}Extra`] : null,
+        );
+        const expectedValue = genAttackTableData(
+          values[key],
+          hasKey(values, key, "Additional") ? values[`${key}Additional`] : null,
+          hasKey(values, key, "Extra") ? values[`${key}Extra`] : null,
+        );
 
         bodyData[rowIdx].push(
           criticalValue ? (
