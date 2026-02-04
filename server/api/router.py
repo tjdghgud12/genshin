@@ -1,5 +1,6 @@
 import data.artifact as artifactData
 from data.character import characterData
+from data.globalVariable import fightPropLabels
 import data.weapon as weaponData
 from services.artifact import getArtifactSetInfo
 from services.ambrApi import getAmbrApi
@@ -23,6 +24,11 @@ router = APIRouter()
 class calculationBody(BaseModel):
     additionalFightProp: fightPropSchema
     characterInfo: requestCharacterInfoSchema
+
+
+@router.get("/fightPropLabels")
+async def getFightPropLabels():
+    return fightPropLabels
 
 
 @router.get("/weapons/{id}")
