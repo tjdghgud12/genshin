@@ -135,10 +135,10 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
         "physical": [],
         "fire": ["역융해", "증발", "연소", "발화", "과부하"],
         "elec": ["촉진", "만개", "과부하", "감전", "초전도"],
-        "water": ["역증발", "개화", "감전"],
+        "water": ["역증발", "개화", "감전", "달결정"],
         "grass": ["발산", "개화", "연소"],
         "wind": ["확산"],
-        "rock": [],
+        "rock": ["달결정"],
         "ice": ["융해", "초전도"],
     }
     attackTypeKeyMap = {
