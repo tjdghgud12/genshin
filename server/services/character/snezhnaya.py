@@ -1,5 +1,5 @@
 from services.character.commonData import CharacterFightPropReturnData, CharacterFightPropGetter, genCharacterBaseStat, getWeaponArtifactFightProp, getAfterWeaponArtifactFightProp
-from data.globalVariable import fightPropMpa
+from data.globalVariable import fightPropMap
 from schemas.calculation import requestCharacterInfoSchema
 from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 from ambr import CharacterDetail
@@ -30,12 +30,12 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
                 case "「고독한 우리는 망자와 다름없으나…」":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "「앞으로 우리는 새 생명을 누리리라」":
-                    additionalAttackPoints.append({"key": fightPropMpa.ELEMENT_BURST_ATTACK_ADD_POINT.value, "value": ("ATTACK", (constellation.options[0].stack * 7) / 100)})
+                    additionalAttackPoints.append({"key": fightPropMap.ELEMENT_BURST_ATTACK_ADD_POINT.value, "value": ("ATTACK", (constellation.options[0].stack * 7) / 100)})
                     if constellation.options[1].active:
-                        newFightProp.add(fightPropMpa.NOMAL_ATTACK_CRITICAL.value, 0.1)
-                        newFightProp.add(fightPropMpa.NOMAL_ATTACK_CRITICAL_HURT.value, 0.7)
-                        newFightProp.add(fightPropMpa.ELEMENT_BURST_CRITICAL.value, 0.1)
-                        newFightProp.add(fightPropMpa.ELEMENT_BURST_CRITICAL_HURT.value, 0.7)
+                        newFightProp.add(fightPropMap.NOMAL_ATTACK_CRITICAL.value, 0.1)
+                        newFightProp.add(fightPropMap.NOMAL_ATTACK_CRITICAL_HURT.value, 0.7)
+                        newFightProp.add(fightPropMap.ELEMENT_BURST_CRITICAL.value, 0.1)
+                        newFightProp.add(fightPropMap.ELEMENT_BURST_CRITICAL_HURT.value, 0.7)
 
     # ----------------------- active -----------------------
     activeSkillLevelMap = {"사형장으로의 초대": [1.204, 1.302, 1.4, 1.54, 1.638, 1.75, 1.904, 2.058, 2.212, 2.38, 2.548, 2.716, 2.884, 3.052, 3.22]}
@@ -51,16 +51,16 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
                     if firstConstellation.unlocked:
                         skillValue += 1
                     addPointValue = (option.stack * skillValue) / 100
-                    additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", addPointValue)})
-                    additionalAttackPoints.append({"key": fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", addPointValue)})
-                    additionalAttackPoints.append({"key": fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", addPointValue)})
+                    additionalAttackPoints.append({"key": fightPropMap.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", addPointValue)})
+                    additionalAttackPoints.append({"key": fightPropMap.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", addPointValue)})
+                    additionalAttackPoints.append({"key": fightPropMap.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("ATTACK", addPointValue)})
 
     # ----------------------- passive -----------------------
     for passive in characterInfo.passiveSkill:
         if passive.unlocked:
             match passive.name:
                 case "재액의 달만이 알 수 있다":
-                    newFightProp.add(fightPropMpa.FIRE_ADD_HURT.value, 0.4)
+                    newFightProp.add(fightPropMap.FIRE_ADD_HURT.value, 0.4)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -70,9 +70,9 @@ async def getArlecchinoFightProp(ambrCharacterDetail: CharacterDetail, character
     for additionalAttackPoint in additionalAttackPoints:
         key = additionalAttackPoint["key"]
         pointKey, value = additionalAttackPoint["value"]
-        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
-            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
-        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        finalPoint = getattr(newFightProp, getattr(fightPropMap, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMap, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMap, pointKey).value)
         newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)

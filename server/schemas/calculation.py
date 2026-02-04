@@ -86,9 +86,13 @@ class damageResultSchema(BaseModel):
     burningDamage: float | None = None  # 연소
 
     # 달반응
-    lunarChargedDamage: float | None = None  # 달감전 기대값
-    lunarBloomDamage: float | None = None  # 달개화 기대값
-    lunarBloomDamageAdditional: float | None = None  # 달개화 추가 계수 기대값
+    lunarChargedDamage: float | None = None  # 달감전
+    lunarBloomDamage: float | None = None  # 달개화
+    lunarBloomDamageAdditional: float | None = None  # 달개화 추가 계수
+    lunarBloomDamageExtra: float | None = None  # 달개화 extra 데미지(라우마 Q)
+    lunarCrystallizeDamage: float | None = None  # 달결정
+    lunarCrystallizeDamageAdditional: float | None = None  # 달결정 추가 계수
+    lunarCrystallizeDamageExtra: float | None = None  # 달결정 extra 데미지(일루가 Q)
 
     # 확산
     fireSwirlDamage: float | None = None  # 불확산

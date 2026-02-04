@@ -214,6 +214,15 @@ class fightPropSchema(BaseModel):
     FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT: float = 0.0  # 달개화 기본 피증
     FIGHT_PROP_LUNARBLOOM_ADD_POINT: float = 0.0  # 달개화 계수 추가
     FIGHT_PROP_LUNARBLOOM_PROMOTION: float = 0.0  # 달개화 승격
+    FIGHT_PROP_LUNARBLOOM_EXTRA_DAMAGE: float = 0.0  # 달개화 extra 데미지(라우마 Q)
+
+    FIGHT_PROP_LUNARCRYSTALLIZE_CRITICAL: float = 0.0
+    FIGHT_PROP_LUNARCRYSTALLIZE_CRITICAL_HURT: float = 0.0
+    FIGHT_PROP_LUNARCRYSTALLIZE_ADD_HURT: float = 0.0  # 달결정
+    FIGHT_PROP_LUNARCRYSTALLIZE_BASE_ADD_HURT: float = 0.0  # 달결정 기본 피증
+    FIGHT_PROP_LUNARCRYSTALLIZE_ADD_POINT: float = 0.0  # 달결정 계수 추가
+    FIGHT_PROP_LUNARCRYSTALLIZE_PROMOTION: float = 0.0  # 달결정 승격
+    FIGHT_PROP_LUNARCRYSTALLIZE_EXTRA_DAMAGE: float = 0.0  # 달결정 extra 데미지(일루가 Q)
 
     # 최종데미지 곱연산
     FIGHT_PROP_FINAL_LUNARCHARGED_ADD_HURT: float = 0.0

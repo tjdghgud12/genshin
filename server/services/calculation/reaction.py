@@ -103,9 +103,31 @@ def getShatterDamage(level: int, elementMastery: float, shatterAddHurt: float, p
 
 
 # 달개화
-def getLunarBloomDamage(attackPoint: float, elementMastery: float, grassResMinus: float, lunarAddHurt: float, lunarBaseAddHurt: float, lunarPromotion: float):
+def getLunarBloomDamage(attackPoint: float, elementMastery: float, resMinus: float, lunarAddHurt: float, lunarBaseAddHurt: float, lunarPromotion: float, reaction: bool = False):
     # ((계수 * (원마보너스 + 달피증) * 달 개화 기본 피증) + 달 개화 계수 추가(라우마 버프)) * 승격 * 치명 * 내성
     masteryBonus = 6 * elementMastery / (elementMastery + 2000)
-    toleranceCoefficient = getToleranceCoefficient(decrease=grassResMinus)
+    toleranceCoefficient = getToleranceCoefficient(decrease=resMinus)
 
     return (attackPoint * (1 + masteryBonus + lunarAddHurt) * (1 + lunarBaseAddHurt)) * toleranceCoefficient * lunarPromotion
+
+
+# 달감전
+def getLunarChargedDamage(attackPoint: float, elementMastery: float, resMinus: float, lunarAddHurt: float, lunarBaseAddHurt: float, lunarPromotion: float, reaction: bool = False):
+    # ((계수 * (원마보너스 + 달피증) * 달 감전 기본 피증)) * 승격 * 치명 * 내성
+    # reaction은 1.8 / directs는 3
+    masteryBonus = 6 * elementMastery / (elementMastery + 2000)
+    toleranceCoefficient = getToleranceCoefficient(decrease=resMinus)
+
+    return (1.8 if reaction else 3) * (attackPoint * (1 + masteryBonus + lunarAddHurt) * (1 + lunarBaseAddHurt)) * toleranceCoefficient * lunarPromotion
+
+
+# 달결정
+def getLunarCrystallizeDamage(
+    attackPoint: float, elementMastery: float, resMinus: float, lunarAddHurt: float, lunarBaseAddHurt: float, lunarPromotion: float, reaction: bool = False
+):
+    # ((계수 * (원마보너스 + 달피증) * 달 결정 기본 피증) + 달 결정 계수 추가(일루가 버프)) * 승격 * 치명 * 내성
+    # reaction은 0.96 / directs는 1.6
+    masteryBonus = 6 * elementMastery / (elementMastery + 2000)
+    toleranceCoefficient = getToleranceCoefficient(decrease=resMinus)
+
+    return (0.96 if reaction else 1.6) * (attackPoint * (1 + masteryBonus + lunarAddHurt) * (1 + lunarBaseAddHurt)) * toleranceCoefficient * lunarPromotion

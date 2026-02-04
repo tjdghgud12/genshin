@@ -1,5 +1,5 @@
 from services.character.commonData import CharacterFightPropReturnData, CharacterFightPropGetter, genCharacterBaseStat, getWeaponArtifactFightProp, getAfterWeaponArtifactFightProp
-from data.globalVariable import fightPropMpa
+from data.globalVariable import fightPropMap
 from schemas.calculation import requestCharacterInfoSchema
 from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 from ambr import CharacterDetail
@@ -22,9 +22,9 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                 case "「모두 사랑의 축배를 들렴!」":
                     if constellation.options[0].active:
                         description = "원소 전투 스킬 발동 시 일반공격, 강공격, 낙하공격이 hp최대치의 18%만큼 증가하는 물 원소 피해로 변경. 프뉴마 상태일 때 일반공격, 강공격, 낙하공격의 추락충격으로 주는 피해가 hp최대치의 25%만큼 증가"
-                        additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
-                        additionalAttackPoints.append({"key": fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
-                        additionalAttackPoints.append({"key": fightPropMpa.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
+                        additionalAttackPoints.append({"key": fightPropMap.NOMAL_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
+                        additionalAttackPoints.append({"key": fightPropMap.CHARGED_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
+                        additionalAttackPoints.append({"key": fightPropMap.FALLING_ATTACK_ATTACK_ADD_POINT.value, "value": ("HP", 0.43)})
                 case "「내 이름은 그 누구도 모르리라」":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "「난 알았노라, 그대의 이름은…!」":
@@ -65,10 +65,10 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     if firstConstellation.unlocked:
                         option.stack = min(option.stack + 150, 400)
                     if secondConstellation.unlocked:
-                        newFightProp.add(fightPropMpa.HP_PERCENT.value, 0.0035 * option.stack)
+                        newFightProp.add(fightPropMap.HP_PERCENT.value, 0.0035 * option.stack)
 
-                    newFightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[0] * option.stack)
-                    # newFightProp[fightPropMpa.ATTACK_ADD_HURT.value] += skillValue[1] * active.stack # 치유 보너스
+                    newFightProp.add(fightPropMap.ATTACK_ADD_HURT.value, skillValue[0] * option.stack)
+                    # newFightProp[fightPropMap.ATTACK_ADD_HURT.value] += skillValue[1] * active.stack # 치유 보너스
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -81,19 +81,19 @@ async def getFurinaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
         if passive.unlocked:
             match passive.name:
                 case "고독한 독백":
-                    baseHp = getattr(newFightProp, fightPropMpa.BASE_HP.value)
-                    hpPercent = getattr(newFightProp, fightPropMpa.HP_PERCENT.value)
-                    hp = getattr(newFightProp, fightPropMpa.HP.value)
+                    baseHp = getattr(newFightProp, fightPropMap.BASE_HP.value)
+                    hpPercent = getattr(newFightProp, fightPropMap.HP_PERCENT.value)
+                    hp = getattr(newFightProp, fightPropMap.HP.value)
                     totalHp = baseHp * (hpPercent + 1) + hp
-                    newFightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, min(totalHp / 1000 * 0.007, 0.28))
+                    newFightProp.add(fightPropMap.ELEMENT_SKILL_ATTACK_ADD_HURT.value, min(totalHp / 1000 * 0.007, 0.28))
 
     # 추가 계수 입력부
     for additionalAttackPoint in additionalAttackPoints:
         key = additionalAttackPoint["key"]
         pointKey, value = additionalAttackPoint["value"]
-        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
-            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
-        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        finalPoint = getattr(newFightProp, getattr(fightPropMap, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMap, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMap, pointKey).value)
         newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
@@ -134,18 +134,18 @@ async def getNeuvilletteFightProp(ambrCharacterDetail: CharacterDetail, characte
                     option = passive.options[0]
                     if option.active:
                         finalCharged = [0, 0.10, 1.25, 1.60]  # 최종 데미지 곱연산(강공격)
-                        newFightProp.add(fightPropMpa.FINAL_CHARGED_ATTACK_ATTACK_ADD_HURT.value, finalCharged[option.stack])
+                        newFightProp.add(fightPropMap.FINAL_CHARGED_ATTACK_ATTACK_ADD_HURT.value, finalCharged[option.stack])
 
                         firstConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "위대한 제정"))
                         secondConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "법의 계율"))
                         if firstConstellation.unlocked:
                             option.stack = min(option.stack + 1, 3)
                         if secondConstellation.unlocked:
-                            newFightProp.add(fightPropMpa.CHARGED_ATTACK_CRITICAL_HURT.value, 0.14 * option.stack)
+                            newFightProp.add(fightPropMap.CHARGED_ATTACK_CRITICAL_HURT.value, 0.14 * option.stack)
                 case "드높은 중재의 규율":
                     option = passive.options[0]
                     if option.active:
-                        newFightProp.add(fightPropMpa.WATER_ADD_HURT.value, (0.6 * option.stack) / 100)
+                        newFightProp.add(fightPropMap.WATER_ADD_HURT.value, (0.6 * option.stack) / 100)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -175,10 +175,10 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
             match constellation.name:
                 case "미각을 깨우는 식전 공연":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.CRITICAL_HURT.value, 0.6)
+                        newFightProp.add(fightPropMap.CRITICAL_HURT.value, 0.6)
                 case "예술의 경지에 이른 스튜":  # 스킬 계수 추가
                     description = "원소 전투 스킬 발동 시 피해를 에스코피에의 공격력의 240%만큼 증가시키는 즉석 요리 스텍 획득(신학 깃털 효과)"
-                    additionalAttackPoints.append({"key": fightPropMpa.ATTACK_ADD_POINT.value, "value": ("ATTACK", 2.4)})
+                    additionalAttackPoints.append({"key": fightPropMap.ATTACK_ADD_POINT.value, "value": ("ATTACK", 2.4)})
                 case "무지갯빛 티타임":  # 스킬 계수 추가
                     description = "현재 필드 위에 있는 파티 내 자신의 캐릭터의 일반공격, 강공격, 낙하공격이 명중 시 에스코피에의 공격력의 500%에 해당하는 얼음 원소 추가 피해"
                 case "캐러멜화의 마법":
@@ -198,8 +198,8 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
                     option = passive.options[0]
                     if option.active:
                         addIceWarterResMinus = [0, 0.05, 0.1, 0.15, 0.55]
-                        newFightProp.add(fightPropMpa.ICE_RES_MINUS.value, addIceWarterResMinus[option.stack])
-                        newFightProp.add(fightPropMpa.WATER_RES_MINUS.value, addIceWarterResMinus[option.stack])
+                        newFightProp.add(fightPropMap.ICE_RES_MINUS.value, addIceWarterResMinus[option.stack])
+                        newFightProp.add(fightPropMap.WATER_RES_MINUS.value, addIceWarterResMinus[option.stack])
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -209,9 +209,9 @@ async def getEscoffierFightProp(ambrCharacterDetail: CharacterDetail, characterI
     for additionalAttackPoint in additionalAttackPoints:
         key = additionalAttackPoint["key"]
         pointKey, value = additionalAttackPoint["value"]
-        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
-            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
-        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        finalPoint = getattr(newFightProp, getattr(fightPropMap, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMap, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMap, pointKey).value)
         newFightProp.add(key, finalPoint * value)
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
@@ -237,10 +237,10 @@ async def getClorindeFightProp(ambrCharacterDetail: CharacterDetail, characterIn
             match constellation.name:
                 case "「눈물, 생명, 사랑을 간직하며」":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, constellation.options[0].stack * 0.02)
+                        newFightProp.add(fightPropMap.ELEMENT_BURST_ATTACK_ADD_HURT.value, constellation.options[0].stack * 0.02)
                 case "「절대 희망을 버리지 않으리라」":  # 스킬 계수 추가(일반공격, 강공격, 원소폭발의 석양 베기로 주는 피해가 마비카 공격력의 60%/90%/120%만큼 증가)
-                    newFightProp.add(fightPropMpa.CRITICAL.value, 0.1)
-                    newFightProp.add(fightPropMpa.CRITICAL_HURT.value, 0.7)
+                    newFightProp.add(fightPropMap.CRITICAL.value, 0.1)
+                    newFightProp.add(fightPropMap.CRITICAL_HURT.value, 0.7)
                 case "「난 낮의 맹세를 명심하고」":
                     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "「언젠가 찾아올 여명을 믿겠다」":
@@ -263,11 +263,11 @@ async def getClorindeFightProp(ambrCharacterDetail: CharacterDetail, characterIn
                             option.stack = option.maxStack
                             value = 0.3
                             max = 2700
-                        additionalAttackPoints.append({"key": fightPropMpa.NOMAL_ATTACK_ELEC_ADD_POINT.value, "value": ("ATTACK", value * option.stack), "max": max})
-                        additionalAttackPoints.append({"key": fightPropMpa.ELEMENT_BURST_ELEC_ADD_POINT.value, "value": ("ATTACK", value * option.stack), "max": max})
+                        additionalAttackPoints.append({"key": fightPropMap.NOMAL_ATTACK_ELEC_ADD_POINT.value, "value": ("ATTACK", value * option.stack), "max": max})
+                        additionalAttackPoints.append({"key": fightPropMap.ELEMENT_BURST_ELEC_ADD_POINT.value, "value": ("ATTACK", value * option.stack), "max": max})
                 case "계약의 보상":
                     if passive.options[0].active:
-                        newFightProp.add(fightPropMpa.CRITICAL.value, 0.1 * passive.options[0].stack)
+                        newFightProp.add(fightPropMap.CRITICAL.value, 0.1 * passive.options[0].stack)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -278,9 +278,9 @@ async def getClorindeFightProp(ambrCharacterDetail: CharacterDetail, characterIn
         key = additionalAttackPoint["key"]
         pointKey, value = additionalAttackPoint["value"]
         max = additionalAttackPoint["max"]
-        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
-            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
-        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        finalPoint = getattr(newFightProp, getattr(fightPropMap, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMap, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMap, pointKey).value)
         newFightProp.add(key, min(finalPoint * value, max))
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)
@@ -306,17 +306,17 @@ async def getNaviaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
             match constellation.name:
                 case "통솔자의 승승장구":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL.value, constellation.options[0].stack * 0.12)
+                        newFightProp.add(fightPropMap.ELEMENT_SKILL_CRITICAL.value, constellation.options[0].stack * 0.12)
                 case "경영자의 넓은 시야":
                     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "맹세자의 엄격함":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.ROCK_RES_MINUS.value, 0.2)
+                        newFightProp.add(fightPropMap.ROCK_RES_MINUS.value, 0.2)
                 case "협상가의 단호함":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "보스의 기민한 수완":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL_HURT.value, constellation.options[0].stack * 0.45)
+                        newFightProp.add(fightPropMap.ELEMENT_SKILL_CRITICAL_HURT.value, constellation.options[0].stack * 0.45)
 
     # ----------------------- active -----------------------
     for active in characterInfo.activeSkill:
@@ -325,7 +325,7 @@ async def getNaviaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                 if active.options[0].active:
                     stack = active.options[0].stack - 3
                     if stack > 0:
-                        newFightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, active.options[0].stack * 0.15)
+                        newFightProp.add(fightPropMap.ELEMENT_BURST_ATTACK_ADD_HURT.value, active.options[0].stack * 0.15)
 
     # ----------------------- passive -----------------------
     for passive in characterInfo.passiveSkill:
@@ -333,13 +333,13 @@ async def getNaviaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
             match passive.name:
                 case "비밀 유통 경로":
                     if passive.options[0].active:
-                        newFightProp.add(fightPropMpa.NOMAL_ATTACK_ROCK_ADD_HURT.value, 0.40)
-                        newFightProp.add(fightPropMpa.CHARGED_ATTACK_ROCK_ADD_HURT.value, 0.40)
-                        newFightProp.add(fightPropMpa.FALLING_ATTACK_ROCK_ADD_HURT.value, 0.40)
+                        newFightProp.add(fightPropMap.NOMAL_ATTACK_ROCK_ADD_HURT.value, 0.40)
+                        newFightProp.add(fightPropMap.CHARGED_ATTACK_ROCK_ADD_HURT.value, 0.40)
+                        newFightProp.add(fightPropMap.FALLING_ATTACK_ROCK_ADD_HURT.value, 0.40)
 
                 case "상호 협력망":
                     if passive.options[0].active:
-                        newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, passive.options[0].stack * 0.20)
+                        newFightProp.add(fightPropMap.ATTACK_PERCENT.value, passive.options[0].stack * 0.20)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(
@@ -350,9 +350,9 @@ async def getNaviaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
         key = additionalAttackPoint["key"]
         pointKey, value = additionalAttackPoint["value"]
         max = additionalAttackPoint["max"]
-        finalPoint = getattr(newFightProp, getattr(fightPropMpa, f"BASE_{pointKey}").value) * (
-            1 + getattr(newFightProp, getattr(fightPropMpa, f"{pointKey}_PERCENT").value)
-        ) + getattr(newFightProp, getattr(fightPropMpa, pointKey).value)
+        finalPoint = getattr(newFightProp, getattr(fightPropMap, f"BASE_{pointKey}").value) * (
+            1 + getattr(newFightProp, getattr(fightPropMap, f"{pointKey}_PERCENT").value)
+        ) + getattr(newFightProp, getattr(fightPropMap, pointKey).value)
         newFightProp.add(key, min(finalPoint * value, max))
 
     return CharacterFightPropReturnData(fightProp=newFightProp, characterInfo=characterInfo)

@@ -1,8 +1,9 @@
 from ambr import AmbrAPI
 from itertools import chain
-from data.globalVariable import levelCoefficientMap
+from typing import Literal
 from services.ambrApi import getAmbrApi
 from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema, damageResultSchema, responseCalculationResult
+from data.globalVariable import levelCoefficientMap, fightPropMap
 from services.calculation.utils import getFinalProp, getToleranceCoefficient, getCriticalDamageInfo, baseFightPropKeyMap
 from services.calculation.reaction import (
     getVaporizeDamage,
@@ -19,6 +20,8 @@ from services.calculation.reaction import (
     getSpreadDamage,
     getShatterDamage,
     getLunarBloomDamage,
+    getLunarChargedDamage,
+    getLunarCrystallizeDamage,
 )
 from services.character import getFightProp
 from services.character.commonData import CharacterFightPropReturnData
@@ -42,6 +45,84 @@ from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 #   DMG(T)=RM×LM×(1+EM+RB)
 #   DMG(Tr)=DMG(T)*RES  -> 격변 반응은 내성이 존재. 각 원소 내성깍에 따라 연산 필요.
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 매우 중요 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+lunarReactionMap = {
+    "lunarBloom": {"reaction": getLunarBloomDamage, "resMinus": fightPropMap.GRASS_RES_MINUS.value},
+    "lunarCharged": {"reaction": getLunarChargedDamage, "resMinus": fightPropMap.ELEC_RES_MINUS.value},
+    "lunarCrystallize": {"reaction": getLunarCrystallizeDamage, "resMinus": fightPropMap.ROCK_RES_MINUS.value},
+}
+
+
+def getLunarDamage(
+    attackTypeKey: Literal["lunarBloom", "lunarCharged", "lunarCrystallize"],
+    fightProp: responseFightPropSchema,
+    critical: float,
+    criticalHurt: float,
+    finalAttackPoint: float,
+    reaction: bool = False,
+):
+    getLunarReaction = lunarReactionMap[attackTypeKey]["reaction"]
+    lunarAdditionalCriticalDamage = None
+    lunarExtraCriticalDamage = None
+    resMinus = getattr(fightProp, lunarReactionMap[attackTypeKey]["resMinus"], 0.0)
+    lunarType = attackTypeKey.upper()
+    lunarAdditionalPoint = getattr(fightProp, f"FIGHT_PROP_{lunarType}_ADD_POINT", 0.0)
+    lunarExtraDamage = getattr(fightProp, f"FIGHT_PROP_{lunarType}_EXTRA_DAMAGE", 0.0)
+    lunarBaseAddHurt = 1 + fightProp.FIGHT_PROP_LUNAR_BASE_ADD_HURT + getattr(fightProp, f"FIGHT_PROP_{lunarType}_BASE_ADD_HURT", 0.0)
+    lunarAddHurt = 1 + fightProp.FIGHT_PROP_LUNAR_ADD_HURT + getattr(fightProp, f"FIGHT_PROP_{lunarType}_ADD_HURT", 0.0)
+    lunarPromotion = 1 + fightProp.FIGHT_PROP_LUNAR_PROMOTION + getattr(fightProp, f"FIGHT_PROP_{lunarType}_PROMOTION", 0.0)
+    lunarCritical = critical + getattr(fightProp, "FIGHT_PROP_LUNAR_CRITICAL", 0.0) + getattr(fightProp, f"FIGHT_PROP_{lunarType}_CRITICAL", 0.0)
+    lunarCriticalHurt = criticalHurt + getattr(fightProp, "FIGHT_PROP_LUNAR_CRITICAL_HURT", 0.0) + getattr(fightProp, f"FIGHT_PROP_{lunarType}_CRITICAL_HURT", 0.0)
+
+    lunarDamage = getLunarReaction(
+        attackPoint=finalAttackPoint,
+        elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+        lunarBaseAddHurt=lunarBaseAddHurt,
+        lunarPromotion=lunarPromotion,
+        resMinus=resMinus,
+        lunarAddHurt=lunarAddHurt,
+        reaction=reaction,
+    )
+    lunarCriticalDamage = getCriticalDamageInfo(
+        damage=lunarDamage,
+        critical=lunarCritical,
+        criticalHurt=lunarCriticalHurt,
+    )
+    if lunarAdditionalPoint > 0:
+        lunarAdditionalDamage = getLunarReaction(
+            attackPoint=finalAttackPoint,
+            elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+            lunarBaseAddHurt=lunarBaseAddHurt,
+            lunarPromotion=lunarPromotion,
+            resMinus=resMinus,
+            lunarAddHurt=lunarAddHurt,
+            reaction=reaction,
+        )
+        lunarAdditionalCriticalDamage = getCriticalDamageInfo(
+            damage=lunarAdditionalDamage,
+            critical=lunarCritical,
+            criticalHurt=lunarCriticalHurt,
+        )
+    if lunarExtraDamage > 0:
+        # ex) 라우마 Q 스텍
+        # 라우마의 Q 스텍은 각종 피증 및 원마보너스가 적용되지 않음.
+        lunarExtraDamage = getLunarReaction(
+            attackPoint=lunarExtraDamage,
+            elementMastery=0,
+            lunarBaseAddHurt=0,
+            lunarPromotion=lunarPromotion,
+            resMinus=resMinus,
+            lunarAddHurt=0,
+            reaction=reaction,
+        )
+        lunarExtraCriticalDamage = getCriticalDamageInfo(
+            damage=lunarExtraDamage,
+            critical=lunarCritical,
+            criticalHurt=lunarCriticalHurt,
+        )
+
+    return lunarCriticalDamage, lunarAdditionalCriticalDamage, lunarExtraCriticalDamage
 
 
 async def damageCalculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema) -> responseCalculationResult:
@@ -154,48 +235,25 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                 finalDamageAddHurt = 1 + getattr(fightProp, f"FIGHT_PROP_FINAL_{attackTypeKey}_ATTACK_ADD_HURT", 0.0)  # 최종 피해 증가(곱연산, 피해증가 옵션 X)
 
                 # 직접 달 반응 연산
-                if attackType == "lunarBloom":
-                    # ((계수 * 달 개화 피증 * 달 개화 기본 피증) + 달 개화 계수 추가(라우마 버프)) * 승격 * 치명 * 내성
-                    lunarBloomAdditionalPoint = fightProp.FIGHT_PROP_LUNARBLOOM_ADD_POINT
-                    lunarBloomBaseAddHurt = 1 + fightProp.FIGHT_PROP_LUNARBLOOM_BASE_ADD_HURT + fightProp.FIGHT_PROP_LUNAR_BASE_ADD_HURT
-                    lunarBloomAddHurt = 1 + fightProp.FIGHT_PROP_LUNARBLOOM_ADD_HURT + fightProp.FIGHT_PROP_LUNAR_ADD_HURT
-                    lunarBloomPromotion = 1 + fightProp.FIGHT_PROP_LUNAR_PROMOTION + fightProp.FIGHT_PROP_LUNARBLOOM_PROMOTION
-                    lunarBloomDamage = getLunarBloomDamage(
-                        attackPoint=finalAttackPoint,
-                        elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
-                        lunarBaseAddHurt=lunarBloomBaseAddHurt,
-                        lunarPromotion=lunarBloomPromotion,
-                        grassResMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS,
-                        lunarAddHurt=lunarBloomAddHurt,
+                if attackType in ["lunarBloom", "lunarCharged", "lunarCrystallize"]:
+                    lunarCriticalDamage, lunarAdditionalCriticalDamage, lunarExtraCriticalDamage = getLunarDamage(
+                        attackTypeKey=attackType,
+                        fightProp=fightProp,
+                        critical=critical,
+                        criticalHurt=criticalHurt,
+                        finalAttackPoint=finalAttackPoint,
                     )
-                    lunarBloomCriticalDamage = getCriticalDamageInfo(
-                        damage=lunarBloomDamage,
-                        critical=critical + getattr(fightProp, "FIGHT_PROP_LUNARBLOOM_CRITICAL", 0.0),
-                        criticalHurt=criticalHurt + getattr(fightProp, "FIGHT_PROP_LUNARBLOOM_CRITICAL_HURT", 0.0) + getattr(fightProp, "FIGHT_PROP_LUNAR_CRITICAL_HURT", 0.0),
-                    )
-                    setattr(targetCritical, "lunarBloomDamage", lunarBloomCriticalDamage.criticalDamage)
-                    setattr(targetNonCritical, "lunarBloomDamage", lunarBloomCriticalDamage.nonCriticalDamage)
-                    setattr(targetExpected, "lunarBloomDamage", lunarBloomCriticalDamage.expectedDamage)
-
-                    if lunarBloomAdditionalPoint > 0:  # 추가 계수 영역
-                        # 라우마의 Q 스텍은 각종 피증 및 원마보너스가 적용되지 않음.
-                        # ex) 라우마 Q 스텍
-                        lunarBloomAdditionalDamages = getLunarBloomDamage(
-                            attackPoint=lunarBloomAdditionalPoint,
-                            elementMastery=0,
-                            lunarBaseAddHurt=0,
-                            lunarPromotion=lunarBloomPromotion,
-                            grassResMinus=fightProp.FIGHT_PROP_GRASS_RES_MINUS,
-                            lunarAddHurt=0,
-                        )
-                        lunarBloomAdditionalCriticalDamages = getCriticalDamageInfo(
-                            damage=lunarBloomAdditionalDamages,
-                            critical=critical,
-                            criticalHurt=criticalHurt,
-                        )
-                        setattr(targetNonCritical, "lunarBloomDamageAdditional", lunarBloomAdditionalCriticalDamages.nonCriticalDamage)
-                        setattr(targetCritical, "lunarBloomDamageAdditional", lunarBloomAdditionalCriticalDamages.criticalDamage)
-                        setattr(targetExpected, "lunarBloomDamageAdditional", lunarBloomAdditionalCriticalDamages.expectedDamage)
+                    setattr(targetCritical, f"{attackType}Damage", lunarCriticalDamage.criticalDamage)
+                    setattr(targetNonCritical, f"{attackType}Damage", lunarCriticalDamage.nonCriticalDamage)
+                    setattr(targetExpected, f"{attackType}Damage", lunarCriticalDamage.expectedDamage)
+                    if lunarAdditionalCriticalDamage:
+                        setattr(targetNonCritical, f"{attackType}DamageAdditional", lunarAdditionalCriticalDamage.nonCriticalDamage)
+                        setattr(targetCritical, f"{attackType}DamageAdditional", lunarAdditionalCriticalDamage.criticalDamage)
+                        setattr(targetExpected, f"{attackType}DamageAdditional", lunarAdditionalCriticalDamage.expectedDamage)
+                    if lunarExtraCriticalDamage:
+                        setattr(targetNonCritical, f"{attackType}DamageExtra", lunarExtraCriticalDamage.nonCriticalDamage)
+                        setattr(targetCritical, f"{attackType}DamageExtra", lunarExtraCriticalDamage.criticalDamage)
+                        setattr(targetExpected, f"{attackType}DamageExtra", lunarExtraCriticalDamage.expectedDamage)
 
                     continue
 
@@ -358,5 +416,35 @@ async def damageCalculation(characterInfo: requestCharacterInfoSchema, additiona
                             setattr(targetExpected, "waterSwirlDamage", swirlDamages.water)
                             setattr(targetExpected, "iceSwirlDamage", swirlDamages.ice)
                             setattr(targetExpected, "elecSwirlDamage", swirlDamages.elec)
+                        # 반응 달반응 연산(달감전, 달결정)
+                        # case "달감전":
+                        #     lunarChargedDamages = getLunarChargedDamage(
+                        #         attackPoint=damage,
+                        #         elementMastery=fightProp.FIGHT_PROP_ELEMENT_MASTERY,
+                        #         elecResMinus=fightProp.FIGHT_PROP_ELEC_RES_MINUS,
+                        #         lunarAddHurt=fightProp.FIGHT_PROP_LUNAR_ADD_HURT,
+                        #         lunarBaseAddHurt=fightProp.FIGHT_PROP_LUNAR_BASE_ADD_HURT,
+                        #         lunarPromotion=fightProp.FIGHT_PROP_LUNAR_PROMOTION,
+                        #     )
+                        #     setattr(target, "lunarChargedDamage", lunarChargedDamages)
+                        case "달결정":
+                            lunarCriticalDamage, lunarAdditionalCriticalDamage, lunarExtraCriticalDamage = getLunarDamage(
+                                attackTypeKey="lunarCrystallize",
+                                fightProp=fightProp,
+                                critical=critical,
+                                criticalHurt=criticalHurt,
+                                finalAttackPoint=levelCoefficientMap[characterInfo.level],
+                            )
+                            setattr(targetExpected, "lunarCrystallizeDamage", lunarCriticalDamage.expectedDamage)
+                            setattr(targetCritical, "lunarCrystallizeDamage", lunarCriticalDamage.criticalDamage)
+                            setattr(targetNonCritical, "lunarCrystallizeDamage", lunarCriticalDamage.nonCriticalDamage)
+                            if lunarAdditionalCriticalDamage:
+                                setattr(targetExpected, "lunarCrystallizeDamageAdditional", lunarAdditionalCriticalDamage.expectedDamage)
+                                setattr(targetCritical, "lunarCrystallizeDamageAdditional", lunarAdditionalCriticalDamage.criticalDamage)
+                                setattr(targetNonCritical, "lunarCrystallizeDamageAdditional", lunarAdditionalCriticalDamage.nonCriticalDamage)
+                            if lunarExtraCriticalDamage:
+                                setattr(targetExpected, "lunarCrystallizeExtraDamage", lunarExtraCriticalDamage.expectedDamage)
+                                setattr(targetCritical, "lunarCrystallizeExtraDamage", lunarExtraCriticalDamage.criticalDamage)
+                                setattr(targetNonCritical, "lunarCrystallizeExtraDamage", lunarExtraCriticalDamage.nonCriticalDamage)
 
     return responseCalculationResult(damage=damageResult, characterInfo=responseCalculationResult.responseCharacterInfo(**characterInfo.model_dump(), totalStat=fightProp))

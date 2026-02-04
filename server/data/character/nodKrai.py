@@ -237,7 +237,7 @@ info = {
                 additionalAttack=[
                     # additionalAttackSchema(name="보름달·달 감전", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(HP=1, element=["elec"])),
                     additionalAttackSchema(name="보름달·달 개화", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(HP=1, element=["grass"])),
-                    # additionalAttackSchema(name="보름달·달 결정", type="lunarBloom", baseFightProp=damageBaseFightPropSchema(HP=1, element=["rock"]))
+                    additionalAttackSchema(name="보름달·달 결정", type="lunarCrystallize", baseFightProp=damageBaseFightPropSchema(HP=1, element=["rock"])),
                 ],
             ),
             "향수에 잠긴 달": activeSkillSchema(

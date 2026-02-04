@@ -1,5 +1,5 @@
 from services.character.commonData import CharacterFightPropReturnData, CharacterFightPropGetter, genCharacterBaseStat, getWeaponArtifactFightProp, getAfterWeaponArtifactFightProp
-from data.globalVariable import fightPropMpa
+from data.globalVariable import fightPropMap
 from schemas.calculation import requestCharacterInfoSchema
 from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 from ambr import CharacterDetail
@@ -27,19 +27,19 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     # 연소, 개화, 만개, 발화의 치명타 발생
                     # 활성, 촉진, 발산 반응 시 방어력 감소만 적용
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.DEFENSE_MINUS.value, 0.3)
-                        newFightProp.add(fightPropMpa.BLOOM_CRITICAL.value, 0.2)
-                        newFightProp.add(fightPropMpa.BLOOM_CRITICAL_HURT.value, 1.0)
-                        newFightProp.add(fightPropMpa.HYPERBLOOM_CRITICAL.value, 0.2)
-                        newFightProp.add(fightPropMpa.HYPERBLOOM_CRITICAL_HURT.value, 1.0)
-                        newFightProp.add(fightPropMpa.BURGEON_CRITICAL.value, 0.2)
-                        newFightProp.add(fightPropMpa.BURGEON_CRITICAL_HURT.value, 1.0)
-                        newFightProp.add(fightPropMpa.BURNING_CRITICAL.value, 0.2)
-                        newFightProp.add(fightPropMpa.BURNING_CRITICAL_HURT.value, 1.0)
+                        newFightProp.add(fightPropMap.DEFENSE_MINUS.value, 0.3)
+                        newFightProp.add(fightPropMap.BLOOM_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMap.BLOOM_CRITICAL_HURT.value, 1.0)
+                        newFightProp.add(fightPropMap.HYPERBLOOM_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMap.HYPERBLOOM_CRITICAL_HURT.value, 1.0)
+                        newFightProp.add(fightPropMap.BURGEON_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMap.BURGEON_CRITICAL_HURT.value, 1.0)
+                        newFightProp.add(fightPropMap.BURNING_CRITICAL.value, 0.2)
+                        newFightProp.add(fightPropMap.BURNING_CRITICAL_HURT.value, 1.0)
 
                 case "추론으로 드러난 줄기":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, constellation.options[0].stack * 20 + 80)
+                        newFightProp.add(fightPropMap.ELEMENT_MASTERY.value, constellation.options[0].stack * 20 + 80)
                 case "감화된 성취의 싹":
                     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "깨달음을 주는 잎":
@@ -80,9 +80,9 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
                     target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화")
                     secondTarget = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화·업의 사면")
                     if target:
-                        target.add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[stack - 1])
+                        target.add(fightPropMap.ATTACK_ADD_HURT.value, skillValue[stack - 1])
                     if secondTarget:
-                        secondTarget.add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[stack - 1])
+                        secondTarget.add(fightPropMap.ATTACK_ADD_HURT.value, skillValue[stack - 1])
 
     # ----------------------- passive -----------------------
     for passive in characterInfo.passiveSkill:
@@ -90,18 +90,18 @@ async def getNahidaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo
             match passive.name:
                 case "정선으로 포용한 명론":
                     if passive.options[0].active:
-                        newFightProp.add(fightPropMpa.ELEMENT_MASTERY.value, min(getattr(newFightProp, fightPropMpa.ELEMENT_MASTERY.value) * 0.25, 250))
+                        newFightProp.add(fightPropMap.ELEMENT_MASTERY.value, min(getattr(newFightProp, fightPropMap.ELEMENT_MASTERY.value) * 0.25, 250))
                 case "지혜로 깨우친 지론":
-                    val = min(getattr(newFightProp, fightPropMpa.ELEMENT_MASTERY.value) - 200, 800)
+                    val = min(getattr(newFightProp, fightPropMap.ELEMENT_MASTERY.value) - 200, 800)
                     if val > 0:
                         target = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화")
                         secondTarget = newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK.get("삼업의 정화·업의 사면")
                         if target:
-                            target.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
-                            target.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
+                            target.add(fightPropMap.CRITICAL.value, val * 0.03 / 100)
+                            target.add(fightPropMap.ATTACK_ADD_HURT.value, val * 0.1 / 100)
                         if secondTarget:
-                            secondTarget.add(fightPropMpa.CRITICAL.value, val * 0.03 / 100)
-                            secondTarget.add(fightPropMpa.ATTACK_ADD_HURT.value, val * 0.1 / 100)
+                            secondTarget.add(fightPropMap.CRITICAL.value, val * 0.03 / 100)
+                            secondTarget.add(fightPropMap.ATTACK_ADD_HURT.value, val * 0.1 / 100)
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(

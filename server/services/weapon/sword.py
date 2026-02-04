@@ -1,4 +1,4 @@
-from data.globalVariable import fightPropMpa
+from data.globalVariable import fightPropMap
 from schemas.fightProp import fightPropSchema
 from schemas.weapon import weaponDataSchema, WeaponDataReturnSchema
 from services.weapon.commonData import getWeaponBaseFightProp
@@ -14,13 +14,13 @@ async def getMistsplitterReforgedFightProp(
     for i, option in enumerate(options):
         if option.active:
             value = refinementValue[i] if i == 0 else refinementValue[i][int(option.stack) - 1]
-            fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, value)
-            fightProp.add(fightPropMpa.WATER_ADD_HURT.value, value)
-            fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, value)
-            fightProp.add(fightPropMpa.WIND_ADD_HURT.value, value)
-            fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, value)
-            fightProp.add(fightPropMpa.ICE_ADD_HURT.value, value)
-            fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.FIRE_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.WATER_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.ELEC_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.WIND_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.GRASS_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.ICE_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.ROCK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -35,7 +35,7 @@ async def getLionsRoarFightProp(
     for i, option in enumerate(options):
         if option.active:
             value = refinementValue[i]
-            fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.ATTACK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -56,7 +56,7 @@ async def getSplendorOfTranquilWatersFightProp(
     for i, option in enumerate(options):
         if option.active:
             value = refinementValue[i]
-            key = fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value if i == 0 else fightPropMpa.HP_PERCENT.value
+            key = fightPropMap.ELEMENT_SKILL_ATTACK_ADD_HURT.value if i == 0 else fightPropMap.HP_PERCENT.value
             fightProp.add(key, value * option.stack)
 
     return {"fightProp": fightProp, "afterAddProps": None}
@@ -80,10 +80,10 @@ async def getAzurelightFightProp(
             value = refinementValue[i]
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, value)
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, value)
                 case 1:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, value[0])
-                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, value[1])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, value[0])
+                    fightProp.add(fightPropMap.CRITICAL_HURT.value, value[1])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -105,9 +105,9 @@ async def getAbsolutionFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.CRITICAL_HURT.value, refinementValue[0])
                 case 1:
-                    fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, refinementValue[1] * option.maxStack)
+                    fightProp.add(fightPropMap.ATTACK_ADD_HURT.value, refinementValue[1] * option.maxStack)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -137,10 +137,10 @@ async def getWolfFangFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[0])
-                    fightProp.add(fightPropMpa.ELEMENT_BURST_ATTACK_ADD_HURT.value, refinementValue[0])
-                    fightProp.add(fightPropMpa.ELEMENT_SKILL_CRITICAL.value, refinementValue[1] * option.stack)
-                    fightProp.add(fightPropMpa.ELEMENT_BURST_CRITICAL.value, refinementValue[1] * option.stack)
+                    fightProp.add(fightPropMap.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.ELEMENT_BURST_ATTACK_ADD_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.ELEMENT_SKILL_CRITICAL.value, refinementValue[1] * option.stack)
+                    fightProp.add(fightPropMap.ELEMENT_BURST_CRITICAL.value, refinementValue[1] * option.stack)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -162,13 +162,13 @@ async def getLightofFoliarIncisionFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.CRITICAL.value, refinementValue[0])
+                    fightProp.add(fightPropMap.CRITICAL.value, refinementValue[0])
                 case 1:
                     value = characterFightProp.FIGHT_PROP_ELEMENT_MASTERY * refinementValue[0]
-                    fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, value)
-                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_POINT.value, value)
+                    fightProp.add(fightPropMap.NOMAL_ATTACK_ATTACK_ADD_POINT.value, value)
+                    fightProp.add(fightPropMap.ELEMENT_SKILL_ATTACK_ADD_POINT.value, value)
 
-    return {"fightProp": fightProp, "afterAddProps": [fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_POINT.value, fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_POINT.value]}
+    return {"fightProp": fightProp, "afterAddProps": [fightPropMap.NOMAL_ATTACK_ATTACK_ADD_POINT.value, fightPropMap.ELEMENT_SKILL_ATTACK_ADD_POINT.value]}
 
 
 async def getFavoniusSwordFightProp(
@@ -197,16 +197,16 @@ async def getPeakPatrolSongFightProp(
             match i:
                 case 0:
                     # 1. 방어력 8/10/12/14/16% 증가
-                    fightProp.add(fightPropMpa.DEFENSE_PERCENT.value, refinementValue[0] * option.stack)
+                    fightProp.add(fightPropMap.DEFENSE_PERCENT.value, refinementValue[0] * option.stack)
                     # 2. 모든 원소 피해 보너스 10/12.5/15/17.5/20% 증가
                     value = refinementValue[1] * option.stack
-                    fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, value)
-                    fightProp.add(fightPropMpa.WATER_ADD_HURT.value, value)
-                    fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, value)
-                    fightProp.add(fightPropMpa.WIND_ADD_HURT.value, value)
-                    fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, value)
-                    fightProp.add(fightPropMpa.ICE_ADD_HURT.value, value)
-                    fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, value)
+                    fightProp.add(fightPropMap.FIRE_ADD_HURT.value, value)
+                    fightProp.add(fightPropMap.WATER_ADD_HURT.value, value)
+                    fightProp.add(fightPropMap.ELEC_ADD_HURT.value, value)
+                    fightProp.add(fightPropMap.WIND_ADD_HURT.value, value)
+                    fightProp.add(fightPropMap.GRASS_ADD_HURT.value, value)
+                    fightProp.add(fightPropMap.ICE_ADD_HURT.value, value)
+                    fightProp.add(fightPropMap.ROCK_ADD_HURT.value, value)
                     # 3. 해당 효과 2스택 중첩 또는 2스택의 지속 시간 갱신 시, 장착 캐릭터의 방어력에 기반해 1000pt마다 파티 내 주변에 있는 모든 캐릭터의 모든 원소 피해 보너스가 8/10/12/14/16% 증가하고,
                     # 최대 25.6/32/38.4/44.8/51.2%까지 증가한다.
                     if option.stack == option.maxStack:
@@ -219,24 +219,24 @@ async def getPeakPatrolSongFightProp(
 
                         if additionalElementHurt > refinementValue[3]:
                             additionalElementHurt = refinementValue[3]
-                        fightProp.add(fightPropMpa.FIRE_ADD_HURT.value, additionalElementHurt)
-                        fightProp.add(fightPropMpa.WATER_ADD_HURT.value, additionalElementHurt)
-                        fightProp.add(fightPropMpa.ELEC_ADD_HURT.value, additionalElementHurt)
-                        fightProp.add(fightPropMpa.WIND_ADD_HURT.value, additionalElementHurt)
-                        fightProp.add(fightPropMpa.GRASS_ADD_HURT.value, additionalElementHurt)
-                        fightProp.add(fightPropMpa.ICE_ADD_HURT.value, additionalElementHurt)
-                        fightProp.add(fightPropMpa.ROCK_ADD_HURT.value, additionalElementHurt)
+                        fightProp.add(fightPropMap.FIRE_ADD_HURT.value, additionalElementHurt)
+                        fightProp.add(fightPropMap.WATER_ADD_HURT.value, additionalElementHurt)
+                        fightProp.add(fightPropMap.ELEC_ADD_HURT.value, additionalElementHurt)
+                        fightProp.add(fightPropMap.WIND_ADD_HURT.value, additionalElementHurt)
+                        fightProp.add(fightPropMap.GRASS_ADD_HURT.value, additionalElementHurt)
+                        fightProp.add(fightPropMap.ICE_ADD_HURT.value, additionalElementHurt)
+                        fightProp.add(fightPropMap.ROCK_ADD_HURT.value, additionalElementHurt)
 
     return {
         "fightProp": fightProp,
         "afterAddProps": [
-            fightPropMpa.FIRE_ADD_HURT.value,
-            fightPropMpa.WATER_ADD_HURT.value,
-            fightPropMpa.ELEC_ADD_HURT.value,
-            fightPropMpa.WIND_ADD_HURT.value,
-            fightPropMpa.GRASS_ADD_HURT.value,
-            fightPropMpa.ICE_ADD_HURT.value,
-            fightPropMpa.ROCK_ADD_HURT.value,
+            fightPropMap.FIRE_ADD_HURT.value,
+            fightPropMap.WATER_ADD_HURT.value,
+            fightPropMap.ELEC_ADD_HURT.value,
+            fightPropMap.WIND_ADD_HURT.value,
+            fightPropMap.GRASS_ADD_HURT.value,
+            fightPropMap.ICE_ADD_HURT.value,
+            fightPropMap.ROCK_ADD_HURT.value,
         ],
     }
 
@@ -252,8 +252,8 @@ async def getTheBlackSwordFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.NOMAL_ATTACK_CRITICAL.value, refinementValue)
-                    fightProp.add(fightPropMpa.CHARGED_ATTACK_CRITICAL.value, refinementValue)
+                    fightProp.add(fightPropMap.NOMAL_ATTACK_CRITICAL.value, refinementValue)
+                    fightProp.add(fightPropMap.CHARGED_ATTACK_CRITICAL.value, refinementValue)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 

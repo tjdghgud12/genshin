@@ -1,5 +1,5 @@
 from services.character.commonData import CharacterFightPropReturnData, CharacterFightPropGetter, genCharacterBaseStat, getWeaponArtifactFightProp, getAfterWeaponArtifactFightProp
-from data.globalVariable import fightPropMpa
+from data.globalVariable import fightPropMap
 from schemas.calculation import requestCharacterInfoSchema
 from schemas.fightProp import fightPropSchema, additionalAttackFightPropSchema
 from ambr import CharacterDetail
@@ -25,7 +25,7 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
             match constellation.name:
                 case "심연":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, 0.7)
+                        newFightProp.add(fightPropMap.ATTACK_PERCENT.value, 0.7)
                 case "악연":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "소망":
@@ -62,7 +62,7 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                     skillValue = activeSkillLevelMap[active.name][active.level + addLevel - 1]
                     if secondConstellation.unlocked:
                         description = "뱀의 계략 pt에 따라 원폭 계수 추가"
-                    newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["일곱빛 섬광(일반공격)"].add(fightPropMpa.ATTACK_ADD_HURT.value, skillValue[option.stack])
+                    newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["일곱빛 섬광(일반공격)"].add(fightPropMap.ATTACK_ADD_HURT.value, skillValue[option.stack])
 
     # ----------------------- passive -----------------------
     # 이치 너머의 이치는 원소전투스킬과 원소폭발의 계수 추가. 계수 추가는 미개발 상태
@@ -74,14 +74,14 @@ async def getSkirkFightProp(ambrCharacterDetail: CharacterDetail, characterInfo:
                         normal = [0, 1.1, 1.2, 1.7]
                         burst = [0, 1.05, 1.15, 1.6]
                         newFightProp.FIGHT_PROP_ADDITIONAL_ATTACK["일곱빛 섬광(일반공격)"].add(
-                            fightPropMpa.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack]
+                            fightPropMap.FINAL_NOMAL_ATTACK_ATTACK_ADD_HURT.value, normal[passive.options[0].stack]
                         )
-                        newFightProp.add(fightPropMpa.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, burst[passive.options[0].stack])
+                        newFightProp.add(fightPropMap.FINAL_ELEMENT_BURST_ATTACK_ADD_HURT.value, burst[passive.options[0].stack])
 
                         fourthConstellation = next((constellation for constellation in characterInfo.constellations if constellation.name == "멸류"))
                         if fourthConstellation.unlocked:
                             addAttackPercent = [0, 0.1, 0.2, 0.4]
-                            newFightProp.add(fightPropMpa.ATTACK_PERCENT.value, addAttackPercent[passive.options[0].stack])
+                            newFightProp.add(fightPropMap.ATTACK_PERCENT.value, addAttackPercent[passive.options[0].stack])
 
     # ----------------------- 추후 연산 진행부 -----------------------
     newFightProp = await getAfterWeaponArtifactFightProp(

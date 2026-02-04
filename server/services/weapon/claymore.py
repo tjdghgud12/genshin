@@ -1,4 +1,4 @@
-from data.globalVariable import fightPropMpa
+from data.globalVariable import fightPropMap
 from schemas.fightProp import fightPropSchema
 from schemas.weapon import weaponDataSchema, WeaponDataReturnSchema
 from services.weapon.commonData import getWeaponBaseFightProp
@@ -21,11 +21,11 @@ async def getAThousandBlazingSunsFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, refinementValue[0])
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1])
+                    fightProp.add(fightPropMap.CRITICAL_HURT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[1])
                 case 1:
-                    fightProp.add(fightPropMpa.CRITICAL_HURT.value, refinementValue[0] * 0.75)
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1] * 0.75)
+                    fightProp.add(fightPropMap.CRITICAL_HURT.value, refinementValue[0] * 0.75)
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[1] * 0.75)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -41,9 +41,9 @@ async def getTheUnforgedFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue * option.stack)
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue * option.stack)
                 case 1:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue * options[0].stack)
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue * options[0].stack)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -65,9 +65,9 @@ async def getSongOfBrokenPinesFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[0])
                 case 1:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[1])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -89,9 +89,9 @@ async def getWolfsGravestoneFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[0])
                 case 1:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[1])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[1])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -113,9 +113,9 @@ async def getVerdictFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[0])
                 case 1:
-                    fightProp.add(fightPropMpa.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[1] * option.stack)
+                    fightProp.add(fightPropMap.ELEMENT_SKILL_ATTACK_ADD_HURT.value, refinementValue[1] * option.stack)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 

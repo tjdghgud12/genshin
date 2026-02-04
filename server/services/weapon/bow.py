@@ -1,4 +1,4 @@
-from data.globalVariable import fightPropMpa
+from data.globalVariable import fightPropMap
 from schemas.fightProp import fightPropSchema
 from schemas.weapon import weaponDataSchema, WeaponDataReturnSchema
 from services.weapon.commonData import getWeaponBaseFightProp
@@ -14,8 +14,8 @@ async def getAmosBowFightProp(
     for i, option in enumerate(options):
         if option.active:
             value = refinementValue[i] if i == 0 else refinementValue[i] * option.stack
-            fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_HURT.value, value)
-            fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.NOMAL_ATTACK_ATTACK_ADD_HURT.value, value)
+            fightProp.add(fightPropMap.CHARGED_ATTACK_ATTACK_ADD_HURT.value, value)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -31,9 +31,9 @@ async def getRustFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.NOMAL_ATTACK_ATTACK_ADD_HURT.value, refinementValue)
+                    fightProp.add(fightPropMap.NOMAL_ATTACK_ATTACK_ADD_HURT.value, refinementValue)
                 case 1:
-                    fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, -0.1)
+                    fightProp.add(fightPropMap.CHARGED_ATTACK_ATTACK_ADD_HURT.value, -0.1)
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -55,9 +55,9 @@ async def getThunderingPulseFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.ATTACK_PERCENT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.ATTACK_PERCENT.value, refinementValue[0])
                 case 1:
-                    fightProp.add(fightPropMpa.CHARGED_ATTACK_ATTACK_ADD_HURT.value, refinementValue[1][option.stack])
+                    fightProp.add(fightPropMap.CHARGED_ATTACK_ATTACK_ADD_HURT.value, refinementValue[1][option.stack])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
@@ -87,9 +87,9 @@ async def getAquaSimulacraFightProp(
         if option.active:
             match i:
                 case 0:
-                    fightProp.add(fightPropMpa.HP_PERCENT.value, refinementValue[0])
+                    fightProp.add(fightPropMap.HP_PERCENT.value, refinementValue[0])
                 case 1:
-                    fightProp.add(fightPropMpa.ATTACK_ADD_HURT.value, refinementValue[1])
+                    fightProp.add(fightPropMap.ATTACK_ADD_HURT.value, refinementValue[1])
 
     return {"fightProp": fightProp, "afterAddProps": None}
 
