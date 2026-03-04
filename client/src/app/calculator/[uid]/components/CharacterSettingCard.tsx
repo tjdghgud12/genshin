@@ -58,6 +58,24 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
     Grass: { label: "풀", key: "FIGHT_PROP_GRASS_ADD_HURT" },
   };
 
+  const overviewFightProp = [
+    { label: "체력", value: info.totalStat.FIGHT_PROP_HP_FINAL },
+    { label: "공격력", value: info.totalStat.FIGHT_PROP_ATTACK_FINAL },
+    { label: "방어력", value: info.totalStat.FIGHT_PROP_DEFENSE_FINAL },
+    { label: "원소마스터리", value: info.totalStat.FIGHT_PROP_ELEMENT_MASTERY },
+    { label: "원소충전효율(%)", value: info.totalStat.FIGHT_PROP_CHARGE_EFFICIENCY },
+    { label: "치명타 확률(%)", value: info.totalStat.FIGHT_PROP_CRITICAL },
+    { label: "치명타 피해량(%)", value: info.totalStat.FIGHT_PROP_CRITICAL_HURT },
+    { label: "물리 피해증가(%)", value: info.totalStat.FIGHT_PROP_PHYSICAL_ADD_HURT },
+    {
+      label: `${elementAddHurtKey[element].label} 원소 피해증가(%)`,
+      value: info.totalStat[elementAddHurtKey[element].key],
+    },
+    { label: "피해증가(%)", value: info.totalStat.FIGHT_PROP_ATTACK_ADD_HURT },
+  ];
+
+  if (character.characterInfo.moonsign) overviewFightProp.push({ label: "달빛 반응 피해 증가(%)", value: info.totalStat.FIGHT_PROP_LUNAR_ADD_HURT });
+
   const form = useForm<z.infer<typeof calculatorFormSchema>>({
     resolver: zodResolver(calculatorFormSchema),
     defaultValues: {
@@ -212,21 +230,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                     <div className="flex-1 flex flex-col">
                       <div className="h-[20%]" />
                       <div className="flex-1 w-[90%] grid grid-cols-[1fr_auto] gap-y-[clamp(0.8rem,0.9vw,1.25rem)] gap-x-10 bg-gray-700/10 rounded-2xl p-8 mx-auto drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">
-                        {[
-                          { label: "체력", value: info.totalStat.FIGHT_PROP_HP_FINAL },
-                          { label: "공격력", value: info.totalStat.FIGHT_PROP_ATTACK_FINAL },
-                          { label: "방어력", value: info.totalStat.FIGHT_PROP_DEFENSE_FINAL },
-                          { label: "원소마스터리", value: info.totalStat.FIGHT_PROP_ELEMENT_MASTERY },
-                          { label: "원소충전효율(%)", value: info.totalStat.FIGHT_PROP_CHARGE_EFFICIENCY },
-                          { label: "치명타 확률(%)", value: info.totalStat.FIGHT_PROP_CRITICAL },
-                          { label: "치명타 피해량(%)", value: info.totalStat.FIGHT_PROP_CRITICAL_HURT },
-                          { label: "물리 피해증가(%)", value: info.totalStat.FIGHT_PROP_PHYSICAL_ADD_HURT },
-                          {
-                            label: `${elementAddHurtKey[element].label} 원소 피해증가(%)`,
-                            value: info.totalStat[elementAddHurtKey[element].key],
-                          },
-                          { label: "피해증가(%)", value: info.totalStat.FIGHT_PROP_ATTACK_ADD_HURT },
-                        ].map(({ label, value }, i) => (
+                        {overviewFightProp.map(({ label, value }, i) => (
                           <React.Fragment key={i}>
                             <Label className="w-fit h-fit text-[clamp(1rem,1.5vw,1.5rem)] font-bold">{label}</Label>
                             <Label className="w-fit h-fit text-[clamp(1rem,1.5vw,1.5rem)] font-bold">
