@@ -6,7 +6,8 @@ import DamageResultCard from "@/app/calculator/[uid]/components/DamageResultCard
 import WeaponSettingCard from "@/app/calculator/[uid]/components/WeaponSettingCard";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -24,7 +25,7 @@ import { motion } from "framer-motion";
 import { Calculator } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -61,7 +62,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
     resolver: zodResolver(calculatorFormSchema),
     defaultValues: {
       data: parseCharacterInfo(character),
-      additionalFightProp: Object.fromEntries(Object.keys(fightPropLabels).map((key) => [key, 0])),
+      additionalFightProp: [],
     },
   });
 
@@ -86,9 +87,11 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
 
   const onSubmit = (value: z.infer<typeof calculatorFormSchema>): void => {
     const raw = character.characterInfo;
-    const additionalFightProp = Object.fromEntries(
-      Object.entries(value.additionalFightProp).map(([key, value]) => [key, fightPropLabels[key].includes("%") ? Number(value) / 100 : value]),
-    );
+    const additionalFightProp = Object.fromEntries(Object.keys(fightPropLabels).map((key) => [key, 0]));
+    value.additionalFightProp.forEach((item) => {
+      additionalFightProp[item.key] = fightPropLabels[item.key].includes("%") ? Number(item.value) / 100 : Number(item.value);
+    });
+
     const characterInfo = deepMergeAddOnly(value.data, raw);
 
     characterInfo.artifact.parts = characterInfo.artifact.parts.map((part) => {
@@ -121,7 +124,8 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
     <Tabs className="flex-row gap-0" orientation="vertical" defaultValue={"overView"} onValueChange={(val) => setInfoTab(val)}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className={`w-full flex overflow-hidden`}>
-          <AdditionalFightProp form={form} />
+          <Controller control={form.control} name={`additionalFightProp`} render={({ field }) => <AdditionalFightProp values={field.value} onChange={field.onChange} />} />
+
           <motion.button
             className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-gray-700 flex items-center justify-center text-white shadow-xl overflow-hidden z-50 group hover:gap-3"
             whileHover={{ width: 250 }}
@@ -156,57 +160,52 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                       <div className="w-full flex gap-2">
                         <Label className="text-5xl font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">{info.name}</Label>
                         {info.moonsign && (
-                          <FormField
+                          <Controller
                             control={form.control}
                             name={`data.moonsign`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <motion.button
-                                    className={`w-15 h-15 relative border-0 rounded-full ${field.value === "보름" ? "bg-radial from-white from-50% to-${element} to-75%" : ""}`}
-                                    type="button"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={{ duration: 0.1 }}
-                                    onClick={() => field.onChange(field.value === "초승" ? "보름" : "초승")}
-                                  >
-                                    <Image
-                                      src={"/img/Song_of_the_Welkin_Moon_Chapter.webp"}
-                                      className={`opacity-80 object-cover object-center`}
-                                      alt=""
-                                      fill
-                                      priority
-                                      sizes="(max-width: 1200px) 7vw, 35vw"
-                                    />
-                                  </motion.button>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
+                            render={({ field, fieldState }) => (
+                              <Field orientation="horizontal" className="w-fit" data-invalid={fieldState.invalid}>
+                                <motion.button
+                                  className={`size-15 relative border-0 rounded-full ${field.value === "보름" ? "bg-radial from-white from-50% to-${element} to-75%" : ""}`}
+                                  type="button"
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  transition={{ duration: 0.1 }}
+                                  onClick={() => field.onChange(field.value === "초승" ? "보름" : "초승")}
+                                >
+                                  <Image
+                                    src={"/img/Song_of_the_Welkin_Moon_Chapter.webp"}
+                                    className={`opacity-80 object-cover object-center`}
+                                    alt=""
+                                    fill
+                                    priority
+                                    sizes="(max-width: 1200px) 7vw, 35vw"
+                                  />
+                                </motion.button>
+                              </Field>
                             )}
                           />
                         )}
                       </div>
-                      <FormField
+
+                      <Controller
                         control={form.control}
                         name={`data.level`}
-                        render={({ field }) => (
-                          <FormItem className="w-fit h-fit mb-auto justify-start flex-1 drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">
+                        render={({ field, fieldState }) => (
+                          <Field className="w-fit h-fit mb-auto justify-start flex-1 drop-shadow-[0_1px_3px_rgba(0,0,0,1)]" data-invalid={fieldState.invalid}>
                             <div className="flex pt-[10%] mb-auto">
-                              <FormLabel className="w-fit h-fit text-3xl font-bold mr-3">Lv: </FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="h-fit border-b-3 border-t-0 border-x-0 rounded-none text-3xl! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
-                                  value={field.value}
-                                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(inputNumberWithSpace(e.target.value))}
-                                  type="number"
-                                  min={1}
-                                  max={90}
-                                  placeholder="Lv"
-                                />
-                              </FormControl>
+                              <FieldLabel className="w-fit h-fit text-3xl font-bold mr-3">Lv:</FieldLabel>
+                              <Input
+                                className="h-fit border-b-3 border-t-0 border-x-0 rounded-none text-3xl! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+                                value={field.value}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(inputNumberWithSpace(e.target.value))}
+                                type="number"
+                                min={1}
+                                max={90}
+                                placeholder="Lv"
+                              />
                             </div>
-                            <FormMessage />
-                          </FormItem>
+                          </Field>
                         )}
                       />
                     </div>
@@ -291,98 +290,96 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                             key={tabValue}
                             value={tabValue}
                           >
-                            <FormField
+                            <Controller
                               control={form.control}
                               name={`data.${key as "passiveSkill" | "activeSkill" | "constellations"}.${j}`}
-                              render={({ field }) => (
-                                <FormItem className="w-full flex flex-col">
-                                  <FormControl>
-                                    <div className="w-full h-full p-3">
-                                      <div className="w-full flex gap-1">
-                                        <h1 className="text-2xl font-bold">{dataInfo.name}</h1>
-                                        {"unlocked" in field.value && (
-                                          <>
-                                            <p className="text-xl font-bold my-auto ml-2">해금</p>
-                                            <Switch
-                                              className="w-[50px] h-[25px] my-auto"
-                                              thumbClassName="size-[18px] data-[state=checked]:translate-x-[calc(50px-(100%+4px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
-                                              checked={field.value.unlocked}
-                                              onCheckedChange={(value) => field.onChange({ ...field.value, unlocked: value })}
-                                            />
-                                          </>
-                                        )}
-
-                                        {"level" in field.value && (
-                                          <>
-                                            <p className="text-2xl font-bold ml-2">Lv:</p>
-                                            <Input
-                                              className="w-auto !text-lg border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
-                                              placeholder="Lv"
-                                              type="number"
-                                              value={field.value.level}
-                                              max={10}
-                                              min={0}
-                                              onChange={(e) => {
-                                                const value = inputNumberWithSpace(e.target.value);
-                                                field.onChange({ ...field.value, level: Number(value) > 10 ? 10 : value });
-                                              }}
-                                            />
-                                          </>
-                                        )}
-                                      </div>
-                                      <Accordion className="w-full mb-3" type="single" collapsible defaultValue="description">
-                                        <AccordionItem className="h-auto" value="description">
-                                          <AccordionTrigger className="font-bold">Description</AccordionTrigger>
-                                          <AccordionContent className="flex flex-col gap-4 text-base whitespace-pre-wrap">{dataInfo.description}</AccordionContent>
-                                        </AccordionItem>
-                                      </Accordion>
-
-                                      {field.value.options.length ? (
+                              render={({ field, fieldState }) => (
+                                <Field className="w-full flex flex-col" data-invalid={fieldState.invalid}>
+                                  <div className="w-full h-full p-3">
+                                    <div className="w-full flex gap-1">
+                                      <h1 className="text-2xl font-bold">{dataInfo.name}</h1>
+                                      {"unlocked" in field.value && (
                                         <>
-                                          <Label className="text-2xl font-bold mb-1">옵션</Label>
-                                          <div className="w-full flex gap-7">
-                                            {field.value.options.map((option, i) => {
-                                              const optionInfo = dataInfo.options[i];
-                                              return (
-                                                <div key={`${tabValue}-option-${i}`} className="flex">
-                                                  <p className="text-xl mr-2 my-auto">{optionInfo.label}:</p>
-                                                  {optionInfo.type === "toggle" && (
-                                                    <Switch
-                                                      className="w-[50px] h-[22px] my-auto"
-                                                      thumbClassName="data-[state=checked]:translate-x-[calc(50px-(100%+4px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
-                                                      checked={option.active}
-                                                      onCheckedChange={(value) => {
-                                                        field.value.options[i].active = value;
-                                                        field.onChange(field.value);
-                                                      }}
-                                                    />
-                                                  )}
-                                                  {optionInfo.type === "stack" && (
-                                                    <Input
-                                                      className="w-auto !text-lg border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
-                                                      placeholder="Lv"
-                                                      type="number"
-                                                      value={field.value.options[i].stack}
-                                                      max={optionInfo.maxStack}
-                                                      min={0}
-                                                      onChange={(e) => {
-                                                        const value = Number(inputNumberWithSpace(e.target.value));
-                                                        field.value.options[i].stack = value > optionInfo.maxStack ? optionInfo.maxStack : value;
-                                                        field.onChange(field.value);
-                                                      }}
-                                                    />
-                                                  )}
-                                                </div>
-                                              );
-                                            })}
-                                          </div>
+                                          <p className="text-xl font-bold my-auto ml-2">해금</p>
+                                          <Switch
+                                            className="w-[50px] h-[25px] my-auto"
+                                            thumbClassName="size-[18px] data-[state=checked]:translate-x-[calc(50px-(100%+4px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
+                                            checked={field.value.unlocked}
+                                            onCheckedChange={(value) => field.onChange({ ...field.value, unlocked: value })}
+                                          />
                                         </>
-                                      ) : (
-                                        <></>
+                                      )}
+
+                                      {"level" in field.value && (
+                                        <>
+                                          <p className="text-2xl font-bold ml-2">Lv:</p>
+                                          <Input
+                                            className="w-auto text-lg! border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
+                                            placeholder="Lv"
+                                            type="number"
+                                            value={field.value.level}
+                                            max={10}
+                                            min={0}
+                                            onChange={(e) => {
+                                              const value = inputNumberWithSpace(e.target.value);
+                                              field.onChange({ ...field.value, level: Number(value) > 10 ? 10 : value });
+                                            }}
+                                          />
+                                        </>
                                       )}
                                     </div>
-                                  </FormControl>
-                                </FormItem>
+                                    <Accordion className="w-full mb-3" type="single" collapsible defaultValue="description">
+                                      <AccordionItem className="h-auto" value="description">
+                                        <AccordionTrigger className="font-bold">Description</AccordionTrigger>
+                                        <AccordionContent className="flex flex-col gap-4 text-base whitespace-pre-wrap">{dataInfo.description}</AccordionContent>
+                                      </AccordionItem>
+                                    </Accordion>
+
+                                    {field.value.options.length ? (
+                                      <>
+                                        <Label className="text-2xl font-bold mb-1">옵션</Label>
+                                        <div className="w-full flex gap-7">
+                                          {field.value.options.map((option, i) => {
+                                            const optionInfo = dataInfo.options[i];
+                                            return (
+                                              <div key={`${tabValue}-option-${i}`} className="flex">
+                                                <p className="text-xl mr-2 my-auto">{optionInfo.label}:</p>
+                                                {optionInfo.type === "toggle" && (
+                                                  <Switch
+                                                    className="w-[50px] h-[22px] my-auto"
+                                                    thumbClassName="data-[state=checked]:translate-x-[calc(50px-(100%+4px))] data-[state=unchecked]:translate-x-0" // translate-x의 값은 내부 원 크기 +2(즉, 기본 기준 18px)만큼 -연산 후 들어가야함
+                                                    checked={option.active}
+                                                    onCheckedChange={(value) => {
+                                                      field.value.options[i].active = value;
+                                                      field.onChange(field.value);
+                                                    }}
+                                                  />
+                                                )}
+                                                {optionInfo.type === "stack" && (
+                                                  <Input
+                                                    className="w-auto !text-lg border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
+                                                    placeholder="Lv"
+                                                    type="number"
+                                                    value={field.value.options[i].stack}
+                                                    max={optionInfo.maxStack}
+                                                    min={0}
+                                                    onChange={(e) => {
+                                                      const value = Number(inputNumberWithSpace(e.target.value));
+                                                      field.value.options[i].stack = value > optionInfo.maxStack ? optionInfo.maxStack : value;
+                                                      field.onChange(field.value);
+                                                    }}
+                                                  />
+                                                )}
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <></>
+                                    )}
+                                  </div>
+                                </Field>
                               )}
                             />
                           </TabsContent>
@@ -392,46 +389,43 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                   </Tabs>
 
                   {/* 무기 */}
-                  <FormField
+                  <Controller
                     control={form.control}
                     name={`data.weapon`}
-                    render={({ field }) => (
-                      <FormItem className="w-[30%] h-[90%] flex">
-                        <FormControl>
-                          <div className="h-full flex flex-col">
-                            <Label className="text-3xl font-bold text-gray-700 mb-2">무기</Label>
-                            <WeaponSettingCard
-                              weapon={field.value}
-                              onChange={(weapon) => {
-                                if (weapon) {
-                                  field.onChange({
-                                    ...weapon,
-                                    id: weapon.id,
-                                    name: weapon.name,
-                                    level: 90,
-                                    refinement: 1,
-                                    options: weapon.options.map((o) => ({ ...o, active: true, stack: o.maxStack, select: null })),
-                                  });
-                                }
-                              }}
-                              onLevelChange={(level) => {
-                                field.onChange({ ...field.value, level });
-                              }}
-                              onRefinementChange={(refinement) => {
-                                field.onChange({ ...field.value, refinement });
-                              }}
-                              onOptionsChange={field.value.options.map((option, i) => (val, key) => {
-                                if (typeof val !== "boolean" && Number(val) > option.maxStack) {
-                                  val = option.maxStack;
-                                }
-                                field.value.options[i] = { ...option, [key]: val };
-                                field.onChange(field.value);
-                              })}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                    render={({ field, fieldState }) => (
+                      <Field className="w-[30%] h-[90%] flex" data-invalid={fieldState.invalid}>
+                        <div className="w-full h-full flex flex-col">
+                          <Label className="text-3xl font-bold text-gray-700 mb-2">무기</Label>
+                          <WeaponSettingCard
+                            weapon={field.value}
+                            onChange={(weapon) => {
+                              if (weapon) {
+                                field.onChange({
+                                  ...weapon,
+                                  id: weapon.id,
+                                  name: weapon.name,
+                                  level: 90,
+                                  refinement: 1,
+                                  options: weapon.options.map((o) => ({ ...o, active: true, stack: o.maxStack, select: null })),
+                                });
+                              }
+                            }}
+                            onLevelChange={(level) => {
+                              field.onChange({ ...field.value, level });
+                            }}
+                            onRefinementChange={(refinement) => {
+                              field.onChange({ ...field.value, refinement });
+                            }}
+                            onOptionsChange={field.value.options.map((option, i) => (val, key) => {
+                              if (typeof val !== "boolean" && Number(val) > option.maxStack) {
+                                val = option.maxStack;
+                              }
+                              field.value.options[i] = { ...option, [key]: val };
+                              field.onChange(field.value);
+                            })}
+                          />
+                        </div>
+                      </Field>
                     )}
                   />
                 </CardContent>
@@ -446,11 +440,11 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                     <div className="w-full flex-1 grid gap-1 grid-cols-[repeat(auto-fit,minmax(230px,1fr))]">
                       {info.artifact.parts.map((artifact, i) => {
                         return (
-                          <FormField
+                          <Controller
                             key={`data.artifact.parts.${i}`}
                             control={form.control}
                             name={`data.artifact.parts.${i}`}
-                            render={({ field }) => {
+                            render={({ field, fieldState }) => {
                               const [mainKey, mainValue] = Object.entries(field.value.mainStat)[0];
                               const subOptions = field.value.subStat.map((o) => {
                                 const [key, val] = Object.entries(o)[0];
@@ -458,7 +452,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                               });
 
                               return (
-                                <FormItem>
+                                <Field data-invalid={fieldState.invalid}>
                                   <ArtifactPartCard
                                     key={`artifact-part-${i}`}
                                     className={`bg-gray-700`}
@@ -480,7 +474,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                                       field.onChange(field.value);
                                     })}
                                   />
-                                </FormItem>
+                                </Field>
                               );
                             }}
                           />
@@ -492,11 +486,11 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                   {/* 성유물 세트 옵션*/}
                   <div className="flex flex-col gap-2">
                     <Label className="text-3xl font-bold text-gray-700">성유물 세트</Label>
-                    <FormField
+                    <Controller
                       control={form.control}
                       name={`data.artifact.setInfo`}
-                      render={({ field }) => (
-                        <FormItem className="w-full flex gap-1">
+                      render={({ field, fieldState }) => (
+                        <Field className="w-full flex gap-1" data-invalid={fieldState.invalid}>
                           {field.value.map((set, i) => {
                             const parts = form.getValues(`data.artifact.parts`);
                             const rawInfo = artifactSets[set.name];
@@ -504,7 +498,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                             if (rawInfo) {
                               const options = rawInfo.options.map((o, j) => ({ ...o, ...field.value[i].options[j] }));
                               return (
-                                <FormControl key={`${set.name}-${i}`}>
+                                <FieldContent key={`${set.name}-${i}`}>
                                   <ArtifactSetOptionCard
                                     className={`w-[35%] bg-gray-700`}
                                     setInfo={{ ...rawInfo, ...set, options: options, numberOfParts: numberOfParts }}
@@ -514,12 +508,11 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                                       field.onChange(field.value);
                                     })}
                                   />
-                                </FormControl>
+                                </FieldContent>
                               );
                             }
                           })}
-                          <FormMessage />
-                        </FormItem>
+                        </Field>
                       )}
                     />
                   </div>

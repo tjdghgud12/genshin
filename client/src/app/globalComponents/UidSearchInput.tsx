@@ -1,12 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const uidFormSchema = z.object({
@@ -36,24 +37,22 @@ const UidSearchInput = ({ defaultValue, className = "" }: { defaultValue: string
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`w-1/2 h-fit min-w-[500px] flex overflow-hidden rounded-full border-2 p-1 mx-auto ${className}`}>
-        <FormField
+        <Controller
           control={form.control}
           name="uid"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormControl>
-                <Input
-                  className={`w-full border-none shadow-none focus-visible:ring-0 ${className.includes("text-center") ? "text-center" : ""}`}
-                  {...field}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const uid = e.target.value;
-                    if (/^\d*$/.test(uid)) field.onChange(uid);
-                  }}
-                  maxLength={12}
-                  placeholder="UID"
-                />
-              </FormControl>
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field className="w-full" data-invalid={fieldState.invalid}>
+              <Input
+                className={`w-full border-none shadow-none focus-visible:ring-0 ${className.includes("text-center") ? "text-center" : ""}`}
+                {...field}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const uid = e.target.value;
+                  if (/^\d*$/.test(uid)) field.onChange(uid);
+                }}
+                maxLength={12}
+                placeholder="UID"
+              />
+            </Field>
           )}
         />
         <Button type="submit" className="w-auto bg-transparent rounded-full text-stone-500  hover:bg-stone-300 hover:text-white">

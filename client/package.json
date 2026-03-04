@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@base-ui/react": "^1.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@next/eslint-plugin-next": "^16.1.0",
     "@next/swc-win32-x64-msvc": "^16.1.0",
@@ -28,9 +29,11 @@
     "lucide-react": "^0.562.0",
     "motion": "^12.23.26",
     "next": "^16.1.0",
+    "radix-ui": "^1.4.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.69.0",
+    "shadcn": "^3.8.5",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.2.1",
