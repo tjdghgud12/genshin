@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useFightPropLabelStore } from "@/store/figthtPropLabelStore";
-import { X } from "lucide-react";
+import { CirclePlus, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -59,7 +59,12 @@ const AdditionalFightProp = ({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <FloatingButton open={open} setOpen={setOpen} />
+        <FloatingButton className="bg-violet-700" open={open} setOpen={setOpen}>
+          <CirclePlus className={`size-8 text-white shrink-0 transition-transform ${open ? "rotate-45" : ""}`} />
+          <span className="text-lg whitespace-nowrap overflow-hidden max-w-0 opacity-0 group-hover:max-w-[200px] group-hover:opacity-100 transition-all duration-300">
+            추가 옵션 설정
+          </span>
+        </FloatingButton>
       </SheetTrigger>
       <SheetContent ref={sheetContentRef} className="overflow-auto px-2">
         <SheetDescription />
