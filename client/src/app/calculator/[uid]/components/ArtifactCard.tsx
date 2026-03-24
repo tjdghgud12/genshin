@@ -14,7 +14,7 @@ import { useArtifactSetsInfoStore } from "@/store/artifactStore";
 import { useFightPropLabelStore } from "@/store/figthtPropLabelStore";
 import { IArtifactOptionInfo, IArtifactSetsInfo } from "@/types/artifactType";
 import { TypeMerge } from "@/types/globalType";
-import { CircleOff } from "lucide-react";
+import { CircleOff, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Fragment, ReactElement, useCallback, useEffect, useState } from "react";
 import { z } from "zod";
@@ -169,6 +169,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
           if (res.status === 200) {
             const newArtifact = (res.data.suit as IArtifactPart[]).find((a) => a.pos === artifact.type);
             if (newArtifact) setAmbrArtifact(newArtifact);
+            setImgLoading(true);
           }
         })
         .catch((err) => {
@@ -188,14 +189,17 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
       <CardContent className="p-0 text-white flex flex-col gap-4 overflow-hidden">
         <div className="w-full flex">
           <div className="w-[45%] h-[8.5vw] min-h-[130px] relative z-0 overflow-hidden">
-            {!imgLoading && <DotBounsLoading className="w-auto h-auto m-auto" dotClassName="size-4 stroke-8" />}
-            {ambrArtifact === undefined ? (
+            {!imgLoading ? (
+              <div className="w-full h-full flex">
+                <Loader2 className="size-10 animate-spin m-auto" />
+              </div>
+            ) : ambrArtifact === undefined ? (
               <CircleOff className="size-[7vw] min-w-[120px] m-auto" />
             ) : (
               <>
-                <div className={`w-[95%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l from-gray-700 to-gray-700/0`} />
-                <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r from-gray-700 to-gray-700/0`} />
-                <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-gray-700 to-gray-700/0`} />
+                <div className={`w-[95%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-linear-to-l from-gray-700 to-gray-700/0`} />
+                <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-linear-to-r from-gray-700 to-gray-700/0`} />
+                <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-gray-700 to-gray-700/0`} />
                 <div className="w-[10vw] h-[10vw] min-w-[150px] min-h-[150px] absolute z-0 -left-[25%] -top-[7%]">
                   <Image
                     className={`object-cover scale-110 ${imgLoading ? "" : "hidden"}`}
