@@ -29,23 +29,25 @@ const DamageResultCard = ({
 
   return (
     <Card
-      className={`w-full p-0 shadow-lg border-none mb-5 transition-all duration-200 ${elementColors[element].bg} ${elementColors[element].shadow} ${open ? "" : "bg-transparent shadow-none"}`}
+      className={`w-full p-0 shadow-lg border-none mb-5 font-sans transition-all duration-200 ${elementColors[element].bg} ${elementColors[element].shadow} ${open ? "" : "bg-transparent shadow-none"}`}
     >
       <CardContent className={`w-full rounded-2x`}>
         <Accordion type="single" collapsible onValueChange={(state) => setOpen(state === "calculation-result")} defaultValue="calculation-result">
           <AccordionItem className={`w-full flex flex-col -translate-y-3 relative `} value="calculation-result">
             <AccordionTrigger className="flex-none p-0 m-0 mx-auto bg-gray-700 rounded-full" arrowClassName="size-10 text-white" />
-            <AccordionContent className="w-full">
+            <AccordionContent className="w-full pb-0 bg-gray-700/15 rounded-2xl mt-5">
               {damageResult ? (
                 <Table>
-                  <TableCaption>
-                    ※ 고정 계수를 제외한 <span className="font-bold">변동 계수의 공격은 100%</span> 기준입니다.
+                  <TableCaption className="text-white my-0 py-4 border-t">
+                    <p className="drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
+                      ※ 고정 계수를 제외한 <span className="font-bold">변동 계수의 공격은 100%</span> 기준입니다.
+                    </p>
                   </TableCaption>
-                  <TableHeader className="font-bold">
-                    <TableRow>
+                  <TableHeader>
+                    <TableRow className="h-14">
                       {head.map((d) => (
-                        <TableHead key={`damage-result-table-head-${d}`} className="font-bold text-center">
-                          {d}
+                        <TableHead key={`damage-result-table-head-${d}`}>
+                          <p className="font-bold text-white text-lg drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)] text-center">{d}</p>
                         </TableHead>
                       ))}
                     </TableRow>
@@ -57,7 +59,11 @@ const DamageResultCard = ({
                           {row
                             .filter((d) => d !== null)
                             .map((d, colIdx) => (
-                              <TableCell key={`damage-result-table-body-${rowIdx}-${colIdx}`} className="text-center" {...d.props}>
+                              <TableCell
+                                key={`damage-result-table-body-${rowIdx}-${colIdx}`}
+                                className={`text-white text-lg drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)] text-center ${colIdx ? "font-medium" : "font-bold"}`}
+                                {...d.props}
+                              >
                                 {d.data ? d.data : "-"}
                               </TableCell>
                             ))}
