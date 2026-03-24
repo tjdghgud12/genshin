@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>): Promise<React.ReactElement> => {
   return (
     <html className="h-full" lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen grid grid-rows-[1fr_auto]`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen grid grid-rows-[1fr_auto]`}>
         <div>
           <Toaster richColors position="bottom-left" />
           {children}
