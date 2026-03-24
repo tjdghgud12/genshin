@@ -85,7 +85,7 @@ const AdditionalFightProp = ({
           </ComboboxContent>
         </Combobox>
         <div className="flex gap-2">
-          <Input placeholder="수치를 입력해주세요." onChange={handleStatValueChange} />
+          <Input placeholder="수치를 입력해주세요." onChange={handleStatValueChange} onKeyDown={(e) => e.key === "Enter" && handleAddFightProp()} />
           <Button type="button" className="font-bold hover:scale-105 transition-all duration-100 active:scale-95" onClick={handleAddFightProp}>
             추가
           </Button>
