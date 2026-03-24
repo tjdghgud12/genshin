@@ -67,9 +67,9 @@ const AdditionalFightProp = ({
         </FloatingButton>
       </SheetTrigger>
       <SheetContent ref={sheetContentRef} className="overflow-auto px-2">
-        <SheetDescription />
         <SheetHeader>
-          <SheetTitle>추가 옵션 설정</SheetTitle>
+          <SheetTitle className="text-xl font-semibold tracking-tight text-foreground pb-1 mb-1">Additional Option Setting</SheetTitle>
+          <SheetDescription>원하는 옵션을 선택하고 수치를 입력해주세요.</SheetDescription>
         </SheetHeader>
         <Combobox items={labels} itemToStringValue={(label: { label: string; value: string }) => label.label} onValueChange={handleSelectedFightPropChange}>
           <ComboboxInput className="w-full" placeholder="추가 옵션 선택" />
