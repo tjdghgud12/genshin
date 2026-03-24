@@ -1,9 +1,9 @@
 "use client";
 
-import { Combobox } from "@/app/globalComponents/ComboBox";
 import GradientStar from "@/app/globalComponents/GradientStar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -12,6 +12,7 @@ import api from "@/lib/axios";
 import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useWeaponInfoStore } from "@/store/weaponStore";
+import { IWeaponInfo } from "@/types/weaponType";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
@@ -69,6 +70,7 @@ const WeaponSettingCard = ({
   }, []);
 
   const weaponList = useMemo(() => Object.values(totalWeaponList).filter((w) => w.type === weapon.type), [totalWeaponList, weapon.type]);
+  const selectedWeapon = useMemo(() => weaponList.find((w) => w.id === weapon.id), [weaponList, weapon.id]);
 
   useEffect(() => {
     getWeaponDetail(weapon.id);
@@ -120,19 +122,36 @@ const WeaponSettingCard = ({
               )}
             </div>
             <Combobox
-              className="w-full h-fit bg-gray-700 text-white font-bold border-2 text-xl text-center"
-              optionClassName="bg-gray-700 text-white"
-              options={weaponList.map((w) => ({ label: w.name, data: w.id, raw: w }))}
-              defaultValue={weapon.id.toString()}
-              placeholder="무기"
-              onChange={(id) => {
-                setImgLoading(false);
-                getWeaponDetail(Number(id));
-
-                const weapon = weaponList.find((w) => w.id === Number(id));
-                onChange(weapon ? weapon : undefined);
+              items={weaponList}
+              value={selectedWeapon}
+              itemToStringLabel={(weapon) => weapon.name}
+              onValueChange={(weapon) => {
+                if (weapon) {
+                  setImgLoading(false);
+                  getWeaponDetail(Number(weapon?.id));
+                  onChange(weaponList.find((w) => w.id === Number(weapon?.id)));
+                }
               }}
-            />
+            >
+              <ComboboxInput
+                className="w-full h-fit bg-gray-700 text-white font-bold border-2 text-center"
+                inputClassName="text-lg!"
+                placeholder="무기"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.preventDefault();
+                }}
+              />
+              <ComboboxContent className="bg-gray-700 text-white">
+                <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item: IWeaponInfo) => (
+                    <ComboboxItem key={item.id} value={item}>
+                      {item.name}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
             {weaponDetail && (
               <Label className="m-auto text-lg font-bold">
                 {weaponDetail.upgrade.prop[1] ? weaponSubOption[weaponDetail.upgrade.prop[1].propType as TWeaponSubOptionKey] : ""}
@@ -228,13 +247,34 @@ const WeaponSettingCard = ({
                       <Label className="text-xl font-bold my-auto">{option.label}:</Label>
                       <div className="w-full">
                         <Combobox
-                          className="w-full h-fit bg-gray-700 text-white font-bold border-2 text-xl text-center"
-                          optionClassName="bg-gray-700 text-white"
-                          options={option.selectList.filter((w) => w).map((w) => ({ label: w, data: w }))}
-                          defaultValue={option.select}
-                          placeholder={option.label}
-                          onChange={(value) => onOptionsChange[i](value === undefined ? null : value, "select")}
-                        />
+                          items={option.selectList.map((w) => ({ label: w, value: w }))}
+                          itemToStringValue={(label: { label: string; value: string }) => label.label}
+                          value={{ label: option.select ?? "", value: option.select ?? "" }}
+                          onValueChange={(option) => {
+                            if (option) {
+                              onOptionsChange[i](option?.value === undefined ? null : option?.value, "select");
+                            }
+                          }}
+                        >
+                          <ComboboxInput
+                            className="w-full h-fit bg-gray-700 text-white font-bold border-2"
+                            inputClassName="text-lg!"
+                            placeholder={option.label}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") e.preventDefault();
+                            }}
+                          />
+                          <ComboboxContent className="bg-gray-700 text-white">
+                            <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
+                            <ComboboxList>
+                              {(item: { label: string; value: string }) => (
+                                <ComboboxItem key={item.value} value={item}>
+                                  {item.label}
+                                </ComboboxItem>
+                              )}
+                            </ComboboxList>
+                          </ComboboxContent>
+                        </Combobox>
                       </div>
                     </Fragment>
                   ) : (
