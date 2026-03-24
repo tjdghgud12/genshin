@@ -1,7 +1,6 @@
 "use client";
 
 import { Combobox } from "@/app/globalComponents/ComboBox";
-import { DotBounsLoading } from "@/app/loading";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,16 +55,20 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
   return (
     <Card className={`w-full border-0 border-gray-400 p-1 shadow-md bg-transparent ${className}`}>
       <CardContent className="p-1 text-white flex">
-        {!imgLoading && <DotBounsLoading className="w-fit h-fit m-auto" dotClassName="size-4 stroke-8" />}
+        {imgLoading && (
+          <div className="w-full h-full flex">
+            <Loader2 className="size-10 animate-spin m-auto" />
+          </div>
+        )}
         <div className="w-[40%] aspect-square mr-2 my-auto relative">
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
               <div className="w-full h-full absolute overflow-hidden">
-                <div className={`w-[95%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l from-gray-700 to-gray-700/0`} />
-                <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r from-gray-700 to-gray-700/0`} />
-                <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-gray-700 to-gray-700/0`} />
+                <div className={`w-[95%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-linear-to-l from-gray-700 to-gray-700/0`} />
+                <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-linear-to-r from-gray-700 to-gray-700/0`} />
+                <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-gray-700 to-gray-700/0`} />
                 <div className="w-[15vw] h-[15vw] min-w-[190px] min-h-[190px] absolute z-0 -left-[25%] -top-[15%]">
-                  <Image className={`object-cover`} src={setInfo.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
+                  <Image className={`object-cover`} src={setInfo.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(false)} />
                 </div>
               </div>
             </TooltipTrigger>
@@ -97,7 +100,7 @@ const ArtifactSetOptionCard = ({ className = "", setInfo, onChnage = [] }: IArti
                   </Label>
                   {option.type === "stack" ? (
                     <Input
-                      className="h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0 flex-1"
+                      className="h-fit border-b-2 border-t-0 border-x-0 rounded-none text-xl! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0 flex-1"
                       name={`options.${i}.stack`}
                       type="number"
                       value={option.stack.toString()}
@@ -251,7 +254,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
                   </div>
                 )}
                 <Input
-                  className="w-full border-b-2 border-t-0 border-x-0 rounded-none !text-xl text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-1 p-0"
+                  className="w-full border-b-2 border-t-0 border-x-0 rounded-none text-xl! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-1 p-0"
                   name={`mainOption.value`}
                   type="number"
                   step="any"
@@ -281,7 +284,7 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
                   onChange={(fightProp) => onSubChange[i]({ [fightProp === undefined ? artifactSubOptionList[0] : fightProp]: value })}
                 />
                 <Input
-                  className="border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
+                  className="border-b-2 border-t-0 border-x-0 rounded-none text-lg! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
                   name={`subOption.${i}.value`}
                   type="number"
                   step="any"
