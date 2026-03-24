@@ -9,7 +9,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 
 interface option {
-  label: string;
+  label: string | null;
   data: any;
   group?: string;
   [key: string]: any;
@@ -25,7 +25,7 @@ const Combobox = ({
   onChange = (_value): void => {},
 }: {
   options: option[];
-  defaultValue?: string | undefined;
+  defaultValue?: string | undefined | null;
   placeholder?: string;
   groups?: string[];
   className?: string;

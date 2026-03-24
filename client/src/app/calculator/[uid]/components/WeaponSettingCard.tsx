@@ -2,7 +2,6 @@
 
 import { Combobox } from "@/app/globalComponents/ComboBox";
 import GradientStar from "@/app/globalComponents/GradientStar";
-import { DotBounsLoading } from "@/app/loading";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,9 +12,9 @@ import api from "@/lib/axios";
 import { calculatorCharacterInfoSchema } from "@/lib/calculator";
 import { inputNumberWithSpace } from "@/lib/utils";
 import { useWeaponInfoStore } from "@/store/weaponStore";
-import { IWeaponInfo } from "@/types/weaponType";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 const weaponSubOption = {
@@ -51,7 +50,7 @@ const WeaponSettingCard = ({
 }: {
   className?: string;
   weapon?: TWeaponData;
-  onChange?: (weapon: IWeaponInfo | undefined) => void;
+  onChange?: (weapon: TWeaponData | undefined) => void;
   onLevelChange?: (level: number | string) => void;
   onRefinementChange?: (refinement: number | string) => void;
   onOptionsChange?: ((value: boolean | number | string | null, key: string) => void)[];
@@ -59,8 +58,6 @@ const WeaponSettingCard = ({
   const totalWeaponList = useWeaponInfoStore((state) => state.weaponList);
   const [weaponDetail, setWeaponDetail] = useState<IWeaponDetail | null>(null);
   const [imgLoading, setImgLoading] = useState<boolean>(false);
-  const [weaponList, setWeaponList] = useState<IWeaponInfo[]>([]);
-  const [selectedWeapon, setSelectedWeapon] = useState<IWeaponInfo | undefined>(undefined);
 
   const getWeaponDetail = useCallback(async (id: number): Promise<void> => {
     api
@@ -71,29 +68,29 @@ const WeaponSettingCard = ({
       .catch((err) => console.error(err));
   }, []);
 
+  const weaponList = useMemo(() => Object.values(totalWeaponList).filter((w) => w.type === weapon.type), [totalWeaponList, weapon.type]);
+
   useEffect(() => {
     getWeaponDetail(weapon.id);
   }, [weapon.id, getWeaponDetail]);
-
-  useEffect(() => {
-    const newWeaponList = Object.values(totalWeaponList).filter((w) => w.type === weapon.type);
-    setWeaponList(newWeaponList);
-    setSelectedWeapon(newWeaponList.find((w) => w.id === Number(weapon.id)));
-  }, [totalWeaponList, weapon.type, weapon.id]);
 
   return (
     <Card className={`w-full max-h-full bg-gray-700 border-2 rounded-2xl overflow-y-auto scrollbar-custom shadow-none ${className}`} style={{ scrollbarGutter: "stable" }}>
       <CardContent className="w-full text-white">
         <div className="w-full flex">
           <div className="h-[8.5vw] min-h-[130px] aspect-square relative z-0 overflow-hidden">
-            {!imgLoading && !weaponDetail && <DotBounsLoading className="w-fit h-full m-auto" dotClassName="size-4 stroke-8" />}
+            {!imgLoading && !weaponDetail && (
+              <div className="w-full h-full flex">
+                <Loader2 className="size-10 animate-spin m-auto" />
+              </div>
+            )}
             {weaponDetail ? (
               <Tooltip delayDuration={500}>
                 <TooltipTrigger asChild>
                   <div className="w-full h-full relative overflow-hidden">
-                    <div className={`w-[40%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l from-gray-700 to-gray-700/0`} />
-                    <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r from-gray-700 to-gray-700/0`} />
-                    <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-gray-700 to-gray-700/0`} />
+                    <div className={`w-[40%] pointer-events-none absolute inset-y-0 right-0 z-20 bg-linear-to-l from-gray-700 to-gray-700/0`} />
+                    <div className={`w-[8%] pointer-events-none absolute inset-y-0 left-0 z-20 bg-linear-to-r from-gray-700 to-gray-700/0`} />
+                    <div className={`h-[8%] pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-gray-700 to-gray-700/0`} />
                     <div className="w-[10vw] h-[10vw] min-w-[150px] min-h-[150px] absolute z-0 -left-[20%] -top-[7%]">
                       <Image className={`object-cover`} src={weaponDetail.icon} alt="" priority fill sizes="(max-width: 1200px) 7vw" onLoad={() => setImgLoading(true)} />
                     </div>
@@ -133,7 +130,6 @@ const WeaponSettingCard = ({
                 getWeaponDetail(Number(id));
 
                 const weapon = weaponList.find((w) => w.id === Number(id));
-                setSelectedWeapon(weapon);
                 onChange(weapon ? weapon : undefined);
               }}
             />
@@ -149,7 +145,7 @@ const WeaponSettingCard = ({
           <div className="w-1/2 flex m-auto">
             <Label className="w-fit text-xl font-bold my-auto pr-2">Lv: </Label>
             <Input
-              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-lg1 text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="level"
               type="number"
               value={weapon.level}
@@ -165,7 +161,7 @@ const WeaponSettingCard = ({
           <div className="w-1/2 flex m-auto">
             <Label className="w-fit text-xl font-bold my-auto pr-2">재련: </Label>
             <Input
-              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none !text-lg text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
+              className="w-auto h-fit border-b-2 border-t-0 border-x-0 rounded-none text-lg! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow my-auto p-0"
               name="refinement"
               type="number"
               value={weapon.refinement}
@@ -194,11 +190,11 @@ const WeaponSettingCard = ({
         </Accordion>
 
         <div className="h-fit mt-3">
-          {selectedWeapon ? (
+          {weapon ? (
             <>
-              {selectedWeapon.options.length ? <Label className="text-2xl font-bold mb-1">옵션</Label> : <></>}
+              {weapon.options.length ? <Label className="text-2xl font-bold mb-1">옵션</Label> : <></>}
               <div className="grid grid-cols-[auto_1fr] gap-x-3">
-                {selectedWeapon.options.map((option, i) => {
+                {weapon.options.map((option, i) => {
                   const optionValue = weapon.options[i];
                   return option.type === "toggle" ? (
                     <Fragment key={`${weapon.name}-${option.label}-${i}`}>
@@ -214,7 +210,7 @@ const WeaponSettingCard = ({
                     <Fragment key={`${weapon.name}-${option.label}-${i}`}>
                       <Label className="text-xl font-bold my-auto">{option.label}:</Label>
                       <Input
-                        className="w-fit !text-lg border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
+                        className="w-fit text-lg! border-b-2 border-t-0 border-x-0 rounded-none text-center font-bold focus-visible:ring-0 input-removeArrow p-0 mx-0 mt-auto mb-2"
                         name={`options.${i}`}
                         type="number"
                         value={optionValue.stack.toString()}
