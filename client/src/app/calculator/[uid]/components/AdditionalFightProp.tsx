@@ -90,15 +90,15 @@ const AdditionalFightProp = ({
             추가
           </Button>
         </div>
-        <div className="min-h-32 flex flex-wrap content-start gap-2 border-gray-200 border p-2 rounded-md shadow-sm">
+        <div className="min-h-40 flex flex-wrap content-start gap-2 border-gray-200 border p-2 rounded-md shadow-sm">
           {values.map((value, i) => (
-            <Badge key={`${value.key}.${value.value}.${i}`} className="w-fit h-fit flex gap-2">
+            <Badge key={`${value.key}.${value.value}.${i}`} className="w-fit h-fit flex gap-2 py-1">
               <p className="font-bold">
                 {fightPropLabels[value.key]} - {value.value}
               </p>
               <Button
                 type="button"
-                className="w-fit h-fit p-0! transition-all duration-100 active:scale-90"
+                className="w-fit h-fit p-1! rounded-full transition-all duration-100 active:scale-90"
                 variant="ghost"
                 onClick={() => handleRemoveFightProp(value.key, value.value)}
               >
