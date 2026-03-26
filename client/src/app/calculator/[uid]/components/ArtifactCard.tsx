@@ -1,7 +1,7 @@
 "use client";
 
-import { Combobox } from "@/app/globalComponents/ComboBox";
 import { Card, CardContent } from "@/components/ui/card";
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -15,7 +15,7 @@ import { IArtifactOptionInfo, IArtifactSetsInfo } from "@/types/artifactType";
 import { TypeMerge } from "@/types/globalType";
 import { CircleOff, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { Fragment, ReactElement, useCallback, useEffect, useState } from "react";
+import { Fragment, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 type TArtifactSetInfo = z.infer<typeof calculatorCharacterInfoSchema>["artifact"]["setInfo"][number];
@@ -183,6 +183,38 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
     [artifact.type],
   );
 
+  const { artifactSetList, selectedSet } = useMemo(() => {
+    const setList = Object.keys(artifactSets).map((name) => ({ label: name, value: name }));
+    const selectedSet = setList.find((set) => set.value === artifact.setName);
+
+    return { artifactSetList: setList, selectedSet };
+  }, [artifactSets, artifact]);
+
+  const { subOptions, mainOptions, selectedMainOption, selectedSubOptions } = useMemo(() => {
+    const fixMainOption = artifact.type === "EQUIP_BRACER" || artifact.type === "EQUIP_NECKLACE";
+    const subOptions: { label: string; value: string }[] = artifactSubOptionList
+      .filter((option) => {
+        if (fixMainOption) return true;
+        return option !== main.key;
+      })
+      .map((option) => ({ label: fightPropLabels[option], value: option }));
+    // 다시 잘 생각해.
+    // type만
+    const selectedSubOptions = sub.map((s) => subOptions.find((o) => o.value === s.key));
+
+    let mainOptions: string | { label: string; value: string }[] = [];
+    let selectedMainOption: { label: string; value: string };
+    if (fixMainOption) {
+      mainOptions = artifactMainOptionList[artifact.type] as string;
+      selectedMainOption = { label: fightPropLabels[main.key], value: main.key };
+    } else {
+      mainOptions = (artifactMainOptionList[artifact.type] as string[]).map((option) => ({ label: fightPropLabels[option], value: option }));
+      selectedMainOption = mainOptions.find((o) => o.value === main.key) ?? mainOptions[0];
+    }
+
+    return { subOptions, mainOptions, selectedMainOption, selectedSubOptions };
+  }, [artifact, main, sub, fightPropLabels, artifactSets]);
+
   useEffect(() => {
     getArtifactDetail(artifactSets[artifact.setName]?.id || 0);
   }, [artifactSets, artifact.setName, getArtifactDetail]);
@@ -219,35 +251,65 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
           </div>
           <div className="w-[55%] grid grid-cols-1 gap-2">
             <Combobox
-              className="bg-gray-700 text-white text-xl font-bold border-2 my-auto"
-              optionClassName="bg-gray-700 text-white"
-              options={Object.keys(artifactSets).map((name) => ({ label: name, data: name }))}
-              defaultValue={artifactSets[artifact.setName]?.name.toString() || ""}
-              placeholder="성유물 세트"
-              onChange={(name) => {
+              items={artifactSetList}
+              value={selectedSet}
+              onValueChange={(name) => {
                 if (name) {
-                  const artifactInfo = artifactSets[name];
+                  const artifactInfo = artifactSets[name.value];
                   setAmbrArtifact(undefined);
                   setImgLoading(false);
-                  onSetChange(name);
+                  onSetChange(name.value);
                   getArtifactDetail(Number(artifactInfo.id));
                 }
               }}
-            />
-
+            >
+              <ComboboxInput
+                className="bg-gray-700 text-white text-xl font-bold border-2 my-auto"
+                inputClassName="text-lg! text-center pt-[2.5px] pb-[4.5px]"
+                placeholder={"성유물 세트"}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.preventDefault();
+                }}
+              />
+              <ComboboxContent className="w-auto bg-gray-700 text-white p-1">
+                <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
+                <ComboboxList className="scrollbar-custom">
+                  {(item: { label: string; value: string }) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
             {artifact && (
               <div>
-                {Array.isArray(artifactMainOptionList[artifact.type]) ? (
+                {Array.isArray(mainOptions) ? (
                   <Combobox
-                    className="bg-gray-700 text-white text-xl font-bold border-2 overflow-hidden text-center"
-                    optionClassName="bg-gray-700 text-white"
-                    options={(artifactMainOptionList[artifact.type] as string[]).map((o) => ({
-                      label: fightPropLabels[o],
-                      data: o,
-                    }))}
-                    defaultValue={main.key}
-                    onChange={(fightProp) => onMainChange({ [fightProp === undefined ? artifactMainOptionList[artifact.type][0] : fightProp]: main.value })}
-                  />
+                    items={mainOptions}
+                    value={selectedMainOption}
+                    onValueChange={(fightProp) => {
+                      if (fightProp) onMainChange({ [fightProp.value]: main.value });
+                    }}
+                  >
+                    <ComboboxInput
+                      className="bg-gray-700 text-white font-bold border-2 my-auto overflow-hidden"
+                      inputClassName="text-lg! text-center pt-[2.5px] pb-[4.5px]"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") e.preventDefault();
+                      }}
+                    />
+                    <ComboboxContent className="w-auto bg-gray-700 text-white p-1">
+                      <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
+                      <ComboboxList className="scrollbar-custom">
+                        {(item: { label: string; value: string }) => (
+                          <ComboboxItem key={item.value} value={item}>
+                            {item.label}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
                 ) : (
                   <div className="w-full h-fit flex rounded-md bg-gray-700 border-2 py-1">
                     <Label className="text-white text-xl font-bold m-auto truncate">{fightPropLabels[main.key]}</Label>
@@ -272,17 +334,32 @@ const ArtifactPartCard = ({ className, artifact, main, sub, onSetChange = (): vo
         <div className="flex-1 grid grid-cols-1 gap-2 justify-around mx-auto">
           {sub.map(({ key, value }, i) => {
             return (
-              <div key={`subOption.${i}`} className="w-full flex gap-2">
+              <div key={`subOption.${i}`} className="w-full grid grid-cols-[66%_1fr] gap-2">
                 <Combobox
-                  className="w-2/3 h-fit bg-gray-700 text-white text-lg font-bold border-2 overflow-hidden text-center"
-                  optionClassName="bg-gray-700 text-white"
-                  options={artifactSubOptionList.map((o) => ({
-                    label: fightPropLabels[o],
-                    data: o,
-                  }))}
-                  defaultValue={key}
-                  onChange={(fightProp) => onSubChange[i]({ [fightProp === undefined ? artifactSubOptionList[0] : fightProp]: value })}
-                />
+                  items={subOptions}
+                  value={selectedSubOptions[i]}
+                  onValueChange={(fightProp) => {
+                    if (fightProp) onSubChange[i]({ [fightProp.value]: value });
+                  }}
+                >
+                  <ComboboxInput
+                    inputClassName="text-lg! text-center pt-[2.5px] pb-[4.5px]"
+                    className="bg-gray-700 text-white text-lg font-bold border-2 overflow-hidden"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") e.preventDefault();
+                    }}
+                  />
+                  <ComboboxContent className="w-auto bg-gray-700 text-white p-1">
+                    <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
+                    <ComboboxList className="scrollbar-custom">
+                      {(item: { label: string; value: string }) => (
+                        <ComboboxItem key={item.value} value={item}>
+                          {item.label}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
                 <Input
                   className="border-b-2 border-t-0 border-x-0 rounded-none text-lg! text-center font-bold shadow-none focus-visible:ring-0 input-removeArrow mt-auto p-0"
                   name={`subOption.${i}.value`}

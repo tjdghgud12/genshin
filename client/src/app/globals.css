@@ -154,7 +154,7 @@ input.input-removeArrow[type="number"]::-webkit-outer-spin-button {
 }
 .scrollbar-custom::-webkit-scrollbar-track {
   background: transparent;
-  margin: 16px 0;
+  margin: 5px 0;
 }
 .scrollbar-custom::-webkit-scrollbar-thumb {
   background-color: rgb(156 163 175);

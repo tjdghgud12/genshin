@@ -460,7 +460,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                                   <ArtifactPartCard
                                     key={`artifact-part-${i}`}
                                     className={`bg-gray-700`}
-                                    artifact={artifact}
+                                    artifact={field.value}
                                     main={{ key: mainKey, value: mainValue }}
                                     sub={subOptions}
                                     onSetChange={(value) => {
