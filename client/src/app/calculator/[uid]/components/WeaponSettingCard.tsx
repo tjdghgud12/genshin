@@ -143,7 +143,7 @@ const WeaponSettingCard = ({
               />
               <ComboboxContent className="bg-gray-700 text-white">
                 <ComboboxEmpty>검색 결과가 없습니다.</ComboboxEmpty>
-                <ComboboxList>
+                <ComboboxList className={`scrollbar-custom`}>
                   {(item: IWeaponInfo) => (
                     <ComboboxItem key={item.id} value={item}>
                       {item.name}
