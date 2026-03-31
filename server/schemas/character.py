@@ -84,6 +84,7 @@ class contellationSchema(BaseModel):
 
 class characterDataSchema(BaseModel):
     moonsign: None | Literal["초승", "보름"] = None
+    witchsEve: None | bool = None
     passiveSkill: dict[str, passiveSkillSchema]
     activeSkill: dict[str, activeSkillSchema]
     constellation: list[contellationSchema]

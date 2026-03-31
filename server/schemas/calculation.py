@@ -45,6 +45,7 @@ class requestCharacterInfoSchema(BaseModel):
     id: int
     level: int
     moonsign: None | Literal["초승", "보름"] = None
+    witchsEve: None | bool = None
     passiveSkill: list[requestPassiveSkillSchema]
     activeSkill: list[requestActiveSkillSchema]
     constellations: list[requestContellationSchema]
