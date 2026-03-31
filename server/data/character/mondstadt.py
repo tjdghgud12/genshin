@@ -64,12 +64,21 @@ info = {
         ],
     ),
     "모나": characterDataSchema(
+        witchsEve=True,
         passiveSkill={
             "「할망구, 나 잡아 봐라!」": passiveSkillSchema(
                 description="흐르는 허와 실 상태에 진입 후 2초 동안 만약 주변에 적이 존재하면 자동으로 허영을 하나 만들어낸다. 이러한 방식으로 생성된 허영은 2초 동안 지속되며 터지면서 가하는 피해는 수중 환원 피해의 50%이다.",
                 unlockLevel=1,
             ),
             "「운명에 맡겨!」": passiveSkillSchema(description="모나의 물 원소 피해 보너스가 추가로 모나 원소 충전 효율의 20%만큼 상승한다.", unlockLevel=4),
+            "마녀의 전야제ㆍ천체 운행론": passiveSkillSchema(
+                description="마녀의 과제 · 갈망를 완료하면, 모나가 마도 캐릭터가 된다. 파티에 마도 캐릭터를 2명 이상 편성하면 마도 · 비밀 의식 효과를 획득해 마도 캐릭터가 강화된다."
+                "마도 · 비밀 의식"
+                "모나의 일반 공격 또는 강공격이 적에게 명중 시, 「수성천의 빛」을 1스택 획득한다. 지속 시간: 8초, 최대 중첩수: 3스택. 0.1초마다 해당 방식으로 「수성천의 빛」을 최대 1스택 획득할 수 있다."
+                "파티 내 자신의 다른 캐릭터가 적에게 증발 반응 발동 시, 모든 「수성천의 빛」이 소모되고, 소모된 1스택당 이번 증발 반응으로 주는 피해가 5% 증가한다."
+                "또한 모나의 일반 공격 또는 강공격이 적에게 명중 시, 적의 성이 상태가 2초 연장된다. 해당 효과는 0.5초마다 최대 1회 발동되며, 해당 방식으로 적의 성이 상태를 최대 8초 연장할 수 있다",
+                unlockLevel=0,
+            ),
         },
         activeSkill={
             "인과 간파": activeSkillSchema(
@@ -92,7 +101,10 @@ info = {
             contellationSchema(
                 name="침몰한 예언",
                 description="파티 내 자신의 캐릭터가 성이 상태의 적을 명중하면 8초 동안 물 원소 관련 반응의 효과가 상승한다.",
-                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="성이 상태 적 공격")],
+                options=[
+                    skillConstellationOptionSchema(type=skillConstellationType.toggle, label="성이 상태 적 공격"),
+                    skillConstellationOptionSchema(type=skillConstellationType.toggle, label="대기 상태"),
+                ],
             ),
             contellationSchema(name="성월의 연주", description="일반 공격 명중 시 20%의 확률로 강공격을 1회 추가 발동한다."),
             contellationSchema(name="멈추지 않는 천상", description="원소 폭발 레벨 +3"),

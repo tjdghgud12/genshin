@@ -85,10 +85,11 @@ async def getMonaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: 
             match constellation.name:
                 case "침몰한 예언":
                     if constellation.options[0].active:
-                        newFightProp.add(fightPropMap.ELECTROCHARGED_ADD_HURT.value, 0.15)
-                        newFightProp.add(fightPropMap.LUNARCHARGED_ADD_HURT.value, 0.15)
-                        newFightProp.add(fightPropMap.VAPORIZE_ADD_HURT.value, 0.15)
-                        newFightProp.add(fightPropMap.SWIRL_ADD_HURT.value, 0.15)
+                        value = 0.15 if constellation.options[1].active else 0.24
+                        newFightProp.add(fightPropMap.ELECTROCHARGED_ADD_HURT.value, value)
+                        newFightProp.add(fightPropMap.LUNARCHARGED_ADD_HURT.value, value)
+                        newFightProp.add(fightPropMap.VAPORIZE_ADD_HURT.value, value)
+                        newFightProp.add(fightPropMap.SWIRL_ADD_HURT.value, value)
                 case "멈추지 않는 천상":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "절멸의 예언":
@@ -119,6 +120,7 @@ async def getMonaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: 
     )
 
     # ----------------------- passive -----------------------
+    # 마녀의 전야제는 파티버프로 자신은 못받음.
     for passive in characterInfo.passiveSkill:
         if passive.unlocked:
             match passive.name:
