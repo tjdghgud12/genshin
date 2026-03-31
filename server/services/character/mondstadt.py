@@ -90,11 +90,16 @@ async def getMonaFightProp(ambrCharacterDetail: CharacterDetail, characterInfo: 
                         newFightProp.add(fightPropMap.LUNARCHARGED_ADD_HURT.value, value)
                         newFightProp.add(fightPropMap.VAPORIZE_ADD_HURT.value, value)
                         newFightProp.add(fightPropMap.SWIRL_ADD_HURT.value, value)
+                case "성월의 연주":
+                    if constellation.options[0].active:
+                        newFightProp.add(fightPropMap.ELEMENT_MASTERY.value, 80)
                 case "멈추지 않는 천상":
                     characterInfo.activeSkill[2].level -= 3 if enkaDataFlag else 0
                 case "절멸의 예언":
                     if constellation.options[0].active:
                         newFightProp.add(fightPropMap.CRITICAL.value, 0.15)
+                        if characterInfo.witchsEve is not None:
+                            newFightProp.add(fightPropMap.CRITICAL_HURT.value, 0.15)
                 case "운명의 우롱":
                     characterInfo.activeSkill[1].level -= 3 if enkaDataFlag else 0
                 case "악운의 수식":

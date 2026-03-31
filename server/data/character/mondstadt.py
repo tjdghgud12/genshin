@@ -106,7 +106,12 @@ info = {
                     skillConstellationOptionSchema(type=skillConstellationType.toggle, label="대기 상태"),
                 ],
             ),
-            contellationSchema(name="성월의 연주", description="일반 공격 명중 시 20%의 확률로 강공격을 1회 추가 발동한다."),
+            contellationSchema(
+                name="성월의 연주",
+                description="일반 공격 명중 시 20%의 확률로 강공격을 1회 추가 발동한다."
+                "모나의 강공격이 적에게 명중 시 주변에 있는 파티 내 모든 캐릭터의 원소 마스터리가 80pt 증가한다. 지속시간: 12초",
+                options=[skillConstellationOptionSchema(type=skillConstellationType.toggle, label="강공격 명중")],
+            ),
             contellationSchema(name="멈추지 않는 천상", description="원소 폭발 레벨 +3"),
             contellationSchema(
                 name="절멸의 예언",
