@@ -297,6 +297,14 @@ async def getNocturneCurtainCallFightProp(
     return {"fightProp": fightProp, "afterAddProps": None}
 
 
+async def getPrototypeAmberFightProp(
+    id: int, level: int, _refinement: int, _options: list[weaponDataSchema.extendedWeaponOptionSchema], _characterFightProp: fightPropSchema
+) -> WeaponDataReturnSchema:
+    fightProp = await getWeaponBaseFightProp(id, level)
+
+    return {"fightProp": fightProp, "afterAddProps": None}
+
+
 info = {
     "떠오르는 천일 밤의 꿈": getAThousandFloatingDreamsFightProp,
     "별지기의 시선": getStarcallersWatchFightProp,
@@ -311,4 +319,5 @@ info = {
     "진실의 함": getReliquaryOfTruthFightProp,
     "밤을 엮는 거울": getNightweaversLookingGlassFightProp,
     "막간의 야상곡": getNocturneCurtainCallFightProp,
+    "황금 호박 프로토타입": getPrototypeAmberFightProp,
 }
