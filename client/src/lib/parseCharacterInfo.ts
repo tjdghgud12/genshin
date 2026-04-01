@@ -10,6 +10,7 @@ const parseCharacterInfo = (rawCalculatorData: IUidSearchResult): TCalculatorDat
   return {
     level: data.level,
     moonsign: data.moonsign,
+    witchsEve: data.witchsEve,
     constellations: data.constellations.map((constellation) => ({
       unlocked: constellation.unlocked ?? false,
       options: constellation.options.map((o) => ({

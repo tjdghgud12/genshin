@@ -177,6 +177,28 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                     <div className={`w-[50%] flex flex-col pl-8 pt-3 z-10`}>
                       <div className="w-full flex gap-2">
                         <Label className="text-5xl font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,1)]">{info.name}</Label>
+                        {info.witchsEve && (
+                          <Controller
+                            control={form.control}
+                            name={`data.witchsEve`}
+                            render={({ field, fieldState }) => (
+                              <Field orientation="horizontal" className="w-fit" data-invalid={fieldState.invalid}>
+                                <motion.button
+                                  className={`w-16 h-16 relative rounded-full ${field.value ? `bg-radial from-white from-50% to-${element} to-75%` : "opacity-80"}`}
+                                  type="button"
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  transition={{ duration: 0.1 }}
+                                  onClick={() => field.onChange(!field.value)}
+                                >
+                                  <div className="w-[53px] h-[53px] m-auto relative rounded-full inset-0 bg-[#242424]">
+                                    <Image src={"/img/Icon_Hexenzirkel.png"} className={`object-cover object-center`} alt="" fill priority sizes="(max-width: 1200px) 7vw, 35vw" />
+                                  </div>
+                                </motion.button>
+                              </Field>
+                            )}
+                          />
+                        )}
                         {info.moonsign && (
                           <Controller
                             control={form.control}
@@ -184,7 +206,7 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                             render={({ field, fieldState }) => (
                               <Field orientation="horizontal" className="w-fit" data-invalid={fieldState.invalid}>
                                 <motion.button
-                                  className={`size-15 relative border-0 rounded-full ${field.value === "보름" ? "bg-radial from-white from-50% to-${element} to-75%" : ""}`}
+                                  className={`w-16 h-16 relative rounded-full ${field.value === "보름" ? `bg-radial from-white from-50% to-${element} to-75%` : "opacity-80"}`}
                                   type="button"
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.95 }}
@@ -192,8 +214,8 @@ const CharacterSettingCard = ({ character }: { character: IUidSearchResult }): R
                                   onClick={() => field.onChange(field.value === "초승" ? "보름" : "초승")}
                                 >
                                   <Image
-                                    src={"/img/Song_of_the_Welkin_Moon_Chapter.webp"}
-                                    className={`opacity-80 object-cover object-center`}
+                                    src={"/img/Song_of_the_Welkin_Moon_Chapter.png"}
+                                    className={`object-cover object-center`}
                                     alt=""
                                     fill
                                     priority
