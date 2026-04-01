@@ -6,8 +6,8 @@ ambrApi = None
 
 async def initAmbrApi():
     global ambrApi
-    from data import character
-    from data import weapon
+    from models import character
+    from models import weapon
 
     if ambrApi is None:
         ambrApi = ambr.AmbrAPI(lang=Language.KR)
@@ -19,8 +19,8 @@ async def initAmbrApi():
 
 async def closeAmbrApi():
     global ambrApi
-    from data import character
-    from data import weapon
+    from models import character
+    from models import weapon
 
     if ambrApi is not None:
         await ambrApi.close()

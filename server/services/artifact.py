@@ -1,6 +1,6 @@
-from data.artifact import artifactSetOptions
-from data.character import fightPropTemplate
-from data.globalVariable import fightPropMap, fightPropKeys
+from models.artifact import artifactSetOptions
+from models.character import fightPropTemplate
+from models.globalVariable import fightPropMap, fightPropKeys
 from schemas.artifact import artifactDataSchema, artifactSetDataSchema
 from schemas.fightProp import fightPropSchema
 from typing import cast, TypedDict

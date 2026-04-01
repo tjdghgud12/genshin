@@ -1,5 +1,5 @@
 from services.calculation.utils import getToleranceCoefficient, swirlDamageSchema
-from data.globalVariable import levelCoefficientMap
+from models.globalVariable import levelCoefficientMap
 
 
 # 증발

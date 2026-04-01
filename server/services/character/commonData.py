@@ -1,4 +1,4 @@
-from data import character as characterData
+from models import character as characterData
 from services.artifact import getArtifactFightProp, getArtifactSetData
 from services.weapon import getTotalWeaponFightProp
 from schemas.artifact import artifactDataSchema

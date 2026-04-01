@@ -1,4 +1,4 @@
-from data.globalVariable import fightPropKeys, fightPropTypes
+from models.globalVariable import fightPropKeys, fightPropTypes
 from enum import Enum
 from pydantic import BaseModel, field_validator
 

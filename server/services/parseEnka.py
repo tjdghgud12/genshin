@@ -1,4 +1,4 @@
-from data.globalVariable import enkaFightPropMap
+from models.globalVariable import enkaFightPropMap
 
 
 def parseFightProps(characterFightPropMap: dict):

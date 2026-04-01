@@ -3,7 +3,7 @@ from itertools import chain
 from typing import Literal
 from services.ambrApi import getAmbrApi
 from schemas.calculation import requestCharacterInfoSchema, responseDamageResult, responseFightPropSchema, damageResultSchema, responseCalculationResult
-from data.globalVariable import levelCoefficientMap, fightPropMap
+from models.globalVariable import levelCoefficientMap, fightPropMap
 from services.calculation.utils import getFinalProp, getToleranceCoefficient, getCriticalDamageInfo, baseFightPropKeyMap
 from services.calculation.reaction import (
     getVaporizeDamage,

@@ -1,5 +1,5 @@
-from data.character import fightPropTemplate
-import data.weapon as weaponData
+from models.character import fightPropTemplate
+import models.weapon as weaponData
 from services.ambrApi import getAmbrApi
 from schemas.fightProp import fightPropSchema
 from ambr import AmbrAPI, WeaponDetail, WeaponPromote

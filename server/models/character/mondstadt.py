@@ -126,4 +126,15 @@ info = {
             ),
         ],
     ),
+    # "바르카": characterDataSchema(
+    #     passiveSkill={
+    #         "「네가 파티 총괄을 맡아줘, 이제 나는 여기서 조금 있어도 괜찮아.」": passiveSkillSchema(description="파티 내 모든 캐릭터가 성이 상태의 적을 공격 시 치명타 확률이 15% 증가한다.", unlockLevel=1),
+    #     },
+    #     activeSkill={
+    #         "「조금만 기다려주면 나는 무언가를 보여줄 거야.」": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["water"]))),
+    #     },
+    #     constellation=[
+    #         contellationSchema(name="「나도 이제 좀 힘을 보여줄 거야.」", description="원소 전투 스킬 레벨 +3"),
+    #     ],
+    # ),
 }
