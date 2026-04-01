@@ -100,6 +100,7 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
                     "element": avatar.element.value,
                     "level": avatar.level,
                     "moonsign": characterData[avatar.name].moonsign,
+                    "witchsEve": characterData[avatar.name].witchsEve,
                     "ascension": avatar.ascension,
                     "icon": avatar.costume.icon if getattr(avatar, "costume", None) else avatar.icon,  # type: ignore
                     "weaponType": ambrCharacterDetail.weapon_type,
