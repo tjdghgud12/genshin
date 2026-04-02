@@ -126,15 +126,42 @@ info = {
             ),
         ],
     ),
-    # "바르카": characterDataSchema(
-    #     passiveSkill={
-    #         "「네가 파티 총괄을 맡아줘, 이제 나는 여기서 조금 있어도 괜찮아.」": passiveSkillSchema(description="파티 내 모든 캐릭터가 성이 상태의 적을 공격 시 치명타 확률이 15% 증가한다.", unlockLevel=1),
-    #     },
-    #     activeSkill={
-    #         "「조금만 기다려주면 나는 무언가를 보여줄 거야.」": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["water"]))),
-    #     },
-    #     constellation=[
-    #         contellationSchema(name="「나도 이제 좀 힘을 보여줄 거야.」", description="원소 전투 스킬 레벨 +3"),
-    #     ],
-    # ),
+    "바르카": characterDataSchema(
+        passiveSkill={
+            "새벽 바람의 행군": passiveSkillSchema(
+                description="파티에 불 원소, 물 원소, 번개 원소 또는 얼음 원소 캐릭터가 존재할 시,"
+                "바르카의 공격력에 기반해 공격력 1000pt마다 바르카가 10%의 바람 원소 피해 보너스와 상응하는 원소 피해 보너스를 획득한다."
+                "(해당 방식으로 상술한 원소 타입 중 최대 한 가지 원소 타입의 피해 보너스만 획득 가능)"
+                "해당 방식으로 최대 25%의 보너스를 획득할 수 있다."
+                "또한 파티에 바람 원소 캐릭터가 2명 이상 존재하거나, 원소 타입이 동일한 불 원소, 물 원소, 번개 원소 또는 얼음 원소 캐릭터가 2명 이상 존재할 경우,"
+                "바르카가 광풍 모드에서 일반 공격, 강공격, 특수 강공격 푸른 포식 및 특수 원소전투 스킬 사풍의 도래 발동 시 기존의 140%에 해당하는 피해를 준다."
+                "파티에 바람 원소 캐릭터가 2명 이상 존재하는 동시에 원소 타입이 동일한 불 원소, 물 원소, 번개 원소 또는 얼음 원소 캐릭터가 2명 이상 존재할 경우, 상술한 효과가 220%까지 증가한다.",
+                unlockLevel=1,
+                options=[
+                    skillConstellationOptionSchema(type=skillConstellationType.stack, selectList=["불", "물", "번개", "얼음"], label="원소"),
+                    skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=2, label="바람 원소 수"),
+                    skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=2, label="동일 4대 원소 수"),
+                ],
+            ),
+            "선봉의 바람 깃털": passiveSkillSchema(
+                description="주변에 있는 파티 내 캐릭터가 확산 반응 발동 시, 바르카가 「푸른 송곳니」를 1스택 획득하고,"
+                "바르카가 광풍 모드에서 일반 공격, 강공격, 특수 강공격 푸른 포식 및 특수 원소전투 스킬 사풍의 도래로 주는 피해가 7.5% 증가한다. 지속 시간: 8초, 최대 중첩수: 4스택."
+                "해당 방식을 통해 캐릭터마다 바르카에게 1초에 최대 1스택의 「푸른 송곳니」 효과를 부여할 수 있다",
+                unlockLevel=4,
+                options=[skillConstellationOptionSchema(type=skillConstellationType.stack, maxStack=4, label="푸른 송곳니")],
+            ),
+            "바람의 승전가": passiveSkillSchema(
+                description="파티 내 몬드 캐릭터 1명당 원소전투 스킬 열풍의 추락의 재사용 대기시간이 5% 감소한다. 해당 효과는 비경, 영역 토벌, 나선 비경에서 적용되지 않는다",
+                unlockLevel=0,
+            ),
+            "마녀의 전야제·돌아온 여명": passiveSkillSchema(
+                description="마녀의 과제 · 무제 완료 후, 바르카는 마도 캐릭터가 된다. 파티에 마도 캐릭터를 2명 이상 편성하면 마도 · 비밀 의식 효과를 획득해 마도 캐릭터가 강화된다."
+                "마도 · 비밀 의식"
+                "특수 원소전투 스킬 사풍의 도래 강화: 바르카가 광풍 모드에서 일반 공격으로 적 명중 시, 사풍의 도래의 재사용 대기시간이 1초 감소한다",
+                unlockLevel=0,
+            ),
+        },
+        activeSkill={},
+        constellation=[],
+    ),
 }
