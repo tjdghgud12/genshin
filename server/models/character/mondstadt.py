@@ -161,7 +161,57 @@ info = {
                 unlockLevel=0,
             ),
         },
-        activeSkill={},
-        constellation=[],
+        # 데미지 연산 시 원소전투 스킬에 선택한 원소에 따라 additionalAttack추가해줘야함.
+        activeSkill={
+            "페보니우스 검술·빛의 검무": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(
+                    nomal=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    charge=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                    falling=damageBaseFightPropSchema(ATTACK=1, element=["physical"]),
+                )
+            ),
+            "열풍의 추락": activeSkillSchema(
+                baseFightProp=skillBaseFightPropSchema(elementalSkill=damageBaseFightPropSchema(ATTACK=1, element=["wind"])),
+                additionalAttack=[
+                    additionalAttackSchema(name="일반 공격(광풍-바람)", type="nomal", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["wind"])),
+                    additionalAttackSchema(name="강 공격(광풍-바람)", type="charge", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["wind"])),
+                    additionalAttackSchema(name="사풍의 도래(바람)", type="elementalSkill", baseFightProp=damageBaseFightPropSchema(ATTACK=1, element=["wind"])),
+                ],
+                options=[skillConstellationOptionSchema(type=skillConstellationType.selectList, selectList=["불", "물", "번개", "얼음"], label="원소")],
+            ),
+            "내가 곧 북풍이다": activeSkillSchema(baseFightProp=skillBaseFightPropSchema(elementalBurst=damageBaseFightPropSchema(ATTACK=1, element=["wind"]))),
+        },
+        constellation=[
+            contellationSchema(
+                name="「친구여, 달빛 아래 춤을 추자」",
+                description="바르카가 광풍 모드로 전환 시, 특수 원소전투 스킬 사풍의 도래의 사용 가능 횟수를 추가로 1회 획득한다."
+                "또한 광풍 모드로 전환 후, 바르카가 「노래로 빚은 술」 효과를 획득한다:"
+                "특수 원소전투 스킬 사풍의 도래 발동 또는 특수 강공격 푸른 포식 발동 시 해당 효과를 소모해, 사풍의 도래 또는 푸른 포식이 기존의 200%에 해당하는 피해를 준다",
+                options=[],
+            ),
+            contellationSchema(
+                name="「여명이 도래하면, 우리는 여정을 떠날테니」",
+                description="특수 원소전투 스킬 사풍의 도래 발동 또는 특수 강공격 푸른 포식 발동 시, 바르카가 1회의 추가 공격으로 공격력의 800%에 해당하는 바람 원소 범위 피해를 준다",
+                additionalAttack=[additionalAttackSchema(name="2돌파 추가 공격", type="wind", baseFightProp=damageBaseFightPropSchema(ATTACK=8, element=["wind"]))],
+            ),
+            contellationSchema(name="「친구여, 눈물의 고배는 내려놓자」", description="원소전투 스킬 레벨+3"),
+            contellationSchema(
+                name="「누구도 노래할 자유를 빼앗을 수 없으니」",
+                description="바르카가 확산 반응을 발동 시, 반응에 참여한 원소 타입에 따라, 주변에 있는 파티 내 모든 캐릭터가 각각 20%의 바람 원소 피해 보너스와 상응하는 원소 피해 보너스를 획득한다.",
+                options=[
+                    skillConstellationOptionSchema(type=skillConstellationType.toggle, label="확산 발동"),
+                    skillConstellationOptionSchema(type=skillConstellationType.selectList, selectList=["불", "물", "번개", "얼음"], label="원소"),
+                ],
+            ),
+            contellationSchema(name="「축배를 들라, 폭군은 지나가고」", description="원소폭발 레벨+3"),
+            contellationSchema(
+                name="「사랑하는 몬드는 언제나 굳건하리라」",
+                description="광풍 모드 강화:"
+                "· 특수 원소전투 스킬 사풍의 도래 발동 후 짧은 시간 동안, 바르카가 원소전투 스킬을 짧게 터치하거나 일반 공격을 홀드하면"
+                "사풍의 도래의 사용 가능 횟수를 소모하지 않는 특수 강공격 푸른 포식을 1회 발동한다."
+                "· 특수 강공격 푸른 포식 발동 후, 바르카는 원소전투 스킬을 짧게 터치해 사용 가능 횟수를 소모하지 않는 사풍의 태동을 1회 발동한다."
+                "또한, 고유 특성 「선봉의 바람 깃발」의 「푸른 포식」 효과가 강화된다: 「푸른 포식」 1스택마다 바르카의 치명타 피해가 추가로 20% 증가한다",
+            ),
+        ],
     ),
 }
