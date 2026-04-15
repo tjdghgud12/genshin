@@ -33,8 +33,6 @@ async def getFightPropLabels():
 
 @router.get("/weapons/{id}")
 async def getWeaponDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
-    if ambrApi is None:
-        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     try:
         return await ambrApi.fetch_weapon_detail(id)
     except:
@@ -43,8 +41,6 @@ async def getWeaponDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
 @router.get("/weapons")
 async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
-    if ambrApi is None:
-        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     weaponInfo = weaponData.weaponInfo
     ambrWeapons = await ambrApi.fetch_weapons()  # 4성 이상은 186개, 1성 이상은 220개
 
@@ -53,9 +49,6 @@ async def genWeaponList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
 @router.get("/artifactsets/{id}")
 async def getArtifactSetDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
-    if ambrApi is None:
-        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
-
     try:
         return await ambrApi.fetch_artifact_set_detail(id)
     except:
@@ -64,8 +57,6 @@ async def getArtifactSetDetail(id: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
 @router.get("/artifactsets")
 async def genArtifactSetList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
-    if ambrApi is None:
-        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     setOptions = artifactData.artifactSetOptions
     ambrArtifactSets = await ambrApi.fetch_artifact_sets()
 
@@ -74,9 +65,6 @@ async def genArtifactSetList(ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
 @router.get("/user/{uid}")
 async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
-    if ambrApi is None:
-        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
-
     async with enka.GenshinClient(lang="ko") as client:
         await client.update_assets()
         rawRes = await client.fetch_showcase(uid, raw=True)
@@ -235,8 +223,6 @@ async def getUserData(uid: int, ambrApi: AmbrAPI = Depends(getAmbrApi)):
 
 @router.post("/calculation")
 async def calculation(characterInfo: requestCharacterInfoSchema, additionalFightProp: fightPropSchema, ambrApi: AmbrAPI = Depends(getAmbrApi)):
-    if ambrApi is None:
-        raise HTTPException(status_code=503, detail="ambrApi is not initialized yet")
     result = await damageCalculation(characterInfo=characterInfo, additionalFightProp=additionalFightProp)
     return result
 
